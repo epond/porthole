@@ -19,7 +19,7 @@ sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
 
 # Install scala
 
-* download scala-2.11.8.tgz from http://www.scala-lang.org/download/
+download scala-2.11.8.tgz from http://www.scala-lang.org/download/
 
     sudo mkdir /usr/lib/scala
     sudo tar -xf scala-2.11.8.tgz -C /usr/lib/scala

@@ -1,10 +1,10 @@
 # Getting started with the 7" touchscreen display
 
-* http://learn.pimoroni.com/tutorial/pi-lcd/getting-started-with-raspberry-pi-7-touchscreen-lcd
+http://learn.pimoroni.com/tutorial/pi-lcd/getting-started-with-raspberry-pi-7-touchscreen-lcd
 
 # Rotate screen
 
-* edit `/boot/config.txt` and add the line: `lcd_rotate=2` to the top
+edit `/boot/config.txt` and add the line: `lcd_rotate=2` to the top
 
 # Setup wifi
 

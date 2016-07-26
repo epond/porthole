@@ -22,7 +22,7 @@ edit `/boot/config.txt` and add the line: `lcd_rotate=2` to the top
     sudo apt-get install golang-go
     mkdir -p go/src/github.com/epond
 
-add to ~/.bashrc:
+add to `~/.bashrc`:
 
     export GOPATH="$HOME/go"
     export PATH="$PATH:$GOPATH/bin"
@@ -31,4 +31,12 @@ add to ~/.bashrc:
 
 `sudo raspi-config`
 
-Choose `Wait for Network at Boot` and in `Boot Options` choose `Console Autologin`
+choose `Wait for Network at Boot`
+
+# Start browser in fullscreen at boot
+
+ensure directory `~/.config` exists
+
+add to `/etc/rc.local`:
+
+    epiphany-browser -a --profile ~/.config http://localhost/index.html

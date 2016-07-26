@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	log.Print("Starting porthole...")
+	log.Print("Starting porthole... go to http://localhost:9000/dashboard")
 	http.HandleFunc("/", HomeHandler)
 	http.HandleFunc("/dashboard", DashboardHandler)
 

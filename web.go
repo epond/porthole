@@ -7,10 +7,14 @@ import (
 )
 
 func main() {
-	log.Print("Starting porthole... go to http://localhost:9000/dashboard")
+	log.Print("Starting porthole...")
+
+	NewStatusCoordinator(5)
+
 	http.HandleFunc("/", HomeHandler)
 	http.HandleFunc("/dashboard", DashboardHandler)
 
+	log.Print("porthole active - go to http://localhost:9000/dashboard")
 	http.ListenAndServe("localhost:9000", nil)
 }
 

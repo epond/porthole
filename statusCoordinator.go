@@ -8,17 +8,17 @@ import (
 type StatusCoordinator struct {}
 
 func NewStatusCoordinator(status *Status, fetchInterval int) *StatusCoordinator {
-	enquiryCoordinator := &StatusCoordinator{}
+	statusCoordinator := &StatusCoordinator{}
 
 	go func() {
 		c := time.Tick(time.Duration(fetchInterval) * time.Second)
-		enquiryCoordinator.doWork(status, time.Now())
+		statusCoordinator.doWork(status, time.Now())
 		for now := range c {
-			enquiryCoordinator.doWork(status, now)
+			statusCoordinator.doWork(status, now)
 		}
 	}()
 
-	return enquiryCoordinator
+	return statusCoordinator
 }
 
 func (e *StatusCoordinator) doWork(status *Status, now time.Time) {

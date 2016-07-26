@@ -35,8 +35,4 @@ choose `Wait for Network at Boot`
 
 # Start browser in fullscreen at boot
 
-ensure directory `~/.config` exists
-
-add to `/etc/rc.local`:
-
-    epiphany-browser -a --profile ~/.config http://localhost:9000
+https://github.com/elalemanyo/raspberry-pi-kiosk-screen

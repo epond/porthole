@@ -39,4 +39,4 @@ ensure directory `~/.config` exists
 
 add to `/etc/rc.local`:
 
-    epiphany-browser -a --profile ~/.config http://localhost/index.html
+    epiphany-browser -a --profile ~/.config http://localhost:9000

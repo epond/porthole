@@ -26,3 +26,9 @@ add to ~/.bashrc:
 
     export GOPATH="$HOME/go"
     export PATH="$PATH:$GOPATH/bin"
+
+# Change how the Pi boots up
+
+`sudo raspi-config`
+
+Choose `Wait for Network at Boot` and in `Boot Options` choose `Console Autologin`

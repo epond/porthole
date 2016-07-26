@@ -9,7 +9,7 @@ import (
 func main() {
 	log.Print("Starting porthole...")
 
-	NewStatusCoordinator(5)
+	NewStatusCoordinator(2)
 
 	http.HandleFunc("/", HomeHandler)
 	http.HandleFunc("/dashboard", DashboardHandler)

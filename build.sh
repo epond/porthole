@@ -1,1 +1,1 @@
-go install
+go install github.com/epond/porthole

@@ -13,15 +13,10 @@ func main() {
 
 	NewStatusCoordinator(status, 2)
 
-	http.HandleFunc("/", HomeHandler)
-	http.HandleFunc("/dashboard", DashboardHandler(status))
+	http.HandleFunc("/", DashboardHandler(status))
 
-	log.Print("porthole active - go to http://localhost:9000/dashboard")
+	log.Print("porthole active - browse to http://localhost:9000")
 	http.ListenAndServe("localhost:9000", nil)
-}
-
-func HomeHandler(res http.ResponseWriter, req *http.Request) {
-	fmt.Fprintln(res, "GET /dashboard (see project readme for more information)")
 }
 
 func DashboardHandler(status *Status) func(res http.ResponseWriter, req *http.Request) {

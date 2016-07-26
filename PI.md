@@ -17,15 +17,6 @@ edit `/boot/config.txt` and add the line: `lcd_rotate=2` to the top
 
 `sudo reboot`
 
-# Install scala
-
-download scala-2.11.8.tgz from http://www.scala-lang.org/download/
-
-    sudo mkdir /usr/lib/scala
-    sudo tar -xf scala-2.11.8.tgz -C /usr/lib/scala
-    sudo ln -s /usr/lib/scala/scala-2.11.8/bin/scala /bin/scala
-    sudo ln -s /usr/lib/scala/scala-2.11.8/bin/scalac /bin/scalac
-
 # Install golang (currently 1.3.3)
 
     sudo apt-get install golang-go

@@ -27,12 +27,6 @@ add to `~/.bashrc`:
     export GOPATH="$HOME/go"
     export PATH="$PATH:$GOPATH/bin"
 
-# Change how the Pi boots up
-
-`sudo raspi-config`
-
-choose `Wait for Network at Boot`
-
 # Start browser in fullscreen at boot
 
 https://github.com/elalemanyo/raspberry-pi-kiosk-screen

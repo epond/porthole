@@ -3,8 +3,14 @@
 echo "Waiting for network..."
 /home/pi/go/src/github.com/epond/porthole/waitforip.sh
 
+echo "Updating porthole..."
+cd /home/pi/go/src/github.com/epond/porthole
+sudo -u pi git pull -r
+GOPATH="/home/pi/go"
+bash -c ./build.sh
+
 echo "Starting porthole in background..."
-/home/pi/go/bin/porthole &
+sudo -u pi /home/pi/go/bin/porthole &
 
 echo "Starting browser in kiosk mode..."
 # https://github.com/elalemanyo/raspberry-pi-kiosk-screen

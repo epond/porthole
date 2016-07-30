@@ -27,3 +27,11 @@ add to `~/.bashrc`:
     export GOPATH="$HOME/go"
     export PATH="$PATH:$GOPATH/bin"
 
+# Modify the PI's autostart script
+
+replace the contents of `~/.config/lxsession/LXDE-pi/autostart` with:
+
+    @xset s off
+    @xset -dpms
+    @xset s noblank
+    @/home/pi/go/src/github.com/epond/porthole/dashboard.sh

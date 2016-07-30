@@ -27,6 +27,3 @@ add to `~/.bashrc`:
     export GOPATH="$HOME/go"
     export PATH="$PATH:$GOPATH/bin"
 
-# Start browser in fullscreen at boot
-
-https://github.com/elalemanyo/raspberry-pi-kiosk-screen

@@ -26,6 +26,11 @@ add to `~/.bashrc`:
 
     export GOPATH="$HOME/go"
     export PATH="$PATH:$GOPATH/bin"
+    
+# Clone the porthole repo
+
+    cd go/src/github.com/epond
+    git clone https://github.com/epond/porthole.git
 
 # Modify the PI's autostart script
 

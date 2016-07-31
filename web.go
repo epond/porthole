@@ -6,7 +6,6 @@ import (
 	"html/template"
 	"os"
 	"path"
-	"fmt"
 )
 
 func main() {
@@ -33,7 +32,9 @@ func DashboardHandler(status *Status) func(res http.ResponseWriter, req *http.Re
 }
 
 func DashboardInfoHandler(status *Status) func(res http.ResponseWriter, req *http.Request) {
+	templatePath := path.Join(os.Getenv("GOPATH"), "src/github.com/epond/porthole", "html/dashinfo.html")
+	t, _ := template.ParseFiles(templatePath)
 	return func(res http.ResponseWriter, req *http.Request) {
-		fmt.Fprintf(res, "Counter:%v\n", status.Counter)
+		t.Execute(res, status)
 	}
 }

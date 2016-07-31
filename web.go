@@ -21,6 +21,6 @@ func main() {
 
 func DashboardHandler(status *Status) func(res http.ResponseWriter, req *http.Request) {
 	return func(res http.ResponseWriter, req *http.Request) {
-		fmt.Fprintf(res, "Counter:%v (E)\n", status.Counter)
+		fmt.Fprintf(res, "Counter:%v (F)\n", status.Counter)
 	}
 }

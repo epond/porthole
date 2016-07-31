@@ -1,11 +1,22 @@
 <html>
-    <head>
-        <script type="text/javascript">
-          // Refresh every 5 seconds
-          setTimeout(function(){location = ''},5000)
-        </script>
-    </head>
     <body>
         <h1>Counter: {{.Counter}}</h1>
+        <div id="infoarea"></div>
     </body>
+    <script type="text/javascript">
+        (function update() {
+            var infoarea=document.getElementById("infoarea");
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (xhttp.readyState == 4 && xhttp.status == 200) {
+                    infoarea.innerHTML = xhttp.responseText;
+                }
+            };
+            xhttp.open("GET", "dashinfo", true);
+            xhttp.send();
+
+            setTimeout(update, 1000);
+        })();
+    </script>
 </html>

@@ -6,7 +6,7 @@ echo "Waiting for network..."
 echo "Updating porthole..."
 cd /home/pi/go/src/github.com/epond/porthole
 sudo -u pi git pull -r
-GOPATH="/home/pi/go"
+export GOPATH="/home/pi/go"
 bash -c ./build.sh
 
 echo "Starting porthole in background..."

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
+	"html/template"
 )
 
 func main() {
@@ -20,7 +20,8 @@ func main() {
 }
 
 func DashboardHandler(status *Status) func(res http.ResponseWriter, req *http.Request) {
+	t, _ := template.ParseFiles("html/dashboard.html")
 	return func(res http.ResponseWriter, req *http.Request) {
-		fmt.Fprintf(res, "Counter:%v\n", status.Counter)
+		t.Execute(res, status)
 	}
 }

@@ -6,6 +6,8 @@ import (
 	"html/template"
 	"os"
 	"path"
+	"fmt"
+	"io/ioutil"
 )
 
 func main() {
@@ -15,16 +17,18 @@ func main() {
 
 	NewStatusCoordinator(status, 2)
 
-	http.HandleFunc("/", dashboardHandler)
+	http.HandleFunc("/", dashboardHandler())
 	http.HandleFunc("/dashinfo", dashboardInfoHandler(status))
 
 	log.Print("porthole active - browse to http://localhost:9000")
 	http.ListenAndServe("localhost:9000", nil)
 }
 
-func dashboardHandler(res http.ResponseWriter, req *http.Request) {
-	t, _ := template.ParseFiles(templatePath("dashboard.html"))
-	t.Execute(res, nil)
+func dashboardHandler() func(res http.ResponseWriter, req *http.Request) {
+	dashboard, _ := ioutil.ReadFile(templatePath("dashboard.html"))
+	return func(res http.ResponseWriter, req *http.Request) {
+		fmt.Fprint(res, string(dashboard))
+	}
 }
 
 func dashboardInfoHandler(status *Status) func(res http.ResponseWriter, req *http.Request) {

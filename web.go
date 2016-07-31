@@ -15,26 +15,25 @@ func main() {
 
 	NewStatusCoordinator(status, 2)
 
-	http.HandleFunc("/", DashboardHandler(status))
-	http.HandleFunc("/dashinfo", DashboardInfoHandler(status))
+	http.HandleFunc("/", dashboardHandler)
+	http.HandleFunc("/dashinfo", dashboardInfoHandler(status))
 
 	log.Print("porthole active - browse to http://localhost:9000")
 	http.ListenAndServe("localhost:9000", nil)
 }
 
-func DashboardHandler(status *Status) func(res http.ResponseWriter, req *http.Request) {
-	templatePath := path.Join(os.Getenv("GOPATH"), "src/github.com/epond/porthole", "html/dashboard.html")
-	log.Printf("Loading dashboard template from %v", templatePath)
-	t, _ := template.ParseFiles(templatePath)
+func dashboardHandler(res http.ResponseWriter, req *http.Request) {
+	t, _ := template.ParseFiles(templatePath("dashboard.html"))
+	t.Execute(res, nil)
+}
+
+func dashboardInfoHandler(status *Status) func(res http.ResponseWriter, req *http.Request) {
+	t, _ := template.ParseFiles(templatePath("dashinfo.html"))
 	return func(res http.ResponseWriter, req *http.Request) {
 		t.Execute(res, status)
 	}
 }
 
-func DashboardInfoHandler(status *Status) func(res http.ResponseWriter, req *http.Request) {
-	templatePath := path.Join(os.Getenv("GOPATH"), "src/github.com/epond/porthole", "html/dashinfo.html")
-	t, _ := template.ParseFiles(templatePath)
-	return func(res http.ResponseWriter, req *http.Request) {
-		t.Execute(res, status)
-	}
+func templatePath(file string) string {
+	return path.Join(os.Getenv("GOPATH"), "src/github.com/epond/porthole/html/", file)
 }

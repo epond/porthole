@@ -4,6 +4,8 @@ import (
 	"log"
 	"net/http"
 	"html/template"
+	"os"
+	"path"
 )
 
 func main() {
@@ -20,7 +22,9 @@ func main() {
 }
 
 func DashboardHandler(status *Status) func(res http.ResponseWriter, req *http.Request) {
-	t, _ := template.ParseFiles("html/dashboard.html")
+	templatePath := path.Join(os.Getenv("GOPATH"), "src/github.com/epond/porthole", "html/dashboard.html")
+	log.Printf("Loading dashboard template from %v", templatePath)
+	t, _ := template.ParseFiles(templatePath)
 	return func(res http.ResponseWriter, req *http.Request) {
 		t.Execute(res, status)
 	}

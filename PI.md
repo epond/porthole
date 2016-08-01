@@ -49,3 +49,10 @@ replace the contents of `~/.config/lxsession/LXDE-pi/autostart` with:
     @xset -dpms
     @xset s noblank
     @/home/pi/go/src/github.com/epond/porthole/dashboard.sh
+
+# Mount media folder from nas
+
+    sudo mkdir -p /mnt/nasmedia
+    sudo chmod 777 /mnt/nasmedia
+    sudo mount -o nolock <ip_of_nas>:<mount_path> /mnt/nasmedia
+

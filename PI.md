@@ -1,10 +1,19 @@
-# Getting started with the 7" touchscreen display
+# Enable SSH remote administration
 
+    sudo raspi-config
+
+# Configure the 7" touchscreen display
+
+to rotate screen, edit `/boot/config.txt` and add the line: `lcd_rotate=2` to the top
+
+reduce brightness (after enabling ssh to be safe):
+
+    sudo su
+    echo 80 > /sys/class/backlight/rpi_backlight/brightness
+    exit
+
+An introduction to using the display can be found here:
 http://learn.pimoroni.com/tutorial/pi-lcd/getting-started-with-raspberry-pi-7-touchscreen-lcd
-
-# Rotate screen
-
-edit `/boot/config.txt` and add the line: `lcd_rotate=2` to the top
 
 # Setup wifi
 

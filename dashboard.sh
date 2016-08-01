@@ -3,16 +3,16 @@
 echo "Waiting for network..."
 /home/pi/go/src/github.com/epond/porthole/waitforip.sh
 
-echo "Mounting media folder from nas"
-sudo mkdir -p /mnt/nasmedia
-sudo chmod 777 /mnt/nasmedia
-sudo mount -o nolock 192.168.1.102:/volume1/media /mnt/nasmedia
-
 echo "Updating porthole..."
 cd /home/pi/go/src/github.com/epond/porthole
 sudo -u pi git pull -r
 export GOPATH="/home/pi/go"
 bash -c ./build.sh
+
+echo "Mounting media folder from nas"
+sudo mkdir -p /mnt/nasmedia
+sudo chmod 777 /mnt/nasmedia
+sudo mount -o nolock 192.168.1.102:/volume1/media /mnt/nasmedia
 
 echo "Starting porthole in background..."
 rm /home/pi/porthole.log

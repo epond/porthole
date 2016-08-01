@@ -10,7 +10,8 @@ export GOPATH="/home/pi/go"
 bash -c ./build.sh
 
 echo "Starting porthole in background..."
-/home/pi/go/bin/porthole &
+rm /home/pi/porthole.log
+/home/pi/go/bin/porthole 2> /home/pi/porthole.log &
 
 echo "Starting browser in kiosk mode..."
 # https://github.com/elalemanyo/raspberry-pi-kiosk-screen

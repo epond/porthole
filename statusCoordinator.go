@@ -5,23 +5,27 @@ import (
 	"time"
 )
 
-type StatusCoordinator struct {}
+type StatusCoordinator struct {
+	status *Status
+	musicFolder string
+}
 
-func NewStatusCoordinator(status *Status, fetchInterval int) *StatusCoordinator {
-	statusCoordinator := &StatusCoordinator{}
+func NewStatusCoordinator(status *Status, musicFolder string, fetchInterval int) *StatusCoordinator {
+	statusCoordinator := &StatusCoordinator{status, musicFolder}
 
 	go func() {
 		c := time.Tick(time.Duration(fetchInterval) * time.Second)
-		statusCoordinator.doWork(status, time.Now())
-		for now := range c {
-			statusCoordinator.doWork(status, now)
+		statusCoordinator.doWork()
+		for _ = range c {
+			statusCoordinator.doWork()
 		}
 	}()
 
 	return statusCoordinator
 }
 
-func (e *StatusCoordinator) doWork(status *Status, now time.Time) {
-	status.Counter = status.Counter + 1
-	log.Printf("Status counter:%v", status.Counter)
+func (s *StatusCoordinator) doWork() {
+	s.status.LatestAdditions = s.musicFolder
+	s.status.Counter = s.status.Counter + 1
+	log.Printf("Status counter:%v", s.status.Counter)
 }

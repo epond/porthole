@@ -1,12 +1,14 @@
 #!/bin/bash
 
+export GOPATH="/home/pi/go"
+export MUSIC_FOLDER="/mnt/nasmedia/Music"
+
 echo "Waiting for network..."
 /home/pi/go/src/github.com/epond/porthole/waitforip.sh
 
 echo "Updating porthole..."
 cd /home/pi/go/src/github.com/epond/porthole
 sudo -u pi git pull -r
-export GOPATH="/home/pi/go"
 bash -c ./build.sh
 
 echo "Mounting media folder from nas"

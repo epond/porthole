@@ -27,5 +27,5 @@ func NewStatusCoordinator(status *Status, musicFolder string, fetchInterval int)
 func (s *StatusCoordinator) doWork() {
 	s.status.LatestAdditions = LatestAdditions(s.musicFolder)
 	s.status.Counter = s.status.Counter + 1
-	log.Printf("Status counter:%v", s.status.Counter)
+	log.Printf("Status counter:%v, additions:%v", s.status.Counter, s.status.LatestAdditions)
 }

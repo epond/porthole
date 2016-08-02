@@ -4,6 +4,7 @@ import (
 	"os"
 	"path"
 	"fmt"
+	"log"
 )
 
 func LatestAdditions(musicFolder string) string {
@@ -14,6 +15,13 @@ func LatestAdditions(musicFolder string) string {
 }
 
 func FileInfoAtDepth(rootFolderPath string, targetDepth int) []os.FileInfo {
-	var leaves []os.FileInfo
+	rootFile, err := os.Open(rootFolderPath)
+	if err != nil {
+		log.Fatalf("Could not open folder. Cause: %v", err)
+	}
+	leaves, err := rootFile.Readdir(0)
+	if err != nil {
+		log.Fatalf("Could not read folder info. Cause: %v", err)
+	}
 	return leaves
 }

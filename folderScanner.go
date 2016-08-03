@@ -15,6 +15,10 @@ func LatestAdditions(musicFolder string) string {
 }
 
 func FileInfoAtDepth(rootFolderPath string, targetDepth int) []os.FileInfo {
+	if targetDepth <= 0 {
+		return []os.FileInfo{}
+	}
+
 	rootFile, err := os.Open(rootFolderPath)
 	if err != nil {
 		log.Fatalf("Could not open folder. Cause: %v", err)
@@ -23,5 +27,15 @@ func FileInfoAtDepth(rootFolderPath string, targetDepth int) []os.FileInfo {
 	if err != nil {
 		log.Fatalf("Could not read folder info. Cause: %v", err)
 	}
+
+	if targetDepth == 1 {
+		// TODO exclude apple and synology hidden folders
+		return leaves
+	}
+
+	for _, _ = range leaves {
+		// TODO concatenate results from children
+	}
+
 	return leaves
 }

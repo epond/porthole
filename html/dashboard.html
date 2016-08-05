@@ -4,12 +4,10 @@
     </body>
     <script type="text/javascript">
         (function update() {
-            var infoarea=document.getElementById("infoarea");
-
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function() {
                 if (xhttp.readyState == 4 && xhttp.status == 200) {
-                    infoarea.innerHTML = xhttp.responseText;
+                    document.getElementById("infoarea").innerHTML = xhttp.responseText;
                 }
             };
             xhttp.open("GET", "dashinfo", true);

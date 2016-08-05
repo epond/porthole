@@ -34,7 +34,7 @@ func FileInfoAtDepth(rootFolderPath string, targetDepth int) []os.FileInfo {
 	}
 
 	for _, _ = range leaves {
-		// TODO concatenate results from children
+		// TODO concatenate results from children at targetDepth - 1
 	}
 
 	return leaves

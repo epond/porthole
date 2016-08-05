@@ -29,6 +29,9 @@ func TestGivenDepthOfTwoThenReturnSubfolderInfo(t *testing.T) {
 	expect(t, "foldernames", "a3b2b3b2a3c2b3c2", foldernames)
 }
 
+//func TestItIgnoresAppleHiddenFolders(t *testing.T) {}
+//func TestItIgnoresSynologyHiddenFolders(t *testing.T) {}
+
 func expect(t *testing.T, valueName string, expected string, actual string) {
 	if actual != expected {
 		t.Errorf("Expected %v to be %v but was %v", valueName, expected, actual)

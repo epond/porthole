@@ -2,6 +2,8 @@ package main
 
 import "testing"
 
-func TestFileInfoAtDepth(t *testing.T) {
-	t.Error("not implemented")
+func TestGivenZeroDepthThenFileInfoAtDepthReturnsEmptyArray(t *testing.T) {
+	if len(FileInfoAtDepth("anything", 0)) != 0 {
+		t.Error("not implemented")
+	}
 }

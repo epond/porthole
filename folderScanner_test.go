@@ -4,32 +4,33 @@ import (
 	"testing"
 	"path"
 	"os"
+	"fmt"
+	"strconv"
 )
 
 func TestGivenZeroDepthThenReturnEmptyArray(t *testing.T) {
-	if len(FileInfoAtDepth("anything", 0)) != 0 {
-		t.Error("File info array at depth 0 was non-empty")
-	}
+	expect(t, "number of fileinfos", "0", strconv.Itoa(len(FileInfoAtDepth("anything", 0))))
 }
 
 func TestGivenDepthOfOneThenReturnSubfolderInfo(t *testing.T) {
 	folderPath := path.Join(os.Getenv("GOPATH"), "src/github.com/epond/porthole/testdata/a1")
 	fileInfos := FileInfoAtDepth(folderPath, 1)
-	if len(fileInfos) != 3 {
-		t.Error("File info array at depth 1 did not have length 3")
-	}
-	if fileInfos[0].Name() != "a2" || fileInfos[1].Name() != "b2" || fileInfos[2].Name() != "c2" {
-		t.Error("Folder name was not as expected")
-	}
+	expect(t, "number of fileinfos", "3", strconv.Itoa(len(fileInfos)))
+
+	foldernames := fmt.Sprintf("%v%v%v", fileInfos[0].Name(), fileInfos[1].Name(), fileInfos[2].Name())
+	expect(t, "foldernames", "a2b2c2", foldernames)
 }
 
 func TestGivenDepthOfTwoThenReturnSubfolderInfo(t *testing.T) {
 	folderPath := path.Join(os.Getenv("GOPATH"), "src/github.com/epond/porthole/testdata/a1")
 	fileInfos := FileInfoAtDepth(folderPath, 2)
-	if len(fileInfos) != 4 {
-		t.Error("File info array at depth 2 did not have length 4")
-	}
-	if fileInfos[0].Name() != "a3b2" || fileInfos[1].Name() != "b3b2" || fileInfos[2].Name() != "a3c2" || fileInfos[3].Name() != "b3c2" {
-		t.Error("Folder name was not as expected")
+	expect(t, "number of fileinfos", "4", strconv.Itoa(len(fileInfos)))
+	foldernames := fmt.Sprintf("%v%v%v%v", fileInfos[0].Name(), fileInfos[1].Name(), fileInfos[2].Name(), fileInfos[3].Name())
+	expect(t, "foldernames", "a3b2b3b2a3c2b3c2", foldernames)
+}
+
+func expect(t *testing.T, valueName string, expected string, actual string) {
+	if actual != expected {
+		t.Errorf("Expected %v to be %v but was %v", valueName, expected, actual)
 	}
 }

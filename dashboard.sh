@@ -8,8 +8,9 @@ echo "Waiting for network..."
 
 echo "Updating porthole..."
 cd /home/pi/go/src/github.com/epond/porthole
+rm /home/pi/porthole.log
 sudo -u pi git pull -r
-bash -c ./build.sh
+bash -c ./build.sh >> /home/pi/porthole.log 2>&1
 
 echo "Mounting media folder from nas"
 sudo mkdir -p /mnt/nasmedia
@@ -17,8 +18,7 @@ sudo chmod 777 /mnt/nasmedia
 sudo mount -o nolock 192.168.1.102:/volume1/media /mnt/nasmedia
 
 echo "Starting porthole in background..."
-rm /home/pi/porthole.log
-/home/pi/go/bin/porthole 2> /home/pi/porthole.log &
+/home/pi/go/bin/porthole >> /home/pi/porthole.log 2>&1 &
 
 echo "Starting browser in kiosk mode..."
 # https://github.com/elalemanyo/raspberry-pi-kiosk-screen

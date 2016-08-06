@@ -22,27 +22,26 @@ func FileInfoAtDepth(rootFolderPath string, targetDepth int) []os.FileInfo {
 
 	rootFile, err := os.Open(rootFolderPath)
 	if err != nil {
-		log.Fatalf("Could not open folder. Cause: %v", err)
+		log.Fatalf("Could not open root folder. Cause: %v", err)
 	}
 	children, err := rootFile.Readdir(0)
 	if err != nil {
-		log.Fatalf("Could not read folder info. Cause: %v", err)
+		log.Fatalf("Could not read root folder info. Cause: %v", err)
 	}
 
-	if targetDepth == 1 {
-		fileInfos := make([]os.FileInfo, 0)
-		for _, child := range children {
-			firstChar, _ := utf8.DecodeRuneInString(child.Name())
-			if child.IsDir() && child.Name() != "@eaDir" && firstChar != '.' {
+	fileInfos := make([]os.FileInfo, 0)
+
+	for _, child := range children {
+		firstChar, _ := utf8.DecodeRuneInString(child.Name())
+		if child.IsDir() && child.Name() != "@eaDir" && firstChar != '.' {
+			if targetDepth == 1 {
 				fileInfos = append(fileInfos, child)
+			} else {
+				childFileInfos := FileInfoAtDepth(path.Join(rootFolderPath, child.Name()), targetDepth - 1)
+				fileInfos = append(fileInfos, childFileInfos...)
 			}
 		}
-		return fileInfos
 	}
 
-	for _, _ = range children {
-		// TODO concatenate results from children at targetDepth - 1
-	}
-
-	return children
+	return fileInfos
 }

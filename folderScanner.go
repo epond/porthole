@@ -5,6 +5,7 @@ import (
 	"path"
 	"fmt"
 	"log"
+	"unicode/utf8"
 )
 
 func LatestAdditions(musicFolder string) string {
@@ -23,19 +24,25 @@ func FileInfoAtDepth(rootFolderPath string, targetDepth int) []os.FileInfo {
 	if err != nil {
 		log.Fatalf("Could not open folder. Cause: %v", err)
 	}
-	leaves, err := rootFile.Readdir(0)
+	children, err := rootFile.Readdir(0)
 	if err != nil {
 		log.Fatalf("Could not read folder info. Cause: %v", err)
 	}
 
 	if targetDepth == 1 {
-		// TODO exclude apple and synology hidden folders
-		return leaves
+		fileInfos := make([]os.FileInfo, 0)
+		for _, child := range children {
+			firstChar, _ := utf8.DecodeRuneInString(child.Name())
+			if child.IsDir() && child.Name() != "@eaDir" && firstChar != '.' {
+				fileInfos = append(fileInfos, child)
+			}
+		}
+		return fileInfos
 	}
 
-	for _, _ = range leaves {
+	for _, _ = range children {
 		// TODO concatenate results from children at targetDepth - 1
 	}
 
-	return leaves
+	return children
 }

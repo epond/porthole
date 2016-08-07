@@ -10,10 +10,11 @@ import (
 )
 
 func LatestAdditions(musicFolder string) string {
-	var allLeaves = append(
+	allFileInfos := append(
 		FileInfoAtDepth(path.Join(musicFolder, "flac"), 3),
 		FileInfoAtDepth(path.Join(musicFolder, "flac-cd"), 3)...)
-	return fmt.Sprintf("%v", len(allLeaves))
+	latestFileInfos := LatestFileInfos(allFileInfos, 3)
+	return fmt.Sprintf("%v, %v, %v", latestFileInfos[0].Name(), latestFileInfos[1].Name(), latestFileInfos[2].Name())
 }
 
 func FileInfoAtDepth(rootFolderPath string, targetDepth int) []os.FileInfo {
@@ -62,7 +63,7 @@ func (slice FileInfosSortedByModifiedTime) Len() int {
 }
 
 func (slice FileInfosSortedByModifiedTime) Less(i, j int) bool {
-	return slice[i].ModTime().Before(slice[j].ModTime())
+	return slice[i].ModTime().After(slice[j].ModTime())
 }
 
 func (slice FileInfosSortedByModifiedTime) Swap(i, j int) {

@@ -48,8 +48,7 @@ func TestLatestFileInfosOrdersByModifiedTime(t *testing.T) {
 		DummyFileInfo{"file4", 1, os.ModeDir, now.Add(9 * time.Hour), true},
 		DummyFileInfo{"file5", 1, os.ModeDir, now.Add(2 * time.Hour), true},
 	}
-	expect(t, "folder names", "file2|file5|file3", fileInfoNames(LatestFileInfos(rawFileInfos, 3)))
-	expect(t, "folder names", "file2|file5|file3|file4|file1", fileInfoNames(LatestFileInfos(rawFileInfos, 5)))
+	expect(t, "folder names", "file1|file4|file3", fileInfoNames(LatestFileInfos(rawFileInfos, 3)))
 }
 
 func expect(t *testing.T, valueName string, expected string, actual string) {

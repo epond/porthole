@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"unicode/utf8"
+	"sort"
 )
 
 func LatestAdditions(musicFolder string) string {
@@ -43,5 +44,32 @@ func FileInfoAtDepth(rootFolderPath string, targetDepth int) []os.FileInfo {
 		}
 	}
 
+	return fileInfos
+}
+
+func LatestFileInfos(fileInfos []os.FileInfo, limit int) []os.FileInfo {
+	sortedFileInfos := sortByModTime(fileInfos)
+	if len(sortedFileInfos) > limit {
+		return sortedFileInfos[:limit]
+	}
+	return sortedFileInfos
+}
+
+type FileInfosSortedByModifiedTime []os.FileInfo
+
+func (slice FileInfosSortedByModifiedTime) Len() int {
+	return len(slice)
+}
+
+func (slice FileInfosSortedByModifiedTime) Less(i, j int) bool {
+	return slice[i].ModTime().Before(slice[j].ModTime())
+}
+
+func (slice FileInfosSortedByModifiedTime) Swap(i, j int) {
+	slice[i], slice[j] = slice[j], slice[i]
+}
+
+func sortByModTime(fileInfos FileInfosSortedByModifiedTime) FileInfosSortedByModifiedTime {
+	sort.Sort(fileInfos)
 	return fileInfos
 }

@@ -16,7 +16,7 @@ func main() {
 
 	log.Printf("Starting porthole. Music folder: %v", musicFolder)
 
-	NewStatusCoordinator(status, musicFolder, 2)
+	NewStatusCoordinator(status, musicFolder, 30)
 
 	http.HandleFunc("/", dashboardHandler())
 	http.HandleFunc("/dashinfo", dashboardInfoHandler(status))

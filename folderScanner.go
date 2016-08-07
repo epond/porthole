@@ -11,8 +11,8 @@ import (
 
 func LatestAdditions(musicFolder string) string {
 	allFileInfos := append(
-		FileInfoAtDepth(path.Join(musicFolder, "flac"), 3),
-		FileInfoAtDepth(path.Join(musicFolder, "flac-cd"), 3)...)
+		FileInfoAtDepth(path.Join(musicFolder, "flac-add"), 2),
+		FileInfoAtDepth(path.Join(musicFolder, "flac-vorbis320"), 2)...)
 	latestFileInfos := LatestFileInfos(allFileInfos, 3)
 	return fmt.Sprintf("%v, %v, %v", latestFileInfos[0].Name(), latestFileInfos[1].Name(), latestFileInfos[2].Name())
 }

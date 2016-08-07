@@ -11,20 +11,20 @@ import (
 )
 
 func TestGivenZeroDepthThenReturnEmptyArray(t *testing.T) {
-	expect(t, "number of fileinfos", "0", strconv.Itoa(len(FileInfoAtDepth("anything", 0))))
+	expectInt(t, "number of fileinfos", 0, len(FileInfoAtDepth("anything", 0)))
 }
 
 func TestGivenDepthOfOneThenReturnSubfolderInfo(t *testing.T) {
 	folderPath := path.Join(os.Getenv("GOPATH"), "src/github.com/epond/porthole/testdata/a1")
 	fileInfos := sortByName(FileInfoAtDepth(folderPath, 1))
-	expect(t, "number of fileinfos", "3", strconv.Itoa(len(fileInfos)))
+	expectInt(t, "number of fileinfos", 3, len(fileInfos))
 	expect(t, "foldernames", "a2|b2|c2", fileInfoNames(fileInfos))
 }
 
 func TestGivenDepthOfTwoThenReturnSubfolderInfo(t *testing.T) {
 	folderPath := path.Join(os.Getenv("GOPATH"), "src/github.com/epond/porthole/testdata/a1")
 	fileInfos := sortByName(FileInfoAtDepth(folderPath, 2))
-	expect(t, "number of fileinfos", "4", strconv.Itoa(len(fileInfos)))
+	expectInt(t, "number of fileinfos", 4, len(fileInfos))
 	expect(t, "folder names", "a3b2|a3c2|b3b2|b3c2", fileInfoNames(fileInfos))
 }
 
@@ -34,9 +34,9 @@ func TestLatestFileInfosLimitsNumberOfResults(t *testing.T) {
 		DummyFileInfo{"file2", 1, os.ModeDir, time.Now(), true},
 		DummyFileInfo{"file3", 1, os.ModeDir, time.Now(), true},
 	}
-	expect(t, "length of latest fileInfos", "2", strconv.Itoa(len(LatestFileInfos(fileInfos, 2))))
-	expect(t, "length of latest fileInfos", "3", strconv.Itoa(len(LatestFileInfos(fileInfos, 3))))
-	expect(t, "length of latest fileInfos", "3", strconv.Itoa(len(LatestFileInfos(fileInfos, 4))))
+	expectInt(t, "length of latest fileInfos", 2, len(LatestFileInfos(fileInfos, 2)))
+	expectInt(t, "length of latest fileInfos", 3, len(LatestFileInfos(fileInfos, 3)))
+	expectInt(t, "length of latest fileInfos", 3, len(LatestFileInfos(fileInfos, 4)))
 }
 
 func TestLatestFileInfosOrdersByModifiedTime(t *testing.T) {
@@ -56,6 +56,10 @@ func expect(t *testing.T, valueName string, expected string, actual string) {
 	if actual != expected {
 		t.Errorf("Expected %v to be %v but was %v", valueName, expected, actual)
 	}
+}
+
+func expectInt(t *testing.T, valueName string, expected int, actual int) {
+	expect(t, valueName, strconv.Itoa(expected), strconv.Itoa(actual))
 }
 
 func fileInfoNames(fileInfos []os.FileInfo) string {

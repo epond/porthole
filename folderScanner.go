@@ -73,7 +73,7 @@ func (slice FolderInfos) Len() int {
 }
 
 func (slice FolderInfos) Less(i, j int) bool {
-	return slice[i].timespec.BirthTime().After(slice[j].timespec.BirthTime())
+	return slice[i].timespec.ChangeTime().After(slice[j].timespec.ChangeTime())
 }
 
 func (slice FolderInfos) Swap(i, j int) {

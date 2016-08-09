@@ -43,7 +43,7 @@ func TestLatestFolderInfosLimitsNumberOfResults(t *testing.T) {
 	expectInt(t, "length of latest folderInfos", 3, len(LatestFolderInfos(fileInfos, 4, cannedConversions.conversion)))
 }
 
-func TestLatestFolderInfosOrdersByBirthTime(t *testing.T) {
+func TestLatestFolderInfosOrdersByChangeTime(t *testing.T) {
 	fileInfos := []os.FileInfo{
 		DummyFileInfo{"file1", 1, os.ModeDir, time.Now(), true},
 		DummyFileInfo{"file2", 1, os.ModeDir, time.Now(), true},
@@ -141,7 +141,7 @@ func (d DummyFileInfo) Sys() interface{} {
 }
 
 type DummyTimespec struct {
-	birthTime time.Time
+	changeTime time.Time
 }
 func (d DummyTimespec) ModTime() time.Time {
 	return time.Now()
@@ -150,16 +150,16 @@ func (d DummyTimespec) AccessTime() time.Time {
 	return time.Now()
 }
 func (d DummyTimespec) ChangeTime() time.Time {
-	return time.Now()
+	return d.changeTime
 }
 func (d DummyTimespec) BirthTime() time.Time {
-	return d.birthTime
+	return time.Now()
 }
 func (d DummyTimespec) HasChangeTime() bool {
 	return true
 }
 func (d DummyTimespec) HasBirthTime() bool {
-	return true
+	return false
 }
 
 type CannedConversions struct {

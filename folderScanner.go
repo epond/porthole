@@ -7,14 +7,18 @@ import (
 	"log"
 	"unicode/utf8"
 	"sort"
+	"github.com/djherbis/times"
 )
 
 func LatestAdditions(musicFolder string) string {
 	allFileInfos := append(
 		FileInfoAtDepth(path.Join(musicFolder, "flac-add"), 2),
 		FileInfoAtDepth(path.Join(musicFolder, "flac-vorbis320"), 2)...)
-	latestFileInfos := LatestFileInfos(allFileInfos, 3)
-	return fmt.Sprintf("%v, %v, %v", latestFileInfos[0].Name(), latestFileInfos[1].Name(), latestFileInfos[2].Name())
+	latestFolderInfos := LatestFolderInfos(allFileInfos, 3, times.Get)
+	return fmt.Sprintf("%v, %v, %v",
+		latestFolderInfos[0].fileInfo.Name(),
+		latestFolderInfos[1].fileInfo.Name(),
+		latestFolderInfos[2].fileInfo.Name())
 }
 
 func FileInfoAtDepth(rootFolderPath string, targetDepth int) []os.FileInfo {
@@ -48,29 +52,38 @@ func FileInfoAtDepth(rootFolderPath string, targetDepth int) []os.FileInfo {
 	return fileInfos
 }
 
-func LatestFileInfos(fileInfos []os.FileInfo, limit int) []os.FileInfo {
-	sortedFileInfos := sortByModTime(fileInfos)
-	if len(sortedFileInfos) > limit {
-		return sortedFileInfos[:limit]
+func LatestFolderInfos(fileInfos []os.FileInfo, limit int, conversion func(fi os.FileInfo) times.Timespec) []FolderInfo {
+	folderInfos := BuildFolderInfos(fileInfos, conversion)
+	sort.Sort(folderInfos)
+	if len(fileInfos) > limit {
+		return folderInfos[:limit]
 	}
-	return sortedFileInfos
+	return folderInfos
 }
 
-type FileInfosSortedByModifiedTime []os.FileInfo
+type FolderInfo struct {
+	fileInfo os.FileInfo
+	timespec times.Timespec
+}
 
-func (slice FileInfosSortedByModifiedTime) Len() int {
+type FolderInfos []FolderInfo
+
+func (slice FolderInfos) Len() int {
 	return len(slice)
 }
 
-func (slice FileInfosSortedByModifiedTime) Less(i, j int) bool {
-	return slice[i].ModTime().After(slice[j].ModTime())
+func (slice FolderInfos) Less(i, j int) bool {
+	return slice[i].timespec.BirthTime().After(slice[j].timespec.BirthTime())
 }
 
-func (slice FileInfosSortedByModifiedTime) Swap(i, j int) {
+func (slice FolderInfos) Swap(i, j int) {
 	slice[i], slice[j] = slice[j], slice[i]
 }
 
-func sortByModTime(fileInfos FileInfosSortedByModifiedTime) FileInfosSortedByModifiedTime {
-	sort.Sort(fileInfos)
-	return fileInfos
+func BuildFolderInfos(fileInfos []os.FileInfo, conversion func(fi os.FileInfo) times.Timespec) FolderInfos {
+	folderInfos := make([]FolderInfo, len(fileInfos))
+	for i, fileInfo := range fileInfos {
+		folderInfos[i] = FolderInfo{fileInfo, conversion(fileInfo)}
+	}
+	return folderInfos
 }

@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"sort"
 	"time"
+	"github.com/djherbis/times"
 )
 
 func TestGivenZeroDepthThenReturnEmptyArray(t *testing.T) {
@@ -28,27 +29,38 @@ func TestGivenDepthOfTwoThenReturnSubfolderInfo(t *testing.T) {
 	expect(t, "folder names", "a3b2|a3c2|b3b2|b3c2", fileInfoNames(fileInfos))
 }
 
-func TestLatestFileInfosLimitsNumberOfResults(t *testing.T) {
+
+func TestLatestFolderInfosLimitsNumberOfResults(t *testing.T) {
+	fileInfo := DummyFileInfo{"file1", 1, os.ModeDir, time.Now(), true}
+	fileInfos := []os.FileInfo{fileInfo, fileInfo, fileInfo}
+	timespec := DummyTimespec{time.Now()}
+	timespecs := []DummyTimespec{timespec, timespec, timespec, timespec}
+	cannedConversions := CannedConversions{0, timespecs}
+	expectInt(t, "length of latest folderInfos", 2, len(LatestFolderInfos(fileInfos, 2, cannedConversions.conversion)))
+	cannedConversions = CannedConversions{0, timespecs}
+	expectInt(t, "length of latest folderInfos", 3, len(LatestFolderInfos(fileInfos, 3, cannedConversions.conversion)))
+	cannedConversions = CannedConversions{0, timespecs}
+	expectInt(t, "length of latest folderInfos", 3, len(LatestFolderInfos(fileInfos, 4, cannedConversions.conversion)))
+}
+
+func TestLatestFolderInfosOrdersByBirthTime(t *testing.T) {
 	fileInfos := []os.FileInfo{
 		DummyFileInfo{"file1", 1, os.ModeDir, time.Now(), true},
 		DummyFileInfo{"file2", 1, os.ModeDir, time.Now(), true},
 		DummyFileInfo{"file3", 1, os.ModeDir, time.Now(), true},
+		DummyFileInfo{"file4", 1, os.ModeDir, time.Now(), true},
+		DummyFileInfo{"file5", 1, os.ModeDir, time.Now(), true},
 	}
-	expectInt(t, "length of latest fileInfos", 2, len(LatestFileInfos(fileInfos, 2)))
-	expectInt(t, "length of latest fileInfos", 3, len(LatestFileInfos(fileInfos, 3)))
-	expectInt(t, "length of latest fileInfos", 3, len(LatestFileInfos(fileInfos, 4)))
-}
-
-func TestLatestFileInfosOrdersByModifiedTime(t *testing.T) {
 	now := time.Now()
-	rawFileInfos := []os.FileInfo{
-		DummyFileInfo{"file1", 1, os.ModeDir, now.Add(12 * time.Hour), true},
-		DummyFileInfo{"file2", 1, os.ModeDir, now, true},
-		DummyFileInfo{"file3", 1, os.ModeDir, now.Add(3 * time.Hour), true},
-		DummyFileInfo{"file4", 1, os.ModeDir, now.Add(9 * time.Hour), true},
-		DummyFileInfo{"file5", 1, os.ModeDir, now.Add(2 * time.Hour), true},
+	timespecs := []DummyTimespec{
+		{now.Add(12 * time.Hour)},
+		{now},
+		{now.Add(3 * time.Hour)},
+		{now.Add(9 * time.Hour)},
+		{now.Add(2 * time.Hour)},
 	}
-	expect(t, "folder names", "file1|file4|file3", fileInfoNames(LatestFileInfos(rawFileInfos, 3)))
+	cannedConversions := CannedConversions{0, timespecs}
+	expect(t, "folder names", "file1|file4|file3", folderInfoNames(LatestFolderInfos(fileInfos, 3, cannedConversions.conversion)))
 }
 
 func expect(t *testing.T, valueName string, expected string, actual string) {
@@ -66,6 +78,17 @@ func fileInfoNames(fileInfos []os.FileInfo) string {
 	for i, fileInfo := range fileInfos {
 		allnames.WriteString(fileInfo.Name())
 		if i < len(fileInfos) - 1 {
+			allnames.WriteString("|")
+		}
+	}
+	return allnames.String()
+}
+
+func folderInfoNames(folderInfos []FolderInfo) string {
+	var allnames bytes.Buffer
+	for i, folderInfo := range folderInfos {
+		allnames.WriteString(folderInfo.fileInfo.Name())
+		if i < len(folderInfos) - 1 {
 			allnames.WriteString("|")
 		}
 	}
@@ -98,27 +121,53 @@ type DummyFileInfo struct {
 	modTime time.Time
 	isDir bool
 }
-
 func (d DummyFileInfo) Name() string {
 	return d.name
 }
-
 func (d DummyFileInfo) Size() int64 {
 	return d.size
 }
-
 func (d DummyFileInfo) Mode() os.FileMode {
 	return d.mode
 }
-
 func (d DummyFileInfo) ModTime() time.Time {
 	return d.modTime
 }
-
 func (d DummyFileInfo) IsDir() bool {
 	return d.isDir
 }
-
 func (d DummyFileInfo) Sys() interface{} {
 	return nil
+}
+
+type DummyTimespec struct {
+	birthTime time.Time
+}
+func (d DummyTimespec) ModTime() time.Time {
+	return time.Now()
+}
+func (d DummyTimespec) AccessTime() time.Time {
+	return time.Now()
+}
+func (d DummyTimespec) ChangeTime() time.Time {
+	return time.Now()
+}
+func (d DummyTimespec) BirthTime() time.Time {
+	return d.birthTime
+}
+func (d DummyTimespec) HasChangeTime() bool {
+	return true
+}
+func (d DummyTimespec) HasBirthTime() bool {
+	return true
+}
+
+type CannedConversions struct {
+	cursor int
+	timespecs []DummyTimespec
+}
+
+func (c *CannedConversions) conversion(fi os.FileInfo) times.Timespec {
+	c.cursor = c.cursor + 1
+	return c.timespecs[c.cursor - 1]
 }

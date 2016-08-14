@@ -8,12 +8,12 @@ import (
 	"unicode/utf8"
 )
 
-func FolderInfoAtDepthIter(rootFolderPath string, targetDepth int, parent os.FileInfo) []FolderInfo {
-	if targetDepth <= 0 {
+func FolderInfoAtDepthIter(folderToScan FolderToScan, parent os.FileInfo) []FolderInfo {
+	if folderToScan.targetDepth <= 0 {
 		return []FolderInfo{}
 	}
 
-	rootFile, err := os.Open(rootFolderPath)
+	rootFile, err := os.Open(folderToScan.rootFolderPath)
 	if err != nil {
 		log.Fatalf("Could not open root folder. Cause: %v", err)
 	}
@@ -34,10 +34,11 @@ func FolderInfoAtDepthIter(rootFolderPath string, targetDepth int, parent os.Fil
 	for _, child := range children {
 		firstChar, _ := utf8.DecodeRuneInString(child.Name())
 		if child.IsDir() && child.Name() != "@eaDir" && firstChar != '.' {
-			if targetDepth == 1 {
+			if folderToScan.targetDepth == 1 {
 				folderInfos = append(folderInfos, FolderInfo{child, parent})
 			} else {
-				childFolderInfos := FolderInfoAtDepthIter(path.Join(rootFolderPath, child.Name()), targetDepth - 1, child)
+				nextFolder := FolderToScan{path.Join(folderToScan.rootFolderPath, child.Name()), folderToScan.targetDepth - 1}
+				childFolderInfos := FolderInfoAtDepthIter(nextFolder, child)
 				folderInfos = append(folderInfos, childFolderInfos...)
 			}
 		}
@@ -46,8 +47,13 @@ func FolderInfoAtDepthIter(rootFolderPath string, targetDepth int, parent os.Fil
 	return folderInfos
 }
 
-func FolderInfoAtDepth(rootFolderPath string, targetDepth int) []FolderInfo {
-	return FolderInfoAtDepthIter(rootFolderPath, targetDepth, nil)
+func FolderInfoAtDepth(folderToScan FolderToScan) []FolderInfo {
+	return FolderInfoAtDepthIter(folderToScan, nil)
+}
+
+type FolderToScan struct {
+	rootFolderPath string
+	targetDepth int
 }
 
 type FolderInfo struct {

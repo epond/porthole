@@ -37,7 +37,6 @@ func LatestAdditions(musicFolder string, knownReleasesFile string) string {
 	foldersToScan := []FolderToScan{
 		{path.Join(musicFolder, "flac-add"), 2},
 		{path.Join(musicFolder, "flac-vorbis320"), 2}}
-	folderScanList := ScanFolders(foldersToScan)
-	latestReleases := UpdateKnownReleases(folderScanList, knownReleasesFile, 3)
+	latestReleases := UpdateKnownReleases(ScanFolders(foldersToScan), knownReleasesFile, 3)
 	return fmt.Sprintf("%v, %v, %v", latestReleases[0], latestReleases[1], latestReleases[2])
 }

@@ -8,6 +8,14 @@ import (
 	"unicode/utf8"
 )
 
+func ScanFolders(foldersToScan []FolderToScan) []FolderInfo {
+	var folderScanList []FolderInfo
+	for _, folder := range foldersToScan {
+		folderScanList = append(folderScanList, FolderInfoAtDepth(folder)...)
+	}
+	return folderScanList
+}
+
 func FolderInfoAtDepthIter(folderToScan FolderToScan, parent os.FileInfo) []FolderInfo {
 	if folderToScan.targetDepth <= 0 {
 		return []FolderInfo{}

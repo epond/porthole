@@ -2,6 +2,7 @@
 
 export GOPATH="/home/pi/go"
 export MUSIC_FOLDER="/mnt/nasmedia/Music"
+export KNOWN_RELEASES_FILE="~/knownreleases"
 
 echo "Waiting for network..."
 /home/pi/go/src/github.com/epond/porthole/waitforip.sh

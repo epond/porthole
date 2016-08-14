@@ -12,11 +12,12 @@ import (
 
 func main() {
 	musicFolder := os.Getenv("MUSIC_FOLDER")
+	knownReleasesFile := os.Getenv("KNOWN_RELEASES_FILE")
 	status := &Status{0, ""}
 
-	log.Printf("Starting porthole. Music folder: %v", musicFolder)
+	log.Printf("Starting porthole. Music folder: %v, Known releases file: %v", musicFolder, knownReleasesFile)
 
-	NewStatusCoordinator(status, musicFolder, 30)
+	NewStatusCoordinator(status, musicFolder, knownReleasesFile, 30)
 
 	http.HandleFunc("/", dashboardHandler())
 	http.HandleFunc("/dashinfo", dashboardInfoHandler(status))

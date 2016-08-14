@@ -8,14 +8,6 @@ import (
 	"unicode/utf8"
 )
 
-func LatestAdditions(musicFolder string) string {
-	folderScanList := append(
-		FolderInfoAtDepth(path.Join(musicFolder, "flac-add"), 2),
-		FolderInfoAtDepth(path.Join(musicFolder, "flac-vorbis320"), 2)...)
-	// This will eventually show the last n entries from the latest additions file instead
-	return fmt.Sprintf("%v, %v, %v", folderScanList[0].String(), folderScanList[1].String(), folderScanList[2].String())
-}
-
 func FolderInfoAtDepthIter(rootFolderPath string, targetDepth int, parent os.FileInfo) []FolderInfo {
 	if targetDepth <= 0 {
 		return []FolderInfo{}

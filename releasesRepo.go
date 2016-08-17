@@ -17,9 +17,9 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 	defer knownReleasesFile.Close()
 
 	// Build a map of the current scan
-	folderScanMap := make(map[string]empty)
+	folderScanMap := make(map[string]int)
 	for _, item := range folderScanList {
-		folderScanMap[item.String()] = empty{}
+		folderScanMap[item.String()] = present
 	}
 
 	// Build a list of current scan entries not present in known releases (new releases)
@@ -33,15 +33,15 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 	return []string{"not enough folder infos"}
 }
 
-type empty struct {}
+const present = 1
 
-func readFile(fileLocation string) (file *os.File, lines []string, lineMap map[string]empty) {
+func readFile(fileLocation string) (file *os.File, lines []string, lineMap map[string]int) {
 	file, _ = os.Open(fileLocation)
 	scanner := bufio.NewScanner(file)
-	lineMap = make(map[string]empty)
+	lineMap = make(map[string]int)
 	for scanner.Scan() {
 		lines = append(lines, scanner.Text())
-		lineMap[scanner.Text()] = empty{}
+		lineMap[scanner.Text()] = present
 	}
 	return file, lines, lineMap
 }

@@ -7,7 +7,7 @@ import (
 	"bufio"
 )
 
-func TestWhenFileMissingItCreatesFile(t *testing.T) {
+func _TestWhenFileMissingItCreatesFile(t *testing.T) {
 	setUp()
 	defer tearDown()
 	UpdateKnownReleases([]FolderInfo{{DummyFileInfo{"Lieutenant Pigeon", true}, nil}}, knownReleasesFile(), 0)
@@ -17,7 +17,7 @@ func TestWhenFileMissingItCreatesFile(t *testing.T) {
 	}
 }
 
-func TestItDoesNotChangeFileWhenNoNewReleases(t *testing.T) {
+func _TestItDoesNotChangeFileWhenNoNewReleases(t *testing.T) {
 	setUp()
 	defer tearDown()
 	copyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
@@ -37,7 +37,7 @@ func TestItDoesNotChangeFileWhenNoNewReleases(t *testing.T) {
 	expect(t, "new release 3", "The Krankies - It's Fan-Dabi-Dozi!", lines[len(lines)-1])
 }
 
-func TestItAddsReleasesToEndOfFile(t *testing.T) {
+func _TestItAddsReleasesToEndOfFile(t *testing.T) {
 	setUp()
 	defer tearDown()
 	copyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
@@ -74,6 +74,8 @@ func TestItIgnoresReleasesAlreadyKnown(t *testing.T) {
 	expect(t, "new release 1", "Shake - Iconoclastic Diaries", lines[len(lines)-2])
 	expect(t, "new release 2", "Daniel Menche - Vent", lines[len(lines)-1])
 }
+
+//func TestItHandlesWhenKnownReleasesFileMayNotEndInNewline(t *testing.T) {}
 
 func setUp() {
 	os.Mkdir(tempDir(), os.ModePerm)

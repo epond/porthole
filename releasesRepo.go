@@ -3,8 +3,9 @@ package main
 import (
 	"os"
 	"bufio"
-	"log"
 	"fmt"
+	"sort"
+	"log"
 )
 
 func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, limit int) []string {
@@ -20,15 +21,12 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 	// Build a list of current scan entries not present in known releases (new releases)
 	var newReleases []string
 	for _, scanItem := range folderScanList {
-		log.Printf("scanItem: %v", scanItem.String())
 		if knownReleasesMap[scanItem.String()] != present {
-			log.Print("not present")
 			newReleases = append(newReleases, scanItem.String())
 		}
 	}
 
-	// Sort new releases by name
-	// TODO
+	sortByName(newReleases)
 
 	// Append new releases to known releases file
 	knownReleasesFile, _ := os.OpenFile(knownReleasesPath, os.O_RDWR|os.O_APPEND, 0660)
@@ -37,6 +35,7 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 		krWriter.WriteString(fmt.Sprintf("%v\n", newRelease))
 	}
 	if err = krWriter.Flush(); err != nil {
+		log.Printf("Could not flush %v", knownReleasesPath)
 		panic(err)
 	}
 	knownReleasesFile.Close()
@@ -58,8 +57,26 @@ func readFile(fileLocation string) (lines []string, lineMap map[string]int) {
 	for scanner.Scan() {
 		lines = append(lines, scanner.Text())
 		lineMap[scanner.Text()] = present
-		log.Printf("Found known release: %v", scanner.Text())
 	}
 	file.Close()
 	return lines, lineMap
+}
+
+type SortableStrings []string
+
+func (slice SortableStrings) Len() int {
+	return len(slice)
+}
+
+func (slice SortableStrings) Less(i, j int) bool {
+	return slice[i] < slice[j];
+}
+
+func (slice SortableStrings) Swap(i, j int) {
+	slice[i], slice[j] = slice[j], slice[i]
+}
+
+func sortByName(strings SortableStrings) SortableStrings {
+	sort.Sort(strings)
+	return strings
 }

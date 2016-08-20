@@ -17,6 +17,7 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 
 	// Read knownreleases into an array of its lines and a map
 	_, knownReleasesMap := readFile(knownReleasesPath)
+	log.Printf("Found %v known releases", len(knownReleasesMap))
 
 	// Build a list of current scan entries not present in known releases (new releases)
 	var newReleases []string
@@ -27,18 +28,23 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 	}
 
 	sortByName(newReleases)
+	log.Printf("Found %v new releases", len(newReleases))
 
 	// Append new releases to known releases file
 	knownReleasesFile, _ := os.OpenFile(knownReleasesPath, os.O_RDWR|os.O_APPEND, 0660)
+	defer knownReleasesFile.Close()
 	krWriter := bufio.NewWriter(knownReleasesFile)
 	for _, newRelease := range newReleases {
-		krWriter.WriteString(fmt.Sprintf("%v\n", newRelease))
+		_, err = krWriter.WriteString(fmt.Sprintf("%v\n", newRelease))
+		if err != nil {
+			log.Printf("Could not write new release to %v", knownReleasesPath)
+			panic(err)
+		}
 	}
 	if err = krWriter.Flush(); err != nil {
 		log.Printf("Could not flush %v", knownReleasesPath)
 		panic(err)
 	}
-	knownReleasesFile.Close()
 
 	// Return sorted new releases then knownreleases from the end, up to a total of limit
 

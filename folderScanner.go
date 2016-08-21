@@ -45,7 +45,10 @@ func FolderInfoAtDepthIter(folderToScan FolderToScan, parent os.FileInfo) []Fold
 			if folderToScan.targetDepth == 1 {
 				folderInfos = append(folderInfos, FolderInfo{child, parent})
 			} else {
-				nextFolder := FolderToScan{path.Join(folderToScan.rootFolderPath, child.Name()), folderToScan.targetDepth - 1}
+				nextFolder := FolderToScan{
+					path.Join(folderToScan.rootFolderPath, child.Name()),
+					folderToScan.targetDepth - 1,
+				}
 				childFolderInfos := FolderInfoAtDepthIter(nextFolder, child)
 				folderInfos = append(folderInfos, childFolderInfos...)
 			}

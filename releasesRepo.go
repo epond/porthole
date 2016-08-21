@@ -10,7 +10,11 @@ import (
 
 func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, limit int) []string {
 	if _, err := os.Stat(knownReleasesPath); os.IsNotExist(err) {
-		file, _ := os.Create(knownReleasesPath)
+		file, errCreate := os.Create(knownReleasesPath)
+		if (errCreate != nil) {
+			log.Printf("Could not create known releases at %v", knownReleasesPath)
+			panic(errCreate)
+		}
 		file.Close()
 	}
 

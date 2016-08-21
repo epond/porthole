@@ -9,8 +9,7 @@ import (
 )
 
 func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, limit int) []string {
-	_, err := os.Stat(knownReleasesPath)
-	if err != nil {
+	if _, err := os.Stat(knownReleasesPath); os.IsNotExist(err) {
 		file, _ := os.Create(knownReleasesPath)
 		file.Close()
 	}
@@ -35,13 +34,12 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 	defer knownReleasesFile.Close()
 	krWriter := bufio.NewWriter(knownReleasesFile)
 	for _, newRelease := range newReleases {
-		_, err = krWriter.WriteString(fmt.Sprintf("%v\n", newRelease))
-		if err != nil {
+		if _, err := krWriter.WriteString(fmt.Sprintf("%v\n", newRelease)); os.IsNotExist(err) {
 			log.Printf("Could not write new release to %v", knownReleasesPath)
 			panic(err)
 		}
 	}
-	if err = krWriter.Flush(); err != nil {
+	if err := krWriter.Flush(); err != nil {
 		log.Printf("Could not flush %v", knownReleasesPath)
 		panic(err)
 	}

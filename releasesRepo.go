@@ -38,7 +38,7 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 	defer knownReleasesFile.Close()
 	krWriter := bufio.NewWriter(knownReleasesFile)
 	for _, newRelease := range newReleases {
-		if _, err := krWriter.WriteString(fmt.Sprintf("%v\n", newRelease)); os.IsNotExist(err) {
+		if _, err := krWriter.WriteString(fmt.Sprintf("%v\n", newRelease)); err != nil {
 			log.Printf("Could not write new release to %v", knownReleasesPath)
 			panic(err)
 		}

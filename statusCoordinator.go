@@ -35,8 +35,12 @@ func (s *StatusCoordinator) doWork() {
 
 func LatestAdditions(musicFolder string, knownReleasesFile string) string {
 	foldersToScan := []FolderToScan{
-		{path.Join(musicFolder, "flac-add"), 2},
-		{path.Join(musicFolder, "flac-vorbis320"), 2}}
+		//{path.Join(musicFolder, "flac"), 3},
+		//{path.Join(musicFolder, "flac-cd"), 3},
+		//{path.Join(musicFolder, "flac-add"), 2},
+		{path.Join(musicFolder, "flac-vorbis320"), 2},
+		{path.Join(musicFolder, "mp3", "main"), 2},
+	}
 	latestReleases := UpdateKnownReleases(ScanFolders(foldersToScan), knownReleasesFile, 3)
 	return fmt.Sprintf("%v, %v, %v", latestReleases[0], latestReleases[1], latestReleases[2])
 }

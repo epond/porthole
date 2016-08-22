@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"unicode/utf8"
+	"strings"
 )
 
 func ScanFolders(foldersToScan []FolderToScan) []FolderInfo {
@@ -76,5 +77,13 @@ func (f *FolderInfo) String() string {
 	if f.parent == nil {
 		return f.fileInfo.Name()
 	}
-	return fmt.Sprintf("%v - %v", f.parent.Name(), f.fileInfo.Name())
+	return fmt.Sprintf("%v - %v", capitalise(f.parent.Name()), capitalise(f.fileInfo.Name()))
+}
+
+func capitalise(input string) string {
+	inputSplit := strings.Split(input, " ")
+	for i, s := range inputSplit {
+		inputSplit[i] = fmt.Sprintf("%v%v", strings.ToUpper(s[0:1]), strings.ToLower(s[1:]))
+	}
+	return strings.Join(inputSplit, " ")
 }

@@ -23,7 +23,7 @@ func TestItDoesNotChangeFileWhenNoNewReleases(t *testing.T) {
 	copyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
 	currentScan := []FolderInfo{
 		{DummyFileInfo{"I Do, I Do, I Do, I Do, I Do", true}, DummyFileInfo{"Abba", true}},
-		{DummyFileInfo{"It's Fan-Dabi-Dozi!", true}, DummyFileInfo{"The Krankies", true}},
+		{DummyFileInfo{"It's Fan-dabi-dozi!", true}, DummyFileInfo{"The Krankies", true}},
 		{DummyFileInfo{"Discipline", true}, DummyFileInfo{"Throbbing Gristle", true}},
 	}
 	UpdateKnownReleases(currentScan, knownReleasesFile(), 0)
@@ -34,7 +34,7 @@ func TestItDoesNotChangeFileWhenNoNewReleases(t *testing.T) {
 	expectInt(t, "number of known releases", 3, len(lines))
 	expect(t, "new release 1", "Abba - I Do, I Do, I Do, I Do, I Do", lines[len(lines)-3])
 	expect(t, "new release 2", "Throbbing Gristle - Discipline", lines[len(lines)-2])
-	expect(t, "new release 3", "The Krankies - It's Fan-Dabi-Dozi!", lines[len(lines)-1])
+	expect(t, "new release 3", "The Krankies - It's Fan-dabi-dozi!", lines[len(lines)-1])
 }
 
 func TestItAddsReleasesToEndOfFile(t *testing.T) {

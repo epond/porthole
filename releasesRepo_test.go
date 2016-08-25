@@ -75,8 +75,22 @@ func TestItIgnoresReleasesAlreadyKnown(t *testing.T) {
 	expect(t, "new release 2", "Shake - Iconoclastic Diaries", lines[len(lines)-1])
 }
 
-// TODO
-//func TestItHandlesWhenKnownReleasesFileMayNotEndInNewline(t *testing.T) {}
+func TestItHandlesWhenKnownReleasesFileMayNotEndInNewline(t *testing.T) {
+	setUp()
+	defer tearDown()
+	copyFile(knownReleasesFile(), path.Join(testData(), "knownreleases_endwithoutnewline"))
+	currentScan := []FolderInfo{
+		{DummyFileInfo{"Vent", true}, DummyFileInfo{"Daniel Menche", true}},
+	}
+	UpdateKnownReleases(currentScan, knownReleasesFile(), 0)
+
+	file, lines := knownReleasesLines()
+	defer file.Close()
+
+	expectInt(t, "number of known releases", 2, len(lines))
+	expect(t, "new release 1", "The Krankies - It's Fan-dabi-dozi!", lines[len(lines)-2])
+	expect(t, "new release 2", "Daniel Menche - Vent", lines[len(lines)-1])
+}
 
 // TODO
 //func TestItReturnsLatestReleasesUpToLimit(t *testing.T) {}

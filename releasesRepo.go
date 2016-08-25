@@ -18,6 +18,8 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 		file.Close()
 	}
 
+	ensureFileEndsInNewline(knownReleasesPath)
+
 	// Read knownreleases into an array of its lines and a map
 	_, knownReleasesMap := readFile(knownReleasesPath)
 	log.Printf("Found %v known releases", len(knownReleasesMap))
@@ -57,6 +59,17 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 }
 
 const present = 1
+
+func ensureFileEndsInNewline(fileLocation string) {
+	file, _ := os.OpenFile(fileLocation, os.O_RDWR|os.O_APPEND, 0660)
+	defer file.Close()
+	fileInfo, _ := file.Stat()
+	buf := []byte{' '}
+	file.ReadAt(buf, fileInfo.Size()-1)
+	if buf[0] != '\n' {
+		file.Write([]byte{'\n'})
+	}
+}
 
 func readFile(fileLocation string) (lines []string, lineMap map[string]int) {
 	file, _ := os.Open(fileLocation)

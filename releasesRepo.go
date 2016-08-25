@@ -66,7 +66,7 @@ func ensureFileEndsInNewline(fileLocation string) {
 	fileInfo, _ := file.Stat()
 	buf := []byte{' '}
 	file.ReadAt(buf, fileInfo.Size()-1)
-	if buf[0] != '\n' {
+	if buf[0] != '\n' && fileInfo.Size() > 0 {
 		file.Write([]byte{'\n'})
 	}
 }

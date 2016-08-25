@@ -10,11 +10,19 @@ import (
 func TestWhenFileMissingItCreatesFile(t *testing.T) {
 	setUp()
 	defer tearDown()
-	UpdateKnownReleases([]FolderInfo{{DummyFileInfo{"Lieutenant Pigeon", true}, nil}}, knownReleasesFile(), 0)
+	UpdateKnownReleases([]FolderInfo{
+		{DummyFileInfo{"Mouldy Old Dough", true}, DummyFileInfo{"Lieutenant Pigeon", true}},
+	}, knownReleasesFile(), 0)
 	_, err := os.Stat(knownReleasesFile())
 	if (err != nil) {
 		t.Error("Expected UpdateKnownReleases to create known releases file but it didn't")
 	}
+
+	file, lines := knownReleasesLines()
+	defer file.Close()
+
+	expectInt(t, "known releases on creation", 1, len(lines))
+	expect(t, "known release", "Lieutenant Pigeon - Mouldy Old Dough", lines[len(lines)-1])
 }
 
 func TestItDoesNotChangeFileWhenNoNewReleases(t *testing.T) {

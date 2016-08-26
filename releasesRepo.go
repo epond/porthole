@@ -21,7 +21,7 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 	ensureFileEndsInNewline(knownReleasesPath)
 
 	// Read knownreleases into an array of its lines and a map
-	_, knownReleasesMap := readFile(knownReleasesPath)
+	knownReleasesLines, knownReleasesMap := readFile(knownReleasesPath)
 	log.Printf("Found %v known releases", len(knownReleasesMap))
 
 	// Build a list of current scan entries not present in known releases (new releases)
@@ -51,11 +51,22 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 	}
 
 	// Return sorted new releases then knownreleases from the end, up to a total of limit
-
-	if len(folderScanList) >= 3 {
-		return []string{folderScanList[0].String(), folderScanList[1].String(), folderScanList[2].String()}
+	var latestAdditions []string
+	i := 0
+	for i < min(len(newReleases), limit) {
+		latestAdditions = append(latestAdditions, newReleases[i])
+		i += 1
 	}
-	return []string{"not enough folder infos"}
+
+	i = 0
+	for i < (limit - len(newReleases)) {
+		if i < len(knownReleasesLines) {
+			latestAdditions = append(latestAdditions, knownReleasesLines[len(knownReleasesLines)-i-1])
+		}
+		i += 1
+	}
+
+	return latestAdditions
 }
 
 const present = 1
@@ -100,4 +111,11 @@ func (slice SortableStrings) Swap(i, j int) {
 func sortByName(strings SortableStrings) SortableStrings {
 	sort.Sort(strings)
 	return strings
+}
+
+func min(a int, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }

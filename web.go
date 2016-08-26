@@ -13,7 +13,7 @@ import (
 func main() {
 	musicFolder := os.Getenv("MUSIC_FOLDER")
 	knownReleasesFile := os.Getenv("KNOWN_RELEASES_FILE")
-	status := &Status{0, ""}
+	status := &Status{0, []string{}}
 
 	log.Printf("Starting porthole. Music folder: %v, Known releases file: %v", musicFolder, knownReleasesFile)
 

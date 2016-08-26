@@ -4,7 +4,6 @@ import (
 	"log"
 	"time"
 	"path"
-	"fmt"
 )
 
 type StatusCoordinator struct {
@@ -33,7 +32,7 @@ func (s *StatusCoordinator) doWork() {
 	log.Printf("Status counter:%v, additions:%v", s.status.Counter, s.status.LatestAdditions)
 }
 
-func LatestAdditions(musicFolder string, knownReleasesFile string) string {
+func LatestAdditions(musicFolder string, knownReleasesFile string) []string {
 	foldersToScan := []FolderToScan{
 		//{path.Join(musicFolder, "flac"), 3},
 		//{path.Join(musicFolder, "flac-cd"), 3},
@@ -41,6 +40,5 @@ func LatestAdditions(musicFolder string, knownReleasesFile string) string {
 		{path.Join(musicFolder, "flac-vorbis320"), 2},
 		{path.Join(musicFolder, "mp3", "main"), 2},
 	}
-	latestReleases := UpdateKnownReleases(ScanFolders(foldersToScan), knownReleasesFile, 3)
-	return fmt.Sprintf("%v, %v, %v", latestReleases[0], latestReleases[1], latestReleases[2])
+	return UpdateKnownReleases(ScanFolders(foldersToScan), knownReleasesFile, 3)
 }

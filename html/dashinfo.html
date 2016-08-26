@@ -1,2 +1,9 @@
 Counter: {{.Counter}} <br/>
-Latest Additions: {{.LatestAdditions}}
+Latest Additions:
+<ol>
+    {{range .LatestAdditions}}
+        <li>
+            {{.}}
+        </li>
+    {{end}}
+</ol>

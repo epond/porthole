@@ -100,8 +100,7 @@ func TestItHandlesWhenKnownReleasesFileMayNotEndInNewline(t *testing.T) {
 	expect(t, "new release 2", "Daniel Menche - Vent", lines[len(lines)-1])
 }
 
-// TODO use better name than ReturnValue
-func TestReturnValueWhenNoNewReleasesAndKnownReleasesAboveLimit(t *testing.T) {
+func TestUpdateKnownReleasesReturnValueWhenNoNewReleasesAndKnownReleasesAboveLimit(t *testing.T) {
 	setUp()
 	defer tearDown()
 	copyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
@@ -112,7 +111,7 @@ func TestReturnValueWhenNoNewReleasesAndKnownReleasesAboveLimit(t *testing.T) {
 	expect(t, "latest release 2", "Throbbing Gristle - Discipline", latestAdditions[1])
 }
 
-func TestReturnValueWhenNewReleasesAboveLimit(t *testing.T) {
+func TestUpdateKnownReleasesReturnValueWhenNewReleasesAboveLimit(t *testing.T) {
 	setUp()
 	defer tearDown()
 	copyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
@@ -128,7 +127,7 @@ func TestReturnValueWhenNewReleasesAboveLimit(t *testing.T) {
 	expect(t, "latest release 2", "Lieutenant Pigeon - Mouldy Old Dough", latestAdditions[1])
 }
 
-func TestReturnValueWhenNewReleasesBelowLimit(t *testing.T) {
+func TestUpdateKnownReleasesReturnValueWhenNewReleasesBelowLimit(t *testing.T) {
 	setUp()
 	defer tearDown()
 	copyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
@@ -142,7 +141,7 @@ func TestReturnValueWhenNewReleasesBelowLimit(t *testing.T) {
 	expect(t, "latest release 2", "The Krankies - It's Fan-dabi-dozi!", latestAdditions[1])
 }
 
-func TestReturnValueWhenNewAndKnownReleasesCombinedAreBelowLimit(t *testing.T) {
+func TestUpdateKnownReleasesReturnValueWhenNewAndKnownReleasesCombinedAreBelowLimit(t *testing.T) {
 	setUp()
 	defer tearDown()
 	copyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))

@@ -14,6 +14,7 @@ func main() {
 	musicFolder := os.Getenv("MUSIC_FOLDER")
 	knownReleasesFile := os.Getenv("KNOWN_RELEASES_FILE")
 	gitCommit := os.Getenv("GIT_COMMIT")
+	logFile := os.Getenv("LOG_FILE")
 	status := &Status{
 		GitCommit: gitCommit,
 		Counter: 0,
@@ -26,6 +27,7 @@ func main() {
 
 	http.HandleFunc("/", dashboardHandler())
 	http.HandleFunc("/dashinfo", dashboardInfoHandler(status))
+	http.HandleFunc("/log", logHandler(logFile))
 
 	log.Print("porthole active - browse to http://localhost:9000")
 	http.ListenAndServe("localhost:9000", nil)

@@ -4,6 +4,7 @@ export GOPATH="/home/pi/go"
 export MUSIC_FOLDER="/mnt/nasmedia/Music"
 export KNOWN_RELEASES_FILE="/home/pi/knownreleases"
 export GIT_COMMIT=`git log --pretty=format:'%h' -n 1`
+export LOG_FILE="/home/pi/porthole.log"
 
 echo "Waiting for network..."
 /home/pi/go/src/github.com/epond/porthole/waitforip.sh

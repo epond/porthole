@@ -36,6 +36,7 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 	log.Printf("Found %v new releases", len(newReleases))
 
 	// Append new releases to known releases file
+	// TODO make latest new releases consistent with latest known releases
 	knownReleasesFile, _ := os.OpenFile(knownReleasesPath, os.O_RDWR|os.O_APPEND, 0660)
 	defer knownReleasesFile.Close()
 	krWriter := bufio.NewWriter(knownReleasesFile)

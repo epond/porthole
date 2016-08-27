@@ -23,6 +23,7 @@ func main() {
 
 	log.Printf("Starting porthole. Music folder: %v, Known releases file: %v", musicFolder, knownReleasesFile)
 
+	// TODO make fetch interval configurable
 	NewStatusCoordinator(status, musicFolder, knownReleasesFile, 30)
 
 	http.HandleFunc("/", dashboardHandler())
@@ -36,6 +37,7 @@ func main() {
 	http.ListenAndServe("localhost:9000", nil)
 }
 
+// TODO make dashboard refresh period configurable
 func dashboardHandler() func(res http.ResponseWriter, req *http.Request) {
 	dashboard, _ := ioutil.ReadFile(templatePath("dashboard.html"))
 	return func(res http.ResponseWriter, req *http.Request) {

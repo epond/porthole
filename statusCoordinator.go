@@ -33,6 +33,7 @@ func (s *StatusCoordinator) doWork() {
 }
 
 func LatestAdditions(musicFolder string, knownReleasesFile string) []string {
+	// TODO make folders to scan configurable
 	foldersToScan := []FolderToScan{
 		//{path.Join(musicFolder, "flac"), 3},
 		//{path.Join(musicFolder, "flac-cd"), 3},

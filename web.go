@@ -13,7 +13,12 @@ import (
 func main() {
 	musicFolder := os.Getenv("MUSIC_FOLDER")
 	knownReleasesFile := os.Getenv("KNOWN_RELEASES_FILE")
-	status := &Status{0, []string{}}
+	gitCommit := os.Getenv("GIT_COMMIT")
+	status := &Status{
+		GitCommit: gitCommit,
+		Counter: 0,
+		LatestAdditions: []string{},
+	}
 
 	log.Printf("Starting porthole. Music folder: %v, Known releases file: %v", musicFolder, knownReleasesFile)
 

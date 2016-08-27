@@ -28,6 +28,9 @@ func main() {
 	http.HandleFunc("/", dashboardHandler())
 	http.HandleFunc("/dashinfo", dashboardInfoHandler(status))
 	http.HandleFunc("/log", logHandler(logFile))
+	http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, r.URL.Path[1:])
+	})
 
 	log.Print("porthole active - browse to http://localhost:9000")
 	http.ListenAndServe("localhost:9000", nil)

@@ -32,11 +32,10 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 		}
 	}
 
-	sortByName(newReleases)
+	reverseSortByName(newReleases)
 	log.Printf("Found %v new releases", len(newReleases))
 
 	// Append new releases to known releases file
-	// TODO make latest new releases consistent with latest known releases
 	knownReleasesFile, _ := os.OpenFile(knownReleasesPath, os.O_RDWR|os.O_APPEND, 0660)
 	defer knownReleasesFile.Close()
 	krWriter := bufio.NewWriter(knownReleasesFile)
@@ -52,6 +51,7 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 	}
 
 	// Return sorted new releases then knownreleases from the end, up to a total of limit
+	sortByName(newReleases)
 	var latestAdditions []string
 	i := 0
 	for i < min(len(newReleases), limit) {
@@ -111,6 +111,11 @@ func (slice SortableStrings) Swap(i, j int) {
 
 func sortByName(strings SortableStrings) SortableStrings {
 	sort.Sort(strings)
+	return strings
+}
+
+func reverseSortByName(strings SortableStrings) SortableStrings {
+	sort.Sort(sort.Reverse(strings))
 	return strings
 }
 

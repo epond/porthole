@@ -40,9 +40,9 @@ func TestItDoesNotChangeFileWhenNoNewReleases(t *testing.T) {
 	defer file.Close()
 
 	expectInt(t, "number of known releases", 3, len(lines))
-	expect(t, "new release 1", "Abba - I Do, I Do, I Do, I Do, I Do", lines[len(lines)-3])
-	expect(t, "new release 2", "Throbbing Gristle - Discipline", lines[len(lines)-2])
-	expect(t, "new release 3", "The Krankies - It's Fan-dabi-dozi!", lines[len(lines)-1])
+	expect(t, "known release 1", "The Krankies - It's Fan-dabi-dozi!", lines[len(lines)-1])
+	expect(t, "known release 2", "Throbbing Gristle - Discipline", lines[len(lines)-2])
+	expect(t, "known release 3", "Abba - I Do, I Do, I Do, I Do, I Do", lines[len(lines)-3])
 }
 
 func TestItAddsReleasesToEndOfFile(t *testing.T) {
@@ -59,8 +59,8 @@ func TestItAddsReleasesToEndOfFile(t *testing.T) {
 	defer file.Close()
 
 	expectInt(t, "number of known releases", 5, len(lines))
-	expect(t, "new release 1", "Daniel Menche - Vent", lines[len(lines)-2])
-	expect(t, "new release 2", "Shake - Iconoclastic Diaries", lines[len(lines)-1])
+	expect(t, "known release 1", "Daniel Menche - Vent", lines[len(lines)-1])
+	expect(t, "known release 2", "Shake - Iconoclastic Diaries", lines[len(lines)-2])
 }
 
 func TestItIgnoresReleasesAlreadyKnown(t *testing.T) {
@@ -79,8 +79,8 @@ func TestItIgnoresReleasesAlreadyKnown(t *testing.T) {
 	defer file.Close()
 
 	expectInt(t, "number of known releases", 5, len(lines))
-	expect(t, "new release 1", "Daniel Menche - Vent", lines[len(lines)-2])
-	expect(t, "new release 2", "Shake - Iconoclastic Diaries", lines[len(lines)-1])
+	expect(t, "known release 1", "Daniel Menche - Vent", lines[len(lines)-1])
+	expect(t, "known release 2", "Shake - Iconoclastic Diaries", lines[len(lines)-2])
 }
 
 func TestItHandlesWhenKnownReleasesFileMayNotEndInNewline(t *testing.T) {
@@ -96,8 +96,8 @@ func TestItHandlesWhenKnownReleasesFileMayNotEndInNewline(t *testing.T) {
 	defer file.Close()
 
 	expectInt(t, "number of known releases", 2, len(lines))
-	expect(t, "new release 1", "The Krankies - It's Fan-dabi-dozi!", lines[len(lines)-2])
-	expect(t, "new release 2", "Daniel Menche - Vent", lines[len(lines)-1])
+	expect(t, "known release 1", "Daniel Menche - Vent", lines[len(lines)-1])
+	expect(t, "known release 2", "The Krankies - It's Fan-dabi-dozi!", lines[len(lines)-2])
 }
 
 func TestUpdateKnownReleasesReturnValueWhenNoNewReleasesAndKnownReleasesAboveLimit(t *testing.T) {
@@ -107,8 +107,8 @@ func TestUpdateKnownReleasesReturnValueWhenNoNewReleasesAndKnownReleasesAboveLim
 	latestAdditions := UpdateKnownReleases([]FolderInfo{}, knownReleasesFile(), 2)
 
 	expectInt(t, "number of latest additions", 2, len(latestAdditions))
-	expect(t, "latest release 1", "The Krankies - It's Fan-dabi-dozi!", latestAdditions[0])
-	expect(t, "latest release 2", "Throbbing Gristle - Discipline", latestAdditions[1])
+	expect(t, "latest addition 1", "The Krankies - It's Fan-dabi-dozi!", latestAdditions[0])
+	expect(t, "latest addition 2", "Throbbing Gristle - Discipline", latestAdditions[1])
 }
 
 func TestUpdateKnownReleasesReturnValueWhenNewReleasesAboveLimit(t *testing.T) {
@@ -123,8 +123,8 @@ func TestUpdateKnownReleasesReturnValueWhenNewReleasesAboveLimit(t *testing.T) {
 	latestAdditions := UpdateKnownReleases(currentScan, knownReleasesFile(), 2)
 
 	expectInt(t, "number of latest additions", 2, len(latestAdditions))
-	expect(t, "latest release 1", "Daniel Menche - Vent", latestAdditions[0])
-	expect(t, "latest release 2", "Lieutenant Pigeon - Mouldy Old Dough", latestAdditions[1])
+	expect(t, "latest addition 1", "Daniel Menche - Vent", latestAdditions[0])
+	expect(t, "latest addition 2", "Lieutenant Pigeon - Mouldy Old Dough", latestAdditions[1])
 }
 
 func TestUpdateKnownReleasesReturnValueWhenNewReleasesBelowLimit(t *testing.T) {
@@ -137,8 +137,8 @@ func TestUpdateKnownReleasesReturnValueWhenNewReleasesBelowLimit(t *testing.T) {
 	latestAdditions := UpdateKnownReleases(currentScan, knownReleasesFile(), 2)
 
 	expectInt(t, "number of latest additions", 2, len(latestAdditions))
-	expect(t, "latest release 1", "Daniel Menche - Vent", latestAdditions[0])
-	expect(t, "latest release 2", "The Krankies - It's Fan-dabi-dozi!", latestAdditions[1])
+	expect(t, "latest addition 1", "Daniel Menche - Vent", latestAdditions[0])
+	expect(t, "latest addition 2", "The Krankies - It's Fan-dabi-dozi!", latestAdditions[1])
 }
 
 func TestUpdateKnownReleasesReturnValueWhenNewAndKnownReleasesCombinedAreBelowLimit(t *testing.T) {

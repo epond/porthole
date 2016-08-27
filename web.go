@@ -8,6 +8,7 @@ import (
 	"path"
 	"fmt"
 	"io/ioutil"
+	"strconv"
 )
 
 func main() {
@@ -15,6 +16,7 @@ func main() {
 	knownReleasesFile := os.Getenv("KNOWN_RELEASES_FILE")
 	gitCommit := os.Getenv("GIT_COMMIT")
 	logFile := os.Getenv("LOG_FILE")
+	fetchInterval, _ := strconv.Atoi(os.Getenv("FETCH_INTERVAL"))
 	status := &Status{
 		GitCommit: gitCommit,
 		Counter: 0,
@@ -23,8 +25,7 @@ func main() {
 
 	log.Printf("Starting porthole. Music folder: %v, Known releases file: %v", musicFolder, knownReleasesFile)
 
-	// TODO make fetch interval configurable
-	NewStatusCoordinator(status, musicFolder, knownReleasesFile, 30)
+	NewStatusCoordinator(status, musicFolder, knownReleasesFile, fetchInterval)
 
 	http.HandleFunc("/", dashboardHandler())
 	http.HandleFunc("/dashinfo", dashboardInfoHandler(status))

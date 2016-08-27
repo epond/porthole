@@ -6,8 +6,6 @@ import (
 	"html/template"
 	"os"
 	"path"
-	"fmt"
-	"io/ioutil"
 	"strconv"
 )
 
@@ -17,6 +15,7 @@ func main() {
 	gitCommit := os.Getenv("GIT_COMMIT")
 	logFile := os.Getenv("LOG_FILE")
 	fetchInterval, _ := strconv.Atoi(os.Getenv("FETCH_INTERVAL"))
+	dashboardRefreshInterval, _ := strconv.Atoi(os.Getenv("DASHBOARD_REFRESH_INTERVAL"))
 	status := &Status{
 		GitCommit: gitCommit,
 		Counter: 0,
@@ -27,7 +26,7 @@ func main() {
 
 	NewStatusCoordinator(status, musicFolder, knownReleasesFile, fetchInterval)
 
-	http.HandleFunc("/", dashboardHandler())
+	http.HandleFunc("/", dashboardHandler(dashboardRefreshInterval * 1000))
 	http.HandleFunc("/dashinfo", dashboardInfoHandler(status))
 	http.HandleFunc("/log", logHandler(logFile))
 	http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
@@ -38,18 +37,17 @@ func main() {
 	http.ListenAndServe("localhost:9000", nil)
 }
 
-// TODO make dashboard refresh period configurable
-func dashboardHandler() func(res http.ResponseWriter, req *http.Request) {
-	dashboard, _ := ioutil.ReadFile(templatePath("dashboard.html"))
+func dashboardHandler(dashboardRefreshInterval int) func(res http.ResponseWriter, req *http.Request) {
+	dashboardTemplate, _ := template.ParseFiles(templatePath("dashboard.html"))
 	return func(res http.ResponseWriter, req *http.Request) {
-		fmt.Fprint(res, string(dashboard))
+		dashboardTemplate.Execute(res, dashboardRefreshInterval)
 	}
 }
 
 func dashboardInfoHandler(status *Status) func(res http.ResponseWriter, req *http.Request) {
-	t, _ := template.ParseFiles(templatePath("dashinfo.html"))
+	dashinfoTemplate, _ := template.ParseFiles(templatePath("dashinfo.html"))
 	return func(res http.ResponseWriter, req *http.Request) {
-		t.Execute(res, status)
+		dashinfoTemplate.Execute(res, status)
 	}
 }
 

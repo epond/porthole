@@ -7,6 +7,8 @@ export GIT_COMMIT=`git log --pretty=format:'%h' -n 1`
 export LOG_FILE="/home/pi/porthole.log"
 export FETCH_INTERVAL=30
 export DASHBOARD_REFRESH_INTERVAL=5
+export FOLDERS_TO_SCAN=flac-vorbis320:2,mp3/main:2
+#export FOLDERS_TO_SCAN=flac:3,flac-cd:3,flac-add:2,flac-vorbis320:2,mp3/main:2
 
 echo "Waiting for network..."
 /home/pi/go/src/github.com/epond/porthole/waitforip.sh

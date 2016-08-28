@@ -16,6 +16,7 @@ func main() {
 	logFile := os.Getenv("LOG_FILE")
 	fetchInterval, _ := strconv.Atoi(os.Getenv("FETCH_INTERVAL"))
 	dashboardRefreshInterval, _ := strconv.Atoi(os.Getenv("DASHBOARD_REFRESH_INTERVAL"))
+	foldersToScan := os.Getenv("FOLDERS_TO_SCAN")
 	status := &Status{
 		GitCommit: gitCommit,
 		Counter: 0,
@@ -24,7 +25,7 @@ func main() {
 
 	log.Printf("Starting porthole. Music folder: %v, Known releases file: %v", musicFolder, knownReleasesFile)
 
-	NewStatusCoordinator(status, musicFolder, knownReleasesFile, fetchInterval)
+	NewStatusCoordinator(status, musicFolder, knownReleasesFile, foldersToScan, fetchInterval)
 
 	http.HandleFunc("/", dashboardHandler(dashboardRefreshInterval * 1000))
 	http.HandleFunc("/dashinfo", dashboardInfoHandler(status))

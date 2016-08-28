@@ -3,17 +3,21 @@ package main
 import (
 	"log"
 	"time"
+	"strings"
 	"path"
+	"strconv"
 )
 
 type StatusCoordinator struct {
 	status *Status
 	musicFolder string
 	knownReleasesFile string
+	foldersToScan string
 }
 
-func NewStatusCoordinator(status *Status, musicFolder string, knownReleasesFile string, fetchInterval int) *StatusCoordinator {
-	statusCoordinator := &StatusCoordinator{status, musicFolder, knownReleasesFile}
+// TODO decouple status coordinator from record collection additions
+func NewStatusCoordinator(status *Status, musicFolder string, knownReleasesFile string, foldersToScan string, fetchInterval int) *StatusCoordinator {
+	statusCoordinator := &StatusCoordinator{status, musicFolder, knownReleasesFile, foldersToScan}
 
 	go func() {
 		c := time.Tick(time.Duration(fetchInterval) * time.Second)
@@ -27,19 +31,21 @@ func NewStatusCoordinator(status *Status, musicFolder string, knownReleasesFile 
 }
 
 func (s *StatusCoordinator) doWork() {
-	s.status.LatestAdditions = LatestAdditions(s.musicFolder, s.knownReleasesFile)
+	foldersToScan := parseFoldersToScan(s.musicFolder, s.foldersToScan)
+	s.status.LatestAdditions = UpdateKnownReleases(ScanFolders(foldersToScan), s.knownReleasesFile, 3)
 	s.status.Counter = s.status.Counter + 1
 	log.Printf("Status counter:%v, additions:%v", s.status.Counter, s.status.LatestAdditions)
 }
 
-func LatestAdditions(musicFolder string, knownReleasesFile string) []string {
-	// TODO make folders to scan configurable
-	foldersToScan := []FolderToScan{
-		//{path.Join(musicFolder, "flac"), 3},
-		//{path.Join(musicFolder, "flac-cd"), 3},
-		//{path.Join(musicFolder, "flac-add"), 2},
-		{path.Join(musicFolder, "flac-vorbis320"), 2},
-		{path.Join(musicFolder, "mp3", "main"), 2},
+func parseFoldersToScan(musicFolder string, folders string) []FolderToScan {
+	var foldersToScan []FolderToScan
+	folderPairs := strings.Split(folders, ",")
+	for _, pair := range folderPairs {
+		pairArray := strings.Split(pair, ":")
+		depth, _ := strconv.Atoi(pairArray[1])
+		foldersToScan = append(foldersToScan, FolderToScan{
+			path.Join(musicFolder, pairArray[0]),
+			depth})
 	}
-	return UpdateKnownReleases(ScanFolders(foldersToScan), knownReleasesFile, 3)
+	return foldersToScan
 }

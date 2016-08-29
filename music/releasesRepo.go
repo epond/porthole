@@ -8,6 +8,10 @@ import (
 	"log"
 )
 
+const present = 1
+
+type SortableStrings []string
+
 func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, limit int) []string {
 	if _, err := os.Stat(knownReleasesPath); os.IsNotExist(err) {
 		file, errCreate := os.Create(knownReleasesPath)
@@ -70,8 +74,6 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 	return latestAdditions
 }
 
-const present = 1
-
 func ensureFileEndsInNewline(fileLocation string) {
 	file, _ := os.OpenFile(fileLocation, os.O_RDWR|os.O_APPEND, 0660)
 	defer file.Close()
@@ -94,8 +96,6 @@ func readFile(fileLocation string) (lines []string, lineMap map[string]int) {
 	file.Close()
 	return lines, lineMap
 }
-
-type SortableStrings []string
 
 func (slice SortableStrings) Len() int {
 	return len(slice)

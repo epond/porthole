@@ -9,6 +9,16 @@ import (
 	"strings"
 )
 
+type FolderToScan struct {
+	rootFolderPath string
+	targetDepth int
+}
+
+type FolderInfo struct {
+	fileInfo os.FileInfo
+	parent os.FileInfo
+}
+
 func ScanFolders(foldersToScan []FolderToScan) []FolderInfo {
 	var folderScanList []FolderInfo
 	for _, folder := range foldersToScan {
@@ -61,16 +71,6 @@ func FolderInfoAtDepthIter(folderToScan FolderToScan, parent os.FileInfo) []Fold
 
 func FolderInfoAtDepth(folderToScan FolderToScan) []FolderInfo {
 	return FolderInfoAtDepthIter(folderToScan, nil)
-}
-
-type FolderToScan struct {
-	rootFolderPath string
-	targetDepth int
-}
-
-type FolderInfo struct {
-	fileInfo os.FileInfo
-	parent os.FileInfo
 }
 
 func (f *FolderInfo) String() string {

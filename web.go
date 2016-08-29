@@ -18,19 +18,14 @@ func main() {
 	fetchInterval, _ := strconv.Atoi(os.Getenv("FETCH_INTERVAL"))
 	dashboardRefreshInterval, _ := strconv.Atoi(os.Getenv("DASHBOARD_REFRESH_INTERVAL"))
 	foldersToScan := os.Getenv("FOLDERS_TO_SCAN")
-	status := &Status{
-		GitCommit: gitCommit,
-		Counter: 0,
-		LatestAdditions: []string{},
-	}
 
 	log.Printf("Starting porthole. Music folder: %v, Known releases file: %v", musicFolder, knownReleasesFile)
 
 	recordCollectionAdditions := music.NewFileBasedAdditions(musicFolder, knownReleasesFile, foldersToScan, 3)
-	NewStatusCoordinator(status, fetchInterval, recordCollectionAdditions)
+	statusCoordinator := NewStatusCoordinator(gitCommit, fetchInterval, recordCollectionAdditions)
 
 	http.HandleFunc("/", dashboardHandler(dashboardRefreshInterval * 1000))
-	http.HandleFunc("/dashinfo", dashboardInfoHandler(status))
+	http.HandleFunc("/dashinfo", dashboardInfoHandler(statusCoordinator.status))
 	http.HandleFunc("/log", logHandler(logFile))
 	http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, r.URL.Path[1:])

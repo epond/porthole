@@ -20,8 +20,16 @@ type RecordCollectionAdditions interface {
 	FetchLatestAdditions() []string
 }
 
-func NewStatusCoordinator(status *Status, fetchInterval int, recordCollectionAdditions RecordCollectionAdditions) *StatusCoordinator {
-	statusCoordinator := &StatusCoordinator{status, recordCollectionAdditions}
+func NewStatusCoordinator(gitCommit string, fetchInterval int, recordCollectionAdditions RecordCollectionAdditions) *StatusCoordinator {
+	status := &Status{
+		GitCommit: gitCommit,
+		Counter: 0,
+		LatestAdditions: []string{},
+	}
+	statusCoordinator := &StatusCoordinator{
+		status,
+		recordCollectionAdditions,
+	}
 
 	go func() {
 		c := time.Tick(time.Duration(fetchInterval) * time.Second)

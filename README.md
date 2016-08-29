@@ -2,7 +2,7 @@
 
 A dashboard presented as a web page that shows the most recent additions to a record collection. It is intended to run on a Raspberry Pi.
 
-* Installation instructions are [here](Pi.md)
+* Installation instructions are [here](PI.md)
 * Once porthole is installed on the Pi, every time the Pi is turned on it updates porthole to the latest version by pulling the source from GitHub and doing a full build, then starts the app.
 * Golang was used because it is easily installed via apt-get and it is very fast both when compiling and running.
 * A file specified by the KNOWN_RELEASES_FILE environment variable is used to keep track of what as been added to the record collection, in order. New additions are added to the bottom of the file.

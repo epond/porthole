@@ -1,4 +1,4 @@
-package music
+package test
 
 import (
 	"testing"
@@ -8,22 +8,22 @@ import (
 	"io"
 )
 
-func expect(t *testing.T, valueName string, expected string, actual string) {
+func Expect(t *testing.T, valueName string, expected string, actual string) {
 	if actual != expected {
 		t.Errorf("Expected %v to be %v but was %v", valueName, expected, actual)
 	}
 }
 
-func expectInt(t *testing.T, valueName string, expected int, actual int) {
-	expect(t, valueName, strconv.Itoa(expected), strconv.Itoa(actual))
+func ExpectInt(t *testing.T, valueName string, expected int, actual int) {
+	Expect(t, valueName, strconv.Itoa(expected), strconv.Itoa(actual))
 }
 
 type DummyFileInfo struct {
-	name string
-	isDir bool
+	CannedName  string
+	CannedIsDir bool
 }
 func (d DummyFileInfo) Name() string {
-	return d.name
+	return d.CannedName
 }
 func (d DummyFileInfo) Size() int64 {
 	return 1
@@ -38,13 +38,13 @@ func (d DummyFileInfo) ModTime() time.Time {
 	return time.Now()
 }
 func (d DummyFileInfo) IsDir() bool {
-	return d.isDir
+	return d.CannedIsDir
 }
 func (d DummyFileInfo) Sys() interface{} {
 	return nil
 }
 
-func copyFile(dstName, srcName string) (written int64, err error) {
+func CopyFile(dstName, srcName string) (written int64, err error) {
 	src, err := os.Open(srcName)
 	if err != nil {
 		return

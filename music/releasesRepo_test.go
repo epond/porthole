@@ -5,13 +5,14 @@ import (
 	"os"
 	"path"
 	"bufio"
+	"github.com/epond/porthole/test"
 )
 
 func TestItCreatesFileWhenKnownReleasesFileMissing(t *testing.T) {
 	setUp()
 	defer tearDown()
 	UpdateKnownReleases([]FolderInfo{
-		{DummyFileInfo{"Mouldy Old Dough", true}, DummyFileInfo{"Lieutenant Pigeon", true}},
+		{test.DummyFileInfo{"Mouldy Old Dough", true}, test.DummyFileInfo{"Lieutenant Pigeon", true}},
 	}, knownReleasesFile(), 0)
 	_, err := os.Stat(knownReleasesFile())
 	if (err != nil) {
@@ -21,140 +22,140 @@ func TestItCreatesFileWhenKnownReleasesFileMissing(t *testing.T) {
 	file, lines := knownReleasesLines()
 	defer file.Close()
 
-	expectInt(t, "known releases on creation", 1, len(lines))
-	expect(t, "known release", "Lieutenant Pigeon - Mouldy Old Dough", lines[len(lines)-1])
+	test.ExpectInt(t, "known releases on creation", 1, len(lines))
+	test.Expect(t, "known release", "Lieutenant Pigeon - Mouldy Old Dough", lines[len(lines)-1])
 }
 
 func TestItDoesNotChangeFileWhenNoNewReleases(t *testing.T) {
 	setUp()
 	defer tearDown()
-	copyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
+	test.CopyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
 	currentScan := []FolderInfo{
-		{DummyFileInfo{"I Do, I Do, I Do, I Do, I Do", true}, DummyFileInfo{"Abba", true}},
-		{DummyFileInfo{"It's Fan-dabi-dozi!", true}, DummyFileInfo{"The Krankies", true}},
-		{DummyFileInfo{"Discipline", true}, DummyFileInfo{"Throbbing Gristle", true}},
+		{test.DummyFileInfo{"I Do, I Do, I Do, I Do, I Do", true}, test.DummyFileInfo{"Abba", true}},
+		{test.DummyFileInfo{"It's Fan-dabi-dozi!", true}, test.DummyFileInfo{"The Krankies", true}},
+		{test.DummyFileInfo{"Discipline", true}, test.DummyFileInfo{"Throbbing Gristle", true}},
 	}
 	UpdateKnownReleases(currentScan, knownReleasesFile(), 0)
 
 	file, lines := knownReleasesLines()
 	defer file.Close()
 
-	expectInt(t, "number of known releases", 3, len(lines))
-	expect(t, "known release 1", "The Krankies - It's Fan-dabi-dozi!", lines[len(lines)-1])
-	expect(t, "known release 2", "Throbbing Gristle - Discipline", lines[len(lines)-2])
-	expect(t, "known release 3", "Abba - I Do, I Do, I Do, I Do, I Do", lines[len(lines)-3])
+	test.ExpectInt(t, "number of known releases", 3, len(lines))
+	test.Expect(t, "known release 1", "The Krankies - It's Fan-dabi-dozi!", lines[len(lines)-1])
+	test.Expect(t, "known release 2", "Throbbing Gristle - Discipline", lines[len(lines)-2])
+	test.Expect(t, "known release 3", "Abba - I Do, I Do, I Do, I Do, I Do", lines[len(lines)-3])
 }
 
 func TestItAddsReleasesToEndOfFile(t *testing.T) {
 	setUp()
 	defer tearDown()
-	copyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
+	test.CopyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
 	currentScan := []FolderInfo{
-		{DummyFileInfo{"Vent", true}, DummyFileInfo{"Daniel Menche", true}},
-		{DummyFileInfo{"Iconoclastic Diaries", true}, DummyFileInfo{"Shake", true}},
+		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
+		{test.DummyFileInfo{"Iconoclastic Diaries", true}, test.DummyFileInfo{"Shake", true}},
 	}
 	UpdateKnownReleases(currentScan, knownReleasesFile(), 0)
 
 	file, lines := knownReleasesLines()
 	defer file.Close()
 
-	expectInt(t, "number of known releases", 5, len(lines))
-	expect(t, "known release 1", "Daniel Menche - Vent", lines[len(lines)-1])
-	expect(t, "known release 2", "Shake - Iconoclastic Diaries", lines[len(lines)-2])
+	test.ExpectInt(t, "number of known releases", 5, len(lines))
+	test.Expect(t, "known release 1", "Daniel Menche - Vent", lines[len(lines)-1])
+	test.Expect(t, "known release 2", "Shake - Iconoclastic Diaries", lines[len(lines)-2])
 }
 
 func TestItIgnoresReleasesAlreadyKnown(t *testing.T) {
 	setUp()
 	defer tearDown()
-	copyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
+	test.CopyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
 	currentScan := []FolderInfo{
-		{DummyFileInfo{"Iconoclastic Diaries", true}, DummyFileInfo{"Shake", true}},
-		{DummyFileInfo{"I Do, I Do, I Do, I Do, I Do", true}, DummyFileInfo{"Abba", true}},
-		{DummyFileInfo{"Vent", true}, DummyFileInfo{"Daniel Menche", true}},
-		{DummyFileInfo{"Discipline", true}, DummyFileInfo{"Throbbing Gristle", true}},
+		{test.DummyFileInfo{"Iconoclastic Diaries", true}, test.DummyFileInfo{"Shake", true}},
+		{test.DummyFileInfo{"I Do, I Do, I Do, I Do, I Do", true}, test.DummyFileInfo{"Abba", true}},
+		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
+		{test.DummyFileInfo{"Discipline", true}, test.DummyFileInfo{"Throbbing Gristle", true}},
 	}
 	UpdateKnownReleases(currentScan, knownReleasesFile(), 0)
 
 	file, lines := knownReleasesLines()
 	defer file.Close()
 
-	expectInt(t, "number of known releases", 5, len(lines))
-	expect(t, "known release 1", "Daniel Menche - Vent", lines[len(lines)-1])
-	expect(t, "known release 2", "Shake - Iconoclastic Diaries", lines[len(lines)-2])
+	test.ExpectInt(t, "number of known releases", 5, len(lines))
+	test.Expect(t, "known release 1", "Daniel Menche - Vent", lines[len(lines)-1])
+	test.Expect(t, "known release 2", "Shake - Iconoclastic Diaries", lines[len(lines)-2])
 }
 
 func TestItHandlesWhenKnownReleasesFileMayNotEndInNewline(t *testing.T) {
 	setUp()
 	defer tearDown()
-	copyFile(knownReleasesFile(), path.Join(testData(), "knownreleases_endwithoutnewline"))
+	test.CopyFile(knownReleasesFile(), path.Join(testData(), "knownreleases_endwithoutnewline"))
 	currentScan := []FolderInfo{
-		{DummyFileInfo{"Vent", true}, DummyFileInfo{"Daniel Menche", true}},
+		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
 	}
 	UpdateKnownReleases(currentScan, knownReleasesFile(), 0)
 
 	file, lines := knownReleasesLines()
 	defer file.Close()
 
-	expectInt(t, "number of known releases", 2, len(lines))
-	expect(t, "known release 1", "Daniel Menche - Vent", lines[len(lines)-1])
-	expect(t, "known release 2", "The Krankies - It's Fan-dabi-dozi!", lines[len(lines)-2])
+	test.ExpectInt(t, "number of known releases", 2, len(lines))
+	test.Expect(t, "known release 1", "Daniel Menche - Vent", lines[len(lines)-1])
+	test.Expect(t, "known release 2", "The Krankies - It's Fan-dabi-dozi!", lines[len(lines)-2])
 }
 
 func TestUpdateKnownReleasesReturnValueWhenNoNewReleasesAndKnownReleasesAboveLimit(t *testing.T) {
 	setUp()
 	defer tearDown()
-	copyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
+	test.CopyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
 	latestAdditions := UpdateKnownReleases([]FolderInfo{}, knownReleasesFile(), 2)
 
-	expectInt(t, "number of latest additions", 2, len(latestAdditions))
-	expect(t, "latest addition 1", "The Krankies - It's Fan-dabi-dozi!", latestAdditions[0])
-	expect(t, "latest addition 2", "Throbbing Gristle - Discipline", latestAdditions[1])
+	test.ExpectInt(t, "number of latest additions", 2, len(latestAdditions))
+	test.Expect(t, "latest addition 1", "The Krankies - It's Fan-dabi-dozi!", latestAdditions[0])
+	test.Expect(t, "latest addition 2", "Throbbing Gristle - Discipline", latestAdditions[1])
 }
 
 func TestUpdateKnownReleasesReturnValueWhenNewReleasesAboveLimit(t *testing.T) {
 	setUp()
 	defer tearDown()
-	copyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
+	test.CopyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
 	currentScan := []FolderInfo{
-		{DummyFileInfo{"Iconoclastic Diaries", true}, DummyFileInfo{"Shake", true}},
-		{DummyFileInfo{"Vent", true}, DummyFileInfo{"Daniel Menche", true}},
-		{DummyFileInfo{"Mouldy Old Dough", true}, DummyFileInfo{"Lieutenant Pigeon", true}},
+		{test.DummyFileInfo{"Iconoclastic Diaries", true}, test.DummyFileInfo{"Shake", true}},
+		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
+		{test.DummyFileInfo{"Mouldy Old Dough", true}, test.DummyFileInfo{"Lieutenant Pigeon", true}},
 	}
 	latestAdditions := UpdateKnownReleases(currentScan, knownReleasesFile(), 2)
 
-	expectInt(t, "number of latest additions", 2, len(latestAdditions))
-	expect(t, "latest addition 1", "Daniel Menche - Vent", latestAdditions[0])
-	expect(t, "latest addition 2", "Lieutenant Pigeon - Mouldy Old Dough", latestAdditions[1])
+	test.ExpectInt(t, "number of latest additions", 2, len(latestAdditions))
+	test.Expect(t, "latest addition 1", "Daniel Menche - Vent", latestAdditions[0])
+	test.Expect(t, "latest addition 2", "Lieutenant Pigeon - Mouldy Old Dough", latestAdditions[1])
 }
 
 func TestUpdateKnownReleasesReturnValueWhenNewReleasesBelowLimit(t *testing.T) {
 	setUp()
 	defer tearDown()
-	copyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
+	test.CopyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
 	currentScan := []FolderInfo{
-		{DummyFileInfo{"Vent", true}, DummyFileInfo{"Daniel Menche", true}},
+		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
 	}
 	latestAdditions := UpdateKnownReleases(currentScan, knownReleasesFile(), 2)
 
-	expectInt(t, "number of latest additions", 2, len(latestAdditions))
-	expect(t, "latest addition 1", "Daniel Menche - Vent", latestAdditions[0])
-	expect(t, "latest addition 2", "The Krankies - It's Fan-dabi-dozi!", latestAdditions[1])
+	test.ExpectInt(t, "number of latest additions", 2, len(latestAdditions))
+	test.Expect(t, "latest addition 1", "Daniel Menche - Vent", latestAdditions[0])
+	test.Expect(t, "latest addition 2", "The Krankies - It's Fan-dabi-dozi!", latestAdditions[1])
 }
 
 func TestUpdateKnownReleasesReturnValueWhenNewAndKnownReleasesCombinedAreBelowLimit(t *testing.T) {
 	setUp()
 	defer tearDown()
-	copyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
+	test.CopyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
 	currentScan := []FolderInfo{
-		{DummyFileInfo{"Vent", true}, DummyFileInfo{"Daniel Menche", true}},
+		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
 	}
 	latestAdditions := UpdateKnownReleases(currentScan, knownReleasesFile(), 5)
 
-	expectInt(t, "number of latest additions", 4, len(latestAdditions))
-	expect(t, "latest addition 1", "Daniel Menche - Vent", latestAdditions[0])
-	expect(t, "latest addition 2", "The Krankies - It's Fan-dabi-dozi!", latestAdditions[1])
-	expect(t, "latest addition 3", "Throbbing Gristle - Discipline", latestAdditions[2])
-	expect(t, "latest addition 4", "Abba - I Do, I Do, I Do, I Do, I Do", latestAdditions[3])
+	test.ExpectInt(t, "number of latest additions", 4, len(latestAdditions))
+	test.Expect(t, "latest addition 1", "Daniel Menche - Vent", latestAdditions[0])
+	test.Expect(t, "latest addition 2", "The Krankies - It's Fan-dabi-dozi!", latestAdditions[1])
+	test.Expect(t, "latest addition 3", "Throbbing Gristle - Discipline", latestAdditions[2])
+	test.Expect(t, "latest addition 4", "Abba - I Do, I Do, I Do, I Do, I Do", latestAdditions[3])
 }
 
 func setUp() {

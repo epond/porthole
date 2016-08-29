@@ -1,3 +1,5 @@
+This page describes how to install porthole on a Raspberry Pi.
+
 # Enable SSH remote administration
 
     sudo raspi-config

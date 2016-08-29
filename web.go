@@ -7,6 +7,7 @@ import (
 	"os"
 	"path"
 	"strconv"
+	"github.com/epond/porthole/music"
 )
 
 func main() {
@@ -25,7 +26,7 @@ func main() {
 
 	log.Printf("Starting porthole. Music folder: %v, Known releases file: %v", musicFolder, knownReleasesFile)
 
-	recordCollectionAdditions := &FileBasedAdditions{musicFolder, knownReleasesFile, foldersToScan, 3}
+	recordCollectionAdditions := music.NewFileBasedAdditions(musicFolder, knownReleasesFile, foldersToScan, 3)
 	NewStatusCoordinator(status, fetchInterval, recordCollectionAdditions)
 
 	http.HandleFunc("/", dashboardHandler(dashboardRefreshInterval * 1000))

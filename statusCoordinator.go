@@ -11,7 +11,7 @@ type StatusCoordinator struct {
 }
 
 type RecordCollectionAdditions interface {
-	latestAdditions() []string
+	FetchLatestAdditions() []string
 }
 
 func NewStatusCoordinator(status *Status, fetchInterval int, recordCollectionAdditions RecordCollectionAdditions) *StatusCoordinator {
@@ -29,7 +29,7 @@ func NewStatusCoordinator(status *Status, fetchInterval int, recordCollectionAdd
 }
 
 func (s *StatusCoordinator) doWork() {
-	s.status.LatestAdditions = s.recordCollectionAdditions.latestAdditions()
+	s.status.LatestAdditions = s.recordCollectionAdditions.FetchLatestAdditions()
 	s.status.Counter = s.status.Counter + 1
 	log.Printf("Status counter:%v, additions:%v", s.status.Counter, s.status.LatestAdditions)
 }

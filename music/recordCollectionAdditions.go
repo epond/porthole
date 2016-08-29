@@ -1,4 +1,4 @@
-package main
+package music
 
 import (
 	"strings"
@@ -13,7 +13,15 @@ type FileBasedAdditions struct {
 	latestAdditionsLimit int
 }
 
-func (f *FileBasedAdditions) latestAdditions() []string {
+func NewFileBasedAdditions(
+	musicFolder string,
+	knownReleasesFile string,
+	foldersToScan string,
+	latestAdditionsLimit int) *FileBasedAdditions {
+	return &FileBasedAdditions{musicFolder, knownReleasesFile, foldersToScan, latestAdditionsLimit}
+}
+
+func (f *FileBasedAdditions) FetchLatestAdditions() []string {
 	return UpdateKnownReleases(
 		ScanFolders(parseFoldersToScan(f.musicFolder, f.foldersToScan)),
 		f.knownReleasesFile,

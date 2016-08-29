@@ -25,7 +25,8 @@ func main() {
 
 	log.Printf("Starting porthole. Music folder: %v, Known releases file: %v", musicFolder, knownReleasesFile)
 
-	NewStatusCoordinator(status, musicFolder, knownReleasesFile, foldersToScan, fetchInterval)
+	recordCollectionAdditions := &FileBasedAdditions{musicFolder, knownReleasesFile, foldersToScan, 3}
+	NewStatusCoordinator(status, fetchInterval, recordCollectionAdditions)
 
 	http.HandleFunc("/", dashboardHandler(dashboardRefreshInterval * 1000))
 	http.HandleFunc("/dashinfo", dashboardInfoHandler(status))

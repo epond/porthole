@@ -10,6 +10,8 @@ import (
 	"github.com/epond/porthole/music"
 )
 
+const latestAdditionsLimit  = 5
+
 func main() {
 	musicFolder := os.Getenv("MUSIC_FOLDER")
 	knownReleasesFile := os.Getenv("KNOWN_RELEASES_FILE")
@@ -21,8 +23,15 @@ func main() {
 
 	log.Printf("Starting porthole. Music folder: %v, Known releases file: %v", musicFolder, knownReleasesFile)
 
-	recordCollectionAdditions := music.NewFileBasedAdditions(musicFolder, knownReleasesFile, foldersToScan, 3)
-	statusCoordinator := NewStatusCoordinator(gitCommit, fetchInterval, recordCollectionAdditions)
+	recordCollectionAdditions := music.NewFileBasedAdditions(
+		musicFolder,
+		knownReleasesFile,
+		foldersToScan,
+		latestAdditionsLimit)
+	statusCoordinator := NewStatusCoordinator(
+		gitCommit,
+		fetchInterval,
+		recordCollectionAdditions)
 
 	http.HandleFunc("/", templateHandler("dashboard.html", dashboardRefreshInterval * 1000))
 	http.HandleFunc("/dashinfo", templateHandler("dashinfo.html", statusCoordinator.status))

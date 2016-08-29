@@ -24,8 +24,8 @@ func main() {
 	recordCollectionAdditions := music.NewFileBasedAdditions(musicFolder, knownReleasesFile, foldersToScan, 3)
 	statusCoordinator := NewStatusCoordinator(gitCommit, fetchInterval, recordCollectionAdditions)
 
-	http.HandleFunc("/", dashboardHandler(dashboardRefreshInterval * 1000))
-	http.HandleFunc("/dashinfo", dashboardInfoHandler(statusCoordinator.status))
+	http.HandleFunc("/", templateHandler("dashboard.html", dashboardRefreshInterval * 1000))
+	http.HandleFunc("/dashinfo", templateHandler("dashinfo.html", statusCoordinator.status))
 	http.HandleFunc("/log", logHandler(logFile))
 	http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, r.URL.Path[1:])
@@ -35,17 +35,10 @@ func main() {
 	http.ListenAndServe("localhost:9000", nil)
 }
 
-func dashboardHandler(dashboardRefreshInterval int) func(res http.ResponseWriter, req *http.Request) {
-	dashboardTemplate, _ := template.ParseFiles(templatePath("dashboard.html"))
+func templateHandler(templateFile string, data interface{}) func(res http.ResponseWriter, req *http.Request) {
+	parsedTemplate, _ := template.ParseFiles(templatePath(templateFile))
 	return func(res http.ResponseWriter, req *http.Request) {
-		dashboardTemplate.Execute(res, dashboardRefreshInterval)
-	}
-}
-
-func dashboardInfoHandler(status *Status) func(res http.ResponseWriter, req *http.Request) {
-	dashinfoTemplate, _ := template.ParseFiles(templatePath("dashinfo.html"))
-	return func(res http.ResponseWriter, req *http.Request) {
-		dashinfoTemplate.Execute(res, status)
+		parsedTemplate.Execute(res, data)
 	}
 }
 

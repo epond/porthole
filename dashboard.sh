@@ -3,7 +3,6 @@
 export GOPATH="/home/pi/go"
 export MUSIC_FOLDER="/mnt/nasmedia/Music"
 export KNOWN_RELEASES_FILE="/home/pi/knownreleases"
-export GIT_COMMIT=`git log --pretty=format:'%h' -n 1`
 export LOG_FILE="/home/pi/porthole.log"
 export FETCH_INTERVAL=30
 export DASHBOARD_REFRESH_INTERVAL=5
@@ -14,6 +13,7 @@ echo "Waiting for network..."
 
 echo "Updating porthole..."
 cd /home/pi/go/src/github.com/epond/porthole
+export GIT_COMMIT=`git log --pretty=format:'%h' -n 1`
 rm /home/pi/porthole.log
 git pull -r >> /home/pi/porthole.log 2>&1
 bash -c ./build.sh >> /home/pi/porthole.log 2>&1

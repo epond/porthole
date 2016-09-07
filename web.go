@@ -10,7 +10,7 @@ import (
 	"github.com/epond/porthole/music"
 )
 
-const latestAdditionsLimit  = 5
+const latestAdditionsLimit  = 10
 
 func main() {
 	musicFolder := os.Getenv("MUSIC_FOLDER")

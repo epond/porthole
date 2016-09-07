@@ -1,5 +1,7 @@
 # porthole
 
+![alt tag](static/porthole.jpg)
+
 A dashboard presented as a web page that shows the most recent additions to a record collection. It is intended to run on a Raspberry Pi.
 
 * Installation instructions are [here](PI.md)

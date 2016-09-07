@@ -81,6 +81,7 @@ func (f *FolderInfo) String() string {
 }
 
 func capitalise(input string) string {
+	log.Printf("Capitalising '%v'", input)
 	inputSplit := strings.Split(input, " ")
 	for i, s := range inputSplit {
 		inputSplit[i] = fmt.Sprintf("%v%v", strings.ToUpper(s[0:1]), strings.ToLower(s[1:]))

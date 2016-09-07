@@ -80,10 +80,19 @@ func (f *FolderInfo) String() string {
 	return fmt.Sprintf("%v - %v", capitalise(f.parent.Name()), capitalise(f.fileInfo.Name()))
 }
 
-func capitalise(input string) string {
-	inputSplit := strings.Split(input, " ")
+func capitalise(word string) string {
+	inputSplit := strings.Split(word, " ")
 	for i, s := range inputSplit {
-		inputSplit[i] = fmt.Sprintf("%v%v", strings.ToUpper(s[0:1]), strings.ToLower(s[1:]))
+		var firstLetter string
+		var remainder string
+		if len(s) > 0 {
+			firstLetter = strings.ToUpper(s[0:1])
+			remainder = strings.ToLower(s[1:])
+		} else {
+			firstLetter = ""
+			remainder = ""
+		}
+		inputSplit[i] = fmt.Sprintf("%v%v", firstLetter, remainder)
 	}
 	return strings.Join(inputSplit, " ")
 }

@@ -43,6 +43,13 @@ func TestFolderInfoStringCapitalisesFirstLettersOnly(t *testing.T) {
 	test.Expect(t, "FolderInfo String()", "Ab Cd - Ef Gh", folderInfo.String())
 }
 
+func TestFolderInfoStringCapitalisesEdgeCases(t *testing.T) {
+	folderInfo := FolderInfo{test.DummyFileInfo{"q", true}, test.DummyFileInfo{"m", true}}
+	test.Expect(t, "FolderInfo String()", "M - Q", folderInfo.String())
+	folderInfo = FolderInfo{test.DummyFileInfo{"Ef  Gh", true}, test.DummyFileInfo{"Ab Cd", true}}
+	test.Expect(t, "FolderInfo String()", "Ab Cd - Ef  Gh", folderInfo.String())
+}
+
 func pipeDelimitedString(list []FolderInfo) string {
 	var all bytes.Buffer
 	for i, element := range list {

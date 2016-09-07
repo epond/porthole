@@ -1,5 +1,5 @@
 .button {
-  font: bold 18px Arial;
+  font: bold 36px Arial;
   text-decoration: none;
   background-color: #EEEEEE;
   color: #333333;
@@ -8,4 +8,8 @@
   border-right: 1px solid #333333;
   border-bottom: 1px solid #333333;
   border-left: 1px solid #CCCCCC;
+}
+
+#infoarea {
+  font-size: 24px;
 }

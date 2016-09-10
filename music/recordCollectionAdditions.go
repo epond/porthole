@@ -9,6 +9,7 @@ import (
 type FileBasedAdditions struct {
 	musicFolder string
 	knownReleasesFile string
+	knownReleasesBackup string
 	foldersToScan string
 	latestAdditionsLimit int
 }
@@ -16,15 +17,17 @@ type FileBasedAdditions struct {
 func NewFileBasedAdditions(
 	musicFolder string,
 	knownReleasesFile string,
+	knownReleasesBackup string,
 	foldersToScan string,
 	latestAdditionsLimit int) *FileBasedAdditions {
-	return &FileBasedAdditions{musicFolder, knownReleasesFile, foldersToScan, latestAdditionsLimit}
+	return &FileBasedAdditions{musicFolder, knownReleasesFile, knownReleasesBackup, foldersToScan, latestAdditionsLimit}
 }
 
 func (f *FileBasedAdditions) FetchLatestAdditions() []string {
 	return UpdateKnownReleases(
 		ScanFolders(parseFoldersToScan(f.musicFolder, f.foldersToScan)),
 		f.knownReleasesFile,
+		f.knownReleasesBackup,
 		f.latestAdditionsLimit)
 }
 

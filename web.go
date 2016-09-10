@@ -15,6 +15,7 @@ const latestAdditionsLimit  = 10
 func main() {
 	musicFolder := os.Getenv("MUSIC_FOLDER")
 	knownReleasesFile := os.Getenv("KNOWN_RELEASES_FILE")
+	knownReleasesBackup := os.Getenv("KNOWN_RELEASES_BACKUP")
 	gitCommit := os.Getenv("GIT_COMMIT")
 	logFile := os.Getenv("LOG_FILE")
 	fetchInterval, _ := strconv.Atoi(os.Getenv("FETCH_INTERVAL"))
@@ -26,6 +27,7 @@ func main() {
 	recordCollectionAdditions := music.NewFileBasedAdditions(
 		musicFolder,
 		knownReleasesFile,
+		knownReleasesBackup,
 		foldersToScan,
 		latestAdditionsLimit)
 	statusCoordinator := NewStatusCoordinator(

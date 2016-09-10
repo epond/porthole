@@ -12,7 +12,7 @@ const present = 1
 
 type SortableStrings []string
 
-func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, limit int) []string {
+func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, knownReleasesBackupPath string, limit int) []string {
 	if _, err := os.Stat(knownReleasesPath); os.IsNotExist(err) {
 		file, errCreate := os.Create(knownReleasesPath)
 		if (errCreate != nil) {

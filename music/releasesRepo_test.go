@@ -13,9 +13,9 @@ func TestItCreatesFileWhenKnownReleasesFileMissing(t *testing.T) {
 	defer tearDown()
 	UpdateKnownReleases([]FolderInfo{
 		{test.DummyFileInfo{"Mouldy Old Dough", true}, test.DummyFileInfo{"Lieutenant Pigeon", true}},
-	}, knownReleasesFile(), 0)
-	_, err := os.Stat(knownReleasesFile())
-	if (err != nil) {
+	}, knownReleasesFile(), knownReleasesBackup(), 0)
+	_, lines := knownReleasesLines()
+	if (len(lines) == 0) {
 		t.Error("Expected UpdateKnownReleases to create known releases file but it didn't")
 	}
 
@@ -35,7 +35,7 @@ func TestItDoesNotChangeFileWhenNoNewReleases(t *testing.T) {
 		{test.DummyFileInfo{"It's Fan-dabi-dozi!", true}, test.DummyFileInfo{"The Krankies", true}},
 		{test.DummyFileInfo{"Discipline", true}, test.DummyFileInfo{"Throbbing Gristle", true}},
 	}
-	UpdateKnownReleases(currentScan, knownReleasesFile(), 0)
+	UpdateKnownReleases(currentScan, knownReleasesFile(), knownReleasesBackup(), 0)
 
 	file, lines := knownReleasesLines()
 	defer file.Close()
@@ -54,7 +54,7 @@ func TestItAddsReleasesToEndOfFile(t *testing.T) {
 		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
 		{test.DummyFileInfo{"Iconoclastic Diaries", true}, test.DummyFileInfo{"Shake", true}},
 	}
-	UpdateKnownReleases(currentScan, knownReleasesFile(), 0)
+	UpdateKnownReleases(currentScan, knownReleasesFile(), knownReleasesBackup(), 0)
 
 	file, lines := knownReleasesLines()
 	defer file.Close()
@@ -74,7 +74,7 @@ func TestItIgnoresReleasesAlreadyKnown(t *testing.T) {
 		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
 		{test.DummyFileInfo{"Discipline", true}, test.DummyFileInfo{"Throbbing Gristle", true}},
 	}
-	UpdateKnownReleases(currentScan, knownReleasesFile(), 0)
+	UpdateKnownReleases(currentScan, knownReleasesFile(), knownReleasesBackup(), 0)
 
 	file, lines := knownReleasesLines()
 	defer file.Close()
@@ -91,7 +91,7 @@ func TestItHandlesWhenKnownReleasesFileMayNotEndInNewline(t *testing.T) {
 	currentScan := []FolderInfo{
 		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
 	}
-	UpdateKnownReleases(currentScan, knownReleasesFile(), 0)
+	UpdateKnownReleases(currentScan, knownReleasesFile(), knownReleasesBackup(), 0)
 
 	file, lines := knownReleasesLines()
 	defer file.Close()
@@ -105,7 +105,7 @@ func TestUpdateKnownReleasesReturnValueWhenNoNewReleasesAndKnownReleasesAboveLim
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
-	latestAdditions := UpdateKnownReleases([]FolderInfo{}, knownReleasesFile(), 2)
+	latestAdditions := UpdateKnownReleases([]FolderInfo{}, knownReleasesFile(), knownReleasesBackup(), 2)
 
 	test.ExpectInt(t, "number of latest additions", 2, len(latestAdditions))
 	test.Expect(t, "latest addition 1", "The Krankies - It's Fan-dabi-dozi!", latestAdditions[0])
@@ -121,7 +121,7 @@ func TestUpdateKnownReleasesReturnValueWhenNewReleasesAboveLimit(t *testing.T) {
 		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
 		{test.DummyFileInfo{"Mouldy Old Dough", true}, test.DummyFileInfo{"Lieutenant Pigeon", true}},
 	}
-	latestAdditions := UpdateKnownReleases(currentScan, knownReleasesFile(), 2)
+	latestAdditions := UpdateKnownReleases(currentScan, knownReleasesFile(), knownReleasesBackup(), 2)
 
 	test.ExpectInt(t, "number of latest additions", 2, len(latestAdditions))
 	test.Expect(t, "latest addition 1", "Daniel Menche - Vent", latestAdditions[0])
@@ -135,7 +135,7 @@ func TestUpdateKnownReleasesReturnValueWhenNewReleasesBelowLimit(t *testing.T) {
 	currentScan := []FolderInfo{
 		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
 	}
-	latestAdditions := UpdateKnownReleases(currentScan, knownReleasesFile(), 2)
+	latestAdditions := UpdateKnownReleases(currentScan, knownReleasesFile(), knownReleasesBackup(), 2)
 
 	test.ExpectInt(t, "number of latest additions", 2, len(latestAdditions))
 	test.Expect(t, "latest addition 1", "Daniel Menche - Vent", latestAdditions[0])
@@ -149,13 +149,37 @@ func TestUpdateKnownReleasesReturnValueWhenNewAndKnownReleasesCombinedAreBelowLi
 	currentScan := []FolderInfo{
 		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
 	}
-	latestAdditions := UpdateKnownReleases(currentScan, knownReleasesFile(), 5)
+	latestAdditions := UpdateKnownReleases(currentScan, knownReleasesFile(), knownReleasesBackup(), 5)
 
 	test.ExpectInt(t, "number of latest additions", 4, len(latestAdditions))
 	test.Expect(t, "latest addition 1", "Daniel Menche - Vent", latestAdditions[0])
 	test.Expect(t, "latest addition 2", "The Krankies - It's Fan-dabi-dozi!", latestAdditions[1])
 	test.Expect(t, "latest addition 3", "Throbbing Gristle - Discipline", latestAdditions[2])
 	test.Expect(t, "latest addition 4", "Abba - I Do, I Do, I Do, I Do, I Do", latestAdditions[3])
+}
+
+func TestItBacksUpKnownReleasesWhenChanged(t *testing.T) {
+	setUp()
+	defer tearDown()
+	UpdateKnownReleases([]FolderInfo{
+		{test.DummyFileInfo{"Mouldy Old Dough", true}, test.DummyFileInfo{"Lieutenant Pigeon", true}},
+	}, knownReleasesFile(), knownReleasesBackup(), 0)
+
+	_, backup := knownReleasesBackupLines()
+	if (len(backup) == 0) {
+		t.Error("Expected UpdateKnownReleases to create known releases backup but it didn't")
+	}
+}
+
+func TestItDoesntBackUpKnownReleasesWhenUnchanged(t *testing.T) {
+	setUp()
+	defer tearDown()
+	UpdateKnownReleases([]FolderInfo{}, knownReleasesFile(), knownReleasesBackup(), 0)
+
+	_, backup := knownReleasesBackupLines()
+	if (len(backup) > 0) {
+		t.Error("Expected UpdateKnownReleases to not create known releases backup but it did")
+	}
 }
 
 func setUp() {
@@ -169,8 +193,25 @@ func knownReleasesFile() string {
 	return path.Join(tempDir(), "knownreleases")
 }
 
+func knownReleasesBackup() string {
+	return path.Join(tempDir(), "knownreleases_backup")
+}
+
 func knownReleasesLines() (file *os.File, lines []string) {
-	file, _ = os.Open(knownReleasesFile())
+	return fileLines(knownReleasesFile())
+}
+
+func knownReleasesBackupLines() (file *os.File, lines []string) {
+	return fileLines(knownReleasesBackup())
+}
+
+func fileLines(filePath string) (file *os.File, lines []string) {
+	var err error
+	file, err = os.Open(filePath)
+	if err != nil {
+		return nil, []string{}
+	}
+
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		lines = append(lines, scanner.Text())

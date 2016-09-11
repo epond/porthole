@@ -2,8 +2,8 @@
 
 export GOPATH="/home/pi/go"
 export MUSIC_FOLDER="/mnt/nasmedia/Music"
-export KNOWN_RELEASES_FILE="/home/pi/knownreleases"
-export KNOWN_RELEASES_BACKUP=$MUSIC_FOLDER"/knownreleases_backup"
+export KNOWN_RELEASES_FILE="/home/pi/knownreleases.txt"
+export KNOWN_RELEASES_BACKUP=$MUSIC_FOLDER"/knownreleases_backup.txt"
 export LOG_FILE="/home/pi/porthole.log"
 export FETCH_INTERVAL=30
 export DASHBOARD_REFRESH_INTERVAL=5

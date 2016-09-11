@@ -22,7 +22,7 @@ func main() {
 	dashboardRefreshInterval, _ := strconv.Atoi(os.Getenv("DASHBOARD_REFRESH_INTERVAL"))
 	foldersToScan := os.Getenv("FOLDERS_TO_SCAN")
 
-	log.Printf("Starting porthole. Music folder: %v, Known releases file: %v", musicFolder, knownReleasesFile)
+	log.Printf("Starting porthole. Music folder: %v, Known releases file: %v, Backup: %v", musicFolder, knownReleasesFile, knownReleasesBackup)
 
 	recordCollectionAdditions := music.NewFileBasedAdditions(
 		musicFolder,

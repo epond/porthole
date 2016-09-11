@@ -62,6 +62,7 @@ func TestItAddsReleasesToEndOfFile(t *testing.T) {
 	test.ExpectInt(t, "number of known releases", 5, len(lines))
 	test.Expect(t, "known release 1", "Daniel Menche - Vent", lines[len(lines)-1])
 	test.Expect(t, "known release 2", "Shake - Iconoclastic Diaries", lines[len(lines)-2])
+	test.Expect(t, "known release 3", "The Krankies - It's Fan-dabi-dozi!", lines[len(lines)-3])
 }
 
 func TestItIgnoresReleasesAlreadyKnown(t *testing.T) {
@@ -161,14 +162,22 @@ func TestUpdateKnownReleasesReturnValueWhenNewAndKnownReleasesCombinedAreBelowLi
 func TestItBacksUpKnownReleasesWhenChanged(t *testing.T) {
 	setUp()
 	defer tearDown()
+	test.CopyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
 	UpdateKnownReleases([]FolderInfo{
-		{test.DummyFileInfo{"Mouldy Old Dough", true}, test.DummyFileInfo{"Lieutenant Pigeon", true}},
+		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
+		{test.DummyFileInfo{"Iconoclastic Diaries", true}, test.DummyFileInfo{"Shake", true}},
 	}, knownReleasesFile(), knownReleasesBackup(), 0)
 
-	_, backup := knownReleasesBackupLines()
-	if (len(backup) == 0) {
-		t.Error("Expected UpdateKnownReleases to create known releases backup but it didn't")
+	backupFile, backupLines := knownReleasesBackupLines()
+	defer backupFile.Close()
+	if (len(backupLines) == 0) {
+		t.Error("Expected UpdateKnownReleases to create backup but it didn't")
 	}
+
+	test.ExpectInt(t, "number of lines in backup", 5, len(backupLines))
+	test.Expect(t, "backup release 1", "Daniel Menche - Vent", backupLines[len(backupLines)-1])
+	test.Expect(t, "backup release 2", "Shake - Iconoclastic Diaries", backupLines[len(backupLines)-2])
+	test.Expect(t, "backup release 3", "The Krankies - It's Fan-dabi-dozi!", backupLines[len(backupLines)-3])
 }
 
 func TestItDoesntBackUpKnownReleasesWhenUnchanged(t *testing.T) {
@@ -178,7 +187,7 @@ func TestItDoesntBackUpKnownReleasesWhenUnchanged(t *testing.T) {
 
 	_, backup := knownReleasesBackupLines()
 	if (len(backup) > 0) {
-		t.Error("Expected UpdateKnownReleases to not create known releases backup but it did")
+		t.Error("Expected UpdateKnownReleases to not create backup but it did")
 	}
 }
 

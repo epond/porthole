@@ -54,6 +54,10 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 		panic(err)
 	}
 
+	if len(newReleases) > 0 {
+		backupKnownReleases(knownReleasesBackupPath, append(knownReleasesLines, newReleases...))
+	}
+
 	// Return sorted new releases then knownreleases from the end, up to a total of limit
 	sortByName(newReleases)
 	var latestAdditions []string
@@ -72,6 +76,32 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 	}
 
 	return latestAdditions
+}
+
+func backupKnownReleases(knownReleasesBackupPath string, releases []string) {
+	os.Remove(knownReleasesBackupPath)
+	if _, err := os.Stat(knownReleasesBackupPath); os.IsNotExist(err) {
+		file, errCreate := os.Create(knownReleasesBackupPath)
+		if (errCreate != nil) {
+			log.Printf("Could not create known releases backup at %v", knownReleasesBackupPath)
+			panic(errCreate)
+		}
+		file.Close()
+	}
+
+	knownReleasesBackupFile, _ := os.OpenFile(knownReleasesBackupPath, os.O_RDWR|os.O_APPEND, 0660)
+	defer knownReleasesBackupFile.Close()
+	krWriter := bufio.NewWriter(knownReleasesBackupFile)
+	for _, release := range releases {
+		if _, err := krWriter.WriteString(fmt.Sprintf("%v\n", release)); err != nil {
+			log.Printf("Could not write release to %v", knownReleasesBackupPath)
+			panic(err)
+		}
+	}
+	if err := krWriter.Flush(); err != nil {
+		log.Printf("Could not flush %v", knownReleasesBackupPath)
+		panic(err)
+	}
 }
 
 func ensureFileEndsInNewline(fileLocation string) {

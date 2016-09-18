@@ -10,8 +10,6 @@ import (
 	"github.com/epond/porthole/music"
 )
 
-const latestAdditionsLimit  = 10
-
 func main() {
 	musicFolder := os.Getenv("MUSIC_FOLDER")
 	knownReleasesFile := os.Getenv("KNOWN_RELEASES_FILE")
@@ -21,6 +19,7 @@ func main() {
 	fetchInterval, _ := strconv.Atoi(os.Getenv("FETCH_INTERVAL"))
 	dashboardRefreshInterval, _ := strconv.Atoi(os.Getenv("DASHBOARD_REFRESH_INTERVAL"))
 	foldersToScan := os.Getenv("FOLDERS_TO_SCAN")
+	latestAdditionsLimit, _ := strconv.Atoi(os.Getenv("LATEST_ADDITIONS_LIMIT"))
 
 	log.Printf("Starting porthole. Music folder: %v, Known releases file: %v, Backup: %v", musicFolder, knownReleasesFile, knownReleasesBackup)
 

@@ -43,7 +43,7 @@ func main() {
 	})
 
 	log.Print("porthole active - browse to http://localhost:9000")
-	http.ListenAndServe("localhost:9000", nil)
+	http.ListenAndServe(":9000", nil)
 }
 
 func templateHandler(templateFile string, data interface{}) func(res http.ResponseWriter, req *http.Request) {

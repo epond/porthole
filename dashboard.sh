@@ -14,9 +14,9 @@ echo "Waiting for network..."
 
 echo "Updating porthole..."
 cd /home/pi/go/src/github.com/epond/porthole
-export GIT_COMMIT=`git log --pretty=format:'%h' -n 1`
 rm /home/pi/porthole.log
 git pull -r >> /home/pi/porthole.log 2>&1
+export GIT_COMMIT=`git log --pretty=format:'%h' -n 1`
 bash -c ./build.sh >> /home/pi/porthole.log 2>&1
 
 echo "Mounting media folder from nas"

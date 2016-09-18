@@ -7,7 +7,7 @@ export KNOWN_RELEASES_BACKUP="/mnt/dashboard/knownreleases_backup.txt"
 export LOG_FILE="/home/pi/porthole.log"
 export FETCH_INTERVAL=30
 export DASHBOARD_REFRESH_INTERVAL=5
-export LATEST_ADDITIONS_LIMIT=10
+export LATEST_ADDITIONS_LIMIT=50
 export FOLDERS_TO_SCAN=flac:3,flac-cd:3,flac-add:2,flac-vorbis320:2,mp3/main:2
 
 echo "Waiting for network..."

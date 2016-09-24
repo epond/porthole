@@ -52,3 +52,8 @@ replace the contents of `~/.config/lxsession/LXDE-pi/autostart` with:
     @xset s noblank
     @/home/pi/go/src/github.com/epond/porthole/dashboard.sh
 
+# Tailor the way the dashboard script mounts your NAS drive
+
+The script `dashboard.sh` sets things up before the porthole golang app runs.
+It looks for a NAS box serving files over CIFS at a specific ip address.
+You will need to add CIFS credentials on the pi in the file `/home/pi/nascredentials`

@@ -56,4 +56,6 @@ replace the contents of `~/.config/lxsession/LXDE-pi/autostart` with:
 
 The script `dashboard.sh` sets things up before the porthole golang app runs.
 It looks for a NAS box serving files over CIFS at a specific ip address.
+At the moment the folders it looks for are specific to how my system is set up
+and there isn't easy configuration to change this.
 You will need to add CIFS credentials on the pi in the file `/home/pi/nascredentials`

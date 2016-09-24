@@ -25,8 +25,8 @@ sudo mkdir -p /mnt/nasmedia
 sudo mkdir -p /mnt/dashboard
 sudo chmod 777 /mnt/nasmedia
 sudo chmod 777 /mnt/dashboard
-sudo mount -o nolock 192.168.1.102:/volume1/media /mnt/nasmedia
-sudo mount -o nolock 192.168.1.102:/volume1/dashboard /mnt/dashboard
+sudo sh -c 'mount -t cifs //192.168.1.102/media /mnt/nasmedia --verbose -o credentials=/home/pi/nascredentials >> /home/pi/porthole.log 2>&1'
+sudo sh -c 'mount -t cifs //192.168.1.102/dashboard /mnt/dashboard --verbose -o credentials=/home/pi/nascredentials >> /home/pi/porthole.log 2>&1'
 
 echo "Starting porthole in background..."
 /home/pi/go/bin/porthole >> /home/pi/porthole.log 2>&1 &

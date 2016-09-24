@@ -40,7 +40,12 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 	log.Printf("Found %v new releases", len(newReleases))
 
 	// Append new releases to known releases file
-	knownReleasesFile, _ := os.OpenFile(knownReleasesPath, os.O_RDWR|os.O_APPEND, 0660)
+	var knownReleasesFile *os.File
+	knownReleasesFile, err := os.OpenFile(knownReleasesPath, os.O_RDWR|os.O_APPEND, 0660)
+	if err != nil {
+		log.Printf("Could not open known releases file for appending: %v", knownReleasesPath)
+		panic(err)
+	}
 	defer knownReleasesFile.Close()
 	krWriter := bufio.NewWriter(knownReleasesFile)
 	for _, newRelease := range newReleases {

@@ -17,8 +17,8 @@ sudo mkdir -p /mnt/nasmedia
 sudo mkdir -p /mnt/dashboard
 sudo chmod 777 /mnt/nasmedia
 sudo chmod 777 /mnt/dashboard
-sudo sh -c 'mount -t cifs //192.168.1.102/media /mnt/nasmedia --verbose -o credentials=/home/ed/nascredentials >> /home/$
-sudo sh -c 'mount -t cifs //192.168.1.102/dashboard /mnt/dashboard --verbose -o credentials=/home/ed/nascredentials >> /$
+sudo sh -c 'mount -t cifs //192.168.1.102/media /mnt/nasmedia --verbose -o credentials=/home/ed/nascredentials >> /home/ed/porthole.log 2>&1'
+sudo sh -c 'mount -t cifs //192.168.1.102/dashboard /mnt/dashboard --verbose -o credentials=/home/ed/nascredentials >> /home/ed/porthole.log 2>&1'
 
 echo "Starting porthole in background..."
 /home/ed/go/bin/porthole >> /home/ed/porthole.log 2>&1 &

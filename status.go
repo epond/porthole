@@ -32,7 +32,7 @@ func NewStatusCoordinator(gitCommit string, fetchInterval int, recordCollectionA
 	}
 
 	go func() {
-		c := time.Tick(time.Duration(fetchInterval) * time.Second)
+		c := time.Tick(time.Duration(fetchInterval) * time.Millisecond)
 		statusCoordinator.doWork()
 		for _ = range c {
 			statusCoordinator.doWork()

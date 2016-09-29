@@ -34,7 +34,7 @@ func main() {
 		fetchInterval,
 		recordCollectionAdditions)
 
-	http.HandleFunc("/", templateHandler("dashboard.html", dashboardRefreshInterval * 1000))
+	http.HandleFunc("/", templateHandler("dashboard.html", dashboardRefreshInterval))
 	http.HandleFunc("/dashinfo", templateHandler("dashinfo.html", statusCoordinator.status))
 	http.HandleFunc("/log", logHandler(logFile))
 	http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {

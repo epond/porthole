@@ -8,6 +8,7 @@ import (
 	"path"
 	"strconv"
 	"github.com/epond/porthole/music"
+	"time"
 )
 
 func main() {
@@ -29,10 +30,12 @@ func main() {
 		knownReleasesBackup,
 		foldersToScan,
 		latestAdditionsLimit)
+	clock := time.Tick(time.Duration(fetchInterval) * time.Millisecond)
 	statusCoordinator := NewStatusCoordinator(
 		gitCommit,
 		fetchInterval,
-		recordCollectionAdditions)
+		recordCollectionAdditions,
+		clock)
 
 	http.HandleFunc("/", templateHandler("dashboard.html", dashboardRefreshInterval))
 	http.HandleFunc("/dashinfo", templateHandler("dashinfo.html", statusCoordinator.status))

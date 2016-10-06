@@ -8,6 +8,7 @@ import (
 type Status struct {
 	GitCommit string
 	Counter int
+	LastRequest time.Time
 	LatestAdditions []string
 }
 
@@ -20,10 +21,11 @@ type RecordCollectionAdditions interface {
 	FetchLatestAdditions() []string
 }
 
-func NewStatusCoordinator(gitCommit string, fetchInterval int, recordCollectionAdditions RecordCollectionAdditions) *StatusCoordinator {
+func NewStatusCoordinator(gitCommit string, fetchInterval int, recordCollectionAdditions RecordCollectionAdditions, clock <-chan time.Time) *StatusCoordinator {
 	status := &Status{
 		GitCommit: gitCommit,
 		Counter: 0,
+		LastRequest: time.Now(),
 		LatestAdditions: []string{},
 	}
 	statusCoordinator := &StatusCoordinator{
@@ -32,9 +34,8 @@ func NewStatusCoordinator(gitCommit string, fetchInterval int, recordCollectionA
 	}
 
 	go func() {
-		c := time.Tick(time.Duration(fetchInterval) * time.Millisecond)
 		statusCoordinator.doWork()
-		for _ = range c {
+		for _ = range clock {
 			statusCoordinator.doWork()
 		}
 	}()

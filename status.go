@@ -35,7 +35,7 @@ func NewStatusCoordinator(gitCommit string, recordCollectionAdditions RecordColl
 
 	go func() {
 		statusCoordinator.doWork()
-		for range clock {
+		for _ = range clock {
 			statusCoordinator.doWork()
 		}
 	}()

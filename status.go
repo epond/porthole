@@ -21,7 +21,7 @@ type RecordCollectionAdditions interface {
 	FetchLatestAdditions() []string
 }
 
-func NewStatusCoordinator(gitCommit string, fetchInterval int, recordCollectionAdditions RecordCollectionAdditions, clock <-chan time.Time) *StatusCoordinator {
+func NewStatusCoordinator(gitCommit string, recordCollectionAdditions RecordCollectionAdditions, clock <-chan time.Time) *StatusCoordinator {
 	status := &Status{
 		GitCommit: gitCommit,
 		Counter: 0,
@@ -35,7 +35,7 @@ func NewStatusCoordinator(gitCommit string, fetchInterval int, recordCollectionA
 
 	go func() {
 		statusCoordinator.doWork()
-		for _ = range clock {
+		for range clock {
 			statusCoordinator.doWork()
 		}
 	}()

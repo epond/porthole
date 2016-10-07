@@ -33,7 +33,6 @@ func main() {
 	clock := time.Tick(time.Duration(fetchInterval) * time.Millisecond)
 	statusCoordinator := NewStatusCoordinator(
 		gitCommit,
-		fetchInterval,
 		recordCollectionAdditions,
 		clock)
 

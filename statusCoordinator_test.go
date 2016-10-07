@@ -8,13 +8,21 @@ import (
 
 func TestStatusCoordinatorDoesWorkBeforeWaitingForFirstClockTick(t *testing.T) {
 	rca := &DummyRCA{workCount: 0}
-	dummyClock := make(chan time.Time, 3)
-	NewStatusCoordinator("commit", 1, rca, dummyClock)
+	NewStatusCoordinator("commit", 1, rca, make(chan time.Time, 0))
 	time.Sleep(5 * time.Millisecond)
 	test.ExpectInt(t, "workCount", 1, rca.workCount)
 }
 
-func TestStatusCoordinatorDoesWorkEveryClockTick(t *testing.T) {}
+func TestStatusCoordinatorDoesWorkEveryClockTick(t *testing.T) {
+	rca := &DummyRCA{workCount: 0}
+	dummyClock := make(chan time.Time, 3)
+	dummyClock <- time.Now()
+	dummyClock <- time.Now()
+	dummyClock <- time.Now()
+	NewStatusCoordinator("commit", 1, rca, dummyClock)
+	time.Sleep(5 * time.Millisecond)
+	test.ExpectInt(t, "workCount", 4, rca.workCount)
+}
 
 func TestStatusCoordinatorDoesNoWorkWhenLastRequestWasALongTimeAgo(t *testing.T) {}
 

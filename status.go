@@ -6,31 +6,35 @@ import (
 )
 
 type Status struct {
-	GitCommit string
-	Counter int
-	LastRequest time.Time
+	GitCommit       string
+	Counter         int
+	LastRequest     time.Time
 	LatestAdditions []string
 }
 
 type StatusCoordinator struct {
-	status *Status
-	recordCollectionAdditions RecordCollectionAdditions
+	status             *Status
+	statusUpdateWorker StatusUpdateWorker
 }
 
-type RecordCollectionAdditions interface {
-	FetchLatestAdditions() []string
+type StatusUpdateWorker interface {
+	UpdateStatus(status *Status)
 }
 
-func NewStatusCoordinator(gitCommit string, recordCollectionAdditions RecordCollectionAdditions, clock <-chan time.Time) *StatusCoordinator {
+func NewStatusCoordinator(
+	gitCommit string,
+	statusUpdateWorker StatusUpdateWorker,
+	clock <-chan time.Time) *StatusCoordinator {
+
 	status := &Status{
-		GitCommit: gitCommit,
-		Counter: 0,
-		LastRequest: time.Now(),
+		GitCommit:       gitCommit,
+		Counter:         0,
+		LastRequest:     time.Now(),
 		LatestAdditions: []string{},
 	}
 	statusCoordinator := &StatusCoordinator{
 		status,
-		recordCollectionAdditions,
+		statusUpdateWorker,
 	}
 
 	go func() {
@@ -44,7 +48,7 @@ func NewStatusCoordinator(gitCommit string, recordCollectionAdditions RecordColl
 }
 
 func (s *StatusCoordinator) doWork() {
-	s.status.LatestAdditions = s.recordCollectionAdditions.FetchLatestAdditions()
+	s.statusUpdateWorker.UpdateStatus(s.status)
 	s.status.Counter = s.status.Counter + 1
 	log.Printf("Status counter:%v, additions:%v", s.status.Counter, s.status.LatestAdditions)
 }

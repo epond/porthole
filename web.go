@@ -33,7 +33,7 @@ func main() {
 	clock := time.Tick(time.Duration(fetchInterval) * time.Millisecond)
 	statusCoordinator := NewStatusCoordinator(
 		gitCommit,
-		recordCollectionAdditions,
+		&MusicStatusWorker{recordCollectionAdditions},
 		clock)
 
 	http.HandleFunc("/", templateHandler("dashboard.html", dashboardRefreshInterval))

@@ -7,14 +7,14 @@ import (
 )
 
 func TestStatusCoordinatorDoesWorkBeforeWaitingForFirstClockTick(t *testing.T) {
-	rca := &DummyRCA{workCount: 0}
+	rca := &DummyWorker{workCount: 0}
 	NewStatusCoordinator("commit", rca, make(chan time.Time, 0))
 	time.Sleep(5 * time.Millisecond)
 	test.ExpectInt(t, "workCount", 1, rca.workCount)
 }
 
 func TestStatusCoordinatorDoesWorkEveryClockTick(t *testing.T) {
-	rca := &DummyRCA{workCount: 0}
+	rca := &DummyWorker{workCount: 0}
 	dummyClock := make(chan time.Time, 3)
 	dummyClock <- time.Now()
 	dummyClock <- time.Now()
@@ -26,11 +26,10 @@ func TestStatusCoordinatorDoesWorkEveryClockTick(t *testing.T) {
 
 func TestStatusCoordinatorDoesNoWorkWhenLastRequestWasALongTimeAgo(t *testing.T) {}
 
-type DummyRCA struct {
+type DummyWorker struct {
 	workCount int
 }
 
-func (d *DummyRCA) FetchLatestAdditions() []string {
+func (d *DummyWorker) UpdateStatus(status *Status) {
 	d.workCount += 1
-	return []string{}
 }

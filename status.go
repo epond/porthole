@@ -18,7 +18,7 @@ type StatusCoordinator struct {
 }
 
 type StatusUpdateWorker interface {
-	UpdateStatus(status *Status)
+	UpdateStatus(timestamp time.Time, status *Status)
 }
 
 func NewStatusCoordinator(
@@ -38,17 +38,17 @@ func NewStatusCoordinator(
 	}
 
 	go func() {
-		statusCoordinator.doWork()
-		for _ = range clock {
-			statusCoordinator.doWork()
+		statusCoordinator.doWork(time.Now())
+		for tick := range clock {
+			statusCoordinator.doWork(tick)
 		}
 	}()
 
 	return statusCoordinator
 }
 
-func (s *StatusCoordinator) doWork() {
-	s.statusUpdateWorker.UpdateStatus(s.status)
+func (s *StatusCoordinator) doWork(tick time.Time) {
+	s.statusUpdateWorker.UpdateStatus(tick, s.status)
 	s.status.Counter = s.status.Counter + 1
 	log.Printf("Status counter:%v, additions:%v", s.status.Counter, s.status.LatestAdditions)
 }

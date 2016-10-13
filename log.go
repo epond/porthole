@@ -1,10 +1,10 @@
 package main
 
 import (
-	"net/http"
-	"io/ioutil"
-	"html/template"
 	"fmt"
+	"html/template"
+	"io/ioutil"
+	"net/http"
 )
 
 func logHandler(logFile string) func(res http.ResponseWriter, _ *http.Request) {

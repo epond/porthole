@@ -1,8 +1,8 @@
 package main
 
 import (
-	"testing"
 	"github.com/epond/porthole/test"
+	"testing"
 	"time"
 )
 

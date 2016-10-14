@@ -34,7 +34,8 @@ func main() {
 	statusCoordinator := NewStatusCoordinator(
 		gitCommit,
 		&MusicStatusWorker{recordCollectionAdditions},
-		clock)
+		clock,
+		10 * time.Minute)
 
 	http.HandleFunc("/", templateHandler("dashboard.html", dashboardRefreshInterval))
 	http.HandleFunc("/dashinfo", templateHandler("dashinfo.html", statusCoordinator.status))

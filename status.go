@@ -24,7 +24,8 @@ type StatusUpdateWorker interface {
 func NewStatusCoordinator(
 	gitCommit string,
 	statusUpdateWorker StatusUpdateWorker,
-	clock <-chan time.Time) *StatusCoordinator {
+	clock <-chan time.Time,
+	sleepAfter time.Duration) *StatusCoordinator {
 
 	status := &Status{
 		GitCommit:       gitCommit,

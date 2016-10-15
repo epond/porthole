@@ -83,6 +83,20 @@ func TestStatusCoordinatorResumesWorkWhenRequestsResume(t *testing.T) {
 	test.Expect(t, "tick6", tick6.Format(time.RFC822), worker.ticks[4].Format(time.RFC822))
 }
 
+func TestLastFetchIsTimeOfLastTickThatDidWork(t *testing.T) {
+	worker := &DummyWorker{workCount: 0, ticks: []time.Time{}}
+	now := time.Now()
+	tick1 := now.Add(9 * time.Minute)
+	tick2 := now.Add(11 * time.Minute)
+	dummyClock := make(chan time.Time, 2)
+	coordinator := NewStatusCoordinator("commit", worker, dummyClock, 10 * time.Minute)
+	coordinator.status.LastRequest = time.Now()
+	dummyClock <- tick1
+	dummyClock <- tick2
+	time.Sleep(5 * time.Millisecond)
+	test.Expect(t, "LastFetch", tick1.Format(time.ANSIC), coordinator.status.LastFetch)
+}
+
 type DummyWorker struct {
 	workCount int
 	ticks []time.Time

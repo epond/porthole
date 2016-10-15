@@ -9,6 +9,7 @@ type Status struct {
 	GitCommit       string
 	Counter         int
 	LastRequest     time.Time
+	LastFetch       string
 	LatestAdditions []string
 }
 
@@ -32,6 +33,7 @@ func NewStatusCoordinator(
 		GitCommit:       gitCommit,
 		Counter:         0,
 		LastRequest:     time.Unix(0, 0),
+		LastFetch:       "",
 		LatestAdditions: []string{},
 	}
 	statusCoordinator := &StatusCoordinator{
@@ -54,6 +56,7 @@ func (s *StatusCoordinator) doWork(tick time.Time) {
 	if tick.Before(s.status.LastRequest.Add(s.sleepAfter)) {
 		log.Println("Working")
 		s.statusUpdateWorker.UpdateStatus(tick, s.status)
+		s.status.LastFetch = tick.Format(time.ANSIC)
 		s.status.Counter = s.status.Counter + 1
 	} else {
 		log.Println("Sleeping")

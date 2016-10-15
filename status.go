@@ -32,7 +32,7 @@ func NewStatusCoordinator(
 	status := &Status{
 		GitCommit:       gitCommit,
 		Counter:         0,
-		LastRequest:     time.Unix(0, 0),
+		LastRequest:     time.Now(),
 		LastFetch:       "",
 		LatestAdditions: []string{},
 	}

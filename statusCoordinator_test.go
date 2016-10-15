@@ -8,7 +8,8 @@ import (
 
 func TestStatusCoordinatorDoesWorkBeforeWaitingForFirstClockTick(t *testing.T) {
 	rca := &DummyWorker{workCount: 0}
-	NewStatusCoordinator("commit", rca, make(chan time.Time, 0), 10 * time.Minute)
+	coordinator := NewStatusCoordinator("commit", rca, make(chan time.Time, 0), 10 * time.Minute)
+	coordinator.status.LastRequest = time.Now()
 	time.Sleep(5 * time.Millisecond)
 	test.ExpectInt(t, "workCount", 1, rca.workCount)
 }
@@ -20,7 +21,8 @@ func TestStatusCoordinatorDoesWorkEveryClockTick(t *testing.T) {
 	tick2 := now.Add(1 * time.Minute)
 	tick3 := now.Add(1 * time.Minute)
 	dummyClock := make(chan time.Time, 3)
-	NewStatusCoordinator("commit", worker, dummyClock, 10 * time.Minute)
+	coordinator := NewStatusCoordinator("commit", worker, dummyClock, 10 * time.Minute)
+	coordinator.status.LastRequest = time.Now()
 	dummyClock <- tick1
 	dummyClock <- tick2
 	dummyClock <- tick3
@@ -40,7 +42,8 @@ func TestStatusCoordinatorDoesNoWorkWhenLastRequestWasALongTimeAgo(t *testing.T)
 	tick4 := now.Add(15 * time.Minute)
 	tick5 := now.Add(101 * time.Minute)
 	dummyClock := make(chan time.Time, 5)
-	NewStatusCoordinator("commit", worker, dummyClock, 10 * time.Minute)
+	coordinator := NewStatusCoordinator("commit", worker, dummyClock, 10 * time.Minute)
+	coordinator.status.LastRequest = time.Now()
 	dummyClock <- tick1
 	dummyClock <- tick2
 	dummyClock <- tick3
@@ -63,6 +66,7 @@ func TestStatusCoordinatorResumesWorkWhenRequestsResume(t *testing.T) {
 	tick6 := now.Add(109 * time.Minute)
 	dummyClock := make(chan time.Time, 10)
 	coordinator := NewStatusCoordinator("commit", worker, dummyClock, 10 * time.Minute)
+	coordinator.status.LastRequest = time.Now()
 	dummyClock <- tick1
 	dummyClock <- tick2
 	dummyClock <- tick3

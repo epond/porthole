@@ -15,6 +15,7 @@ type Status struct {
 type StatusCoordinator struct {
 	status             *Status
 	statusUpdateWorker StatusUpdateWorker
+	sleepAfter         time.Duration
 }
 
 type StatusUpdateWorker interface {
@@ -36,6 +37,7 @@ func NewStatusCoordinator(
 	statusCoordinator := &StatusCoordinator{
 		status,
 		statusUpdateWorker,
+		sleepAfter,
 	}
 
 	go func() {
@@ -49,7 +51,11 @@ func NewStatusCoordinator(
 }
 
 func (s *StatusCoordinator) doWork(tick time.Time) {
-	s.statusUpdateWorker.UpdateStatus(tick, s.status)
-	s.status.Counter = s.status.Counter + 1
-	log.Printf("Status counter:%v, additions:%v", s.status.Counter, s.status.LatestAdditions)
+	if tick.Before(s.status.LastRequest.Add(s.sleepAfter)) {
+		log.Println("Working")
+		s.statusUpdateWorker.UpdateStatus(tick, s.status)
+		s.status.Counter = s.status.Counter + 1
+	} else {
+		log.Println("Sleeping")
+	}
 }

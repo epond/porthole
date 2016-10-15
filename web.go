@@ -19,6 +19,7 @@ func main() {
 	logFile := os.Getenv("LOG_FILE")
 	fetchInterval, _ := strconv.Atoi(os.Getenv("FETCH_INTERVAL"))
 	dashboardRefreshInterval, _ := strconv.Atoi(os.Getenv("DASHBOARD_REFRESH_INTERVAL"))
+	sleepAfter, _ := strconv.Atoi(os.Getenv("SLEEP_AFTER"))
 	foldersToScan := os.Getenv("FOLDERS_TO_SCAN")
 	latestAdditionsLimit, _ := strconv.Atoi(os.Getenv("LATEST_ADDITIONS_LIMIT"))
 
@@ -35,10 +36,10 @@ func main() {
 		gitCommit,
 		&MusicStatusWorker{recordCollectionAdditions},
 		clock,
-		10 * time.Minute)
+		time.Duration(sleepAfter) * time.Millisecond)
 
 	http.HandleFunc("/", templateHandler("dashboard.html", dashboardRefreshInterval))
-	http.HandleFunc("/dashinfo", templateHandler("dashinfo.html", statusCoordinator.status))
+	http.HandleFunc("/dashinfo", dashinfoHandler(statusCoordinator.status))
 	http.HandleFunc("/log", logHandler(logFile))
 	http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, r.URL.Path[1:])
@@ -46,6 +47,14 @@ func main() {
 
 	log.Print("porthole active - browse to http://localhost:9000")
 	http.ListenAndServe(":9000", nil)
+}
+
+func dashinfoHandler(status *Status) func(res http.ResponseWriter, req *http.Request) {
+	return func(res http.ResponseWriter, req *http.Request) {
+		log.Println("Rendering dashinfo")
+		status.LastRequest = time.Now()
+		templateHandler("dashinfo.html", status)(res, req)
+	}
 }
 
 func templateHandler(templateFile string, data interface{}) func(res http.ResponseWriter, req *http.Request) {

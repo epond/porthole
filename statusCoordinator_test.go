@@ -10,7 +10,7 @@ func TestStatusCoordinatorDoesWorkBeforeWaitingForFirstClockTick(t *testing.T) {
 	rca := &DummyWorker{workCount: 0}
 	coordinator := NewStatusCoordinator("commit", rca, make(chan time.Time, 0), 10 * time.Minute)
 	coordinator.status.LastRequest = time.Now()
-	time.Sleep(5 * time.Millisecond)
+	time.Sleep(30 * time.Millisecond)
 	test.ExpectInt(t, "workCount", 1, rca.workCount)
 }
 
@@ -26,7 +26,7 @@ func TestStatusCoordinatorDoesWorkEveryClockTick(t *testing.T) {
 	dummyClock <- tick1
 	dummyClock <- tick2
 	dummyClock <- tick3
-	time.Sleep(5 * time.Millisecond)
+	time.Sleep(30 * time.Millisecond)
 	test.ExpectInt(t, "workCount", 4, worker.workCount)
 	test.Expect(t, "tick1", tick1.Format(time.RFC822), worker.ticks[1].Format(time.RFC822))
 	test.Expect(t, "tick2", tick2.Format(time.RFC822), worker.ticks[2].Format(time.RFC822))
@@ -49,7 +49,7 @@ func TestStatusCoordinatorDoesNoWorkWhenLastRequestWasALongTimeAgo(t *testing.T)
 	dummyClock <- tick3
 	dummyClock <- tick4
 	dummyClock <- tick5
-	time.Sleep(5 * time.Millisecond)
+	time.Sleep(30 * time.Millisecond)
 	test.ExpectInt(t, "workCount", 3, worker.workCount)
 	test.Expect(t, "tick1", tick1.Format(time.RFC822), worker.ticks[1].Format(time.RFC822))
 	test.Expect(t, "tick2", tick2.Format(time.RFC822), worker.ticks[2].Format(time.RFC822))
@@ -71,11 +71,11 @@ func TestStatusCoordinatorResumesWorkWhenRequestsResume(t *testing.T) {
 	dummyClock <- tick2
 	dummyClock <- tick3
 	dummyClock <- tick4
-	time.Sleep(5 * time.Millisecond)
+	time.Sleep(30 * time.Millisecond)
 	coordinator.status.LastRequest = now.Add(100 * time.Minute)
 	dummyClock <- tick5
 	dummyClock <- tick6
-	time.Sleep(5 * time.Millisecond)
+	time.Sleep(30 * time.Millisecond)
 	test.ExpectInt(t, "workCount", 5, worker.workCount)
 	test.Expect(t, "tick1", tick1.Format(time.RFC822), worker.ticks[1].Format(time.RFC822))
 	test.Expect(t, "tick2", tick2.Format(time.RFC822), worker.ticks[2].Format(time.RFC822))
@@ -93,7 +93,7 @@ func TestLastFetchIsTimeOfLastTickThatDidWork(t *testing.T) {
 	coordinator.status.LastRequest = time.Now()
 	dummyClock <- tick1
 	dummyClock <- tick2
-	time.Sleep(5 * time.Millisecond)
+	time.Sleep(30 * time.Millisecond)
 	test.Expect(t, "LastFetch", tick1.Format(time.ANSIC), coordinator.status.LastFetch)
 }
 

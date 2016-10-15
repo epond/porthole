@@ -26,7 +26,6 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 
 	// Read knownreleases into an array of its lines and a map
 	knownReleasesLines, knownReleasesMap := readFile(knownReleasesPath)
-	log.Printf("Found %v known releases", len(knownReleasesMap))
 
 	// Build a list of current scan entries not present in known releases (new releases)
 	var newReleases []string
@@ -37,7 +36,7 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 	}
 
 	reverseSortByName(newReleases)
-	log.Printf("Found %v new releases", len(newReleases))
+	log.Printf("Found %v known and %v new releases", len(knownReleasesMap), len(newReleases))
 
 	// Append new releases to known releases file
 	var knownReleasesFile *os.File

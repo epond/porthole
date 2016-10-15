@@ -51,7 +51,6 @@ func main() {
 
 func dashinfoHandler(status *Status) func(res http.ResponseWriter, req *http.Request) {
 	return func(res http.ResponseWriter, req *http.Request) {
-		log.Println("Rendering dashinfo")
 		status.LastRequest = time.Now()
 		templateHandler("dashinfo.html", status)(res, req)
 	}

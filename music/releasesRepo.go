@@ -38,6 +38,15 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 	reverseSortByName(newReleases)
 	log.Printf("Found %v known and %v new releases", len(knownReleasesMap), len(newReleases))
 
+	missingReleases := findMissingReleases(folderScanList, knownReleasesLines)
+
+	if len(missingReleases) > 0 {
+		log.Printf("Found %v missing releases", len(missingReleases))
+		for i, missing := range missingReleases {
+			log.Printf("Missing #%v: %v", i+1, missing)
+		}
+	}
+
 	// Append new releases to known releases file
 	var knownReleasesFile *os.File
 	knownReleasesFile, err := os.OpenFile(knownReleasesPath, os.O_RDWR|os.O_APPEND, 0660)
@@ -80,6 +89,23 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 	}
 
 	return latestAdditions
+}
+
+func findMissingReleases(scanned []FolderInfo, known []string) []string {
+	scannedMap := make(map[string]int)
+	for _, release := range scanned {
+		scannedMap[release.String()] = present
+	}
+
+	// Build a list of known releases not present in current scan
+	var missingList []string
+	for _, release := range known {
+		if scannedMap[release] != present {
+			missingList = append(missingList, release)
+		}
+	}
+
+	return missingList
 }
 
 func backupKnownReleases(knownReleasesBackupPath string, releases []string) {

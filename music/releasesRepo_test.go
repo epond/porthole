@@ -191,6 +191,51 @@ func TestItDoesntBackUpKnownReleasesWhenUnchanged(t *testing.T) {
 	}
 }
 
+func TestNoMissingReleases(t *testing.T) {
+	scanned := []FolderInfo{
+		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
+		{test.DummyFileInfo{"Iconoclastic Diaries", true}, test.DummyFileInfo{"Shake", true}},
+	}
+	known := []string{
+		"Daniel Menche - Vent",
+		"Shake - Iconoclastic Diaries",
+	}
+	missing := findMissingReleases(scanned, known)
+	test.ExpectInt(t, "number of missing releases", 0, len(missing))
+}
+
+func TestOneMissingRelease(t *testing.T) {
+	scanned := []FolderInfo{
+		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
+		{test.DummyFileInfo{"Iconoclastic Diaries", true}, test.DummyFileInfo{"Shake", true}},
+	}
+	known := []string{
+		"Daniel Menche - Vent",
+		"The Krankies - It's Fan-dabi-dozi!",
+		"Shake - Iconoclastic Diaries",
+	}
+	missing := findMissingReleases(scanned, known)
+	test.ExpectInt(t, "number of missing releases", 1, len(missing))
+	test.Expect(t, "missing release", "The Krankies - It's Fan-dabi-dozi!", missing[0])
+}
+
+func TestTwoMissingReleases(t *testing.T) {
+	scanned := []FolderInfo{
+		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
+		{test.DummyFileInfo{"Iconoclastic Diaries", true}, test.DummyFileInfo{"Shake", true}},
+	}
+	known := []string{
+		"Daniel Menche - Vent",
+		"The Krankies - It's Fan-dabi-dozi!",
+		"Shake - Iconoclastic Diaries",
+		"Throbbing Gristle - Discipline",
+	}
+	missing := findMissingReleases(scanned, known)
+	test.ExpectInt(t, "number of missing releases", 2, len(missing))
+	test.Expect(t, "missing release 1", "The Krankies - It's Fan-dabi-dozi!", missing[0])
+	test.Expect(t, "missing release 2", "Throbbing Gristle - Discipline", missing[1])
+}
+
 func setUp() {
 	os.Mkdir(tempDir(), os.ModePerm)
 }

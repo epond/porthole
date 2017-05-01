@@ -1,13 +1,13 @@
 #!/bin/bash
 
-export MUSIC_FOLDER="/mnt/nasmedia/Music"
+export MUSIC_FOLDER="/mnt/nasmedia"
 export KNOWN_RELEASES_FILE="/mnt/dashboard/knownreleases.txt"
 export KNOWN_RELEASES_BACKUP="/mnt/dashboard/knownreleases_backup.txt"
 export LOG_FILE="/home/ed/porthole.log"
 export FETCH_INTERVAL=30000
 export DASHBOARD_REFRESH_INTERVAL=5000
 export SLEEP_AFTER=60000
-export FOLDERS_TO_SCAN=flac:3,flac-cd:3,flac-add:2,flac-vorbis320:2,mp3/main:2
+export FOLDERS_TO_SCAN="Music/flac:3,Music/flac-cd:3,Music/flac-add:2,Music/flac-vorbis320:2,Music/mp3/main:2,Music_other/hd audio:3"
 export LATEST_ADDITIONS_LIMIT=50
 export GIT_COMMIT=`git log --pretty=format:'%h' -n 1`
 

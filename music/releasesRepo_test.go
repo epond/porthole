@@ -1,10 +1,11 @@
 package music
 
 import (
-	"testing"
+	"bufio"
 	"os"
 	"path"
-	"bufio"
+	"testing"
+
 	"github.com/epond/porthole/test"
 )
 
@@ -15,7 +16,7 @@ func TestItCreatesFileWhenKnownReleasesFileMissing(t *testing.T) {
 		{test.DummyFileInfo{"Mouldy Old Dough", true}, test.DummyFileInfo{"Lieutenant Pigeon", true}},
 	}, knownReleasesFile(), knownReleasesBackup(), 0)
 	_, lines := knownReleasesLines()
-	if (len(lines) == 0) {
+	if len(lines) == 0 {
 		t.Error("Expected UpdateKnownReleases to create known releases file but it didn't")
 	}
 
@@ -170,7 +171,7 @@ func TestItBacksUpKnownReleasesWhenChanged(t *testing.T) {
 
 	backupFile, backupLines := knownReleasesBackupLines()
 	defer backupFile.Close()
-	if (len(backupLines) == 0) {
+	if len(backupLines) == 0 {
 		t.Error("Expected UpdateKnownReleases to create backup but it didn't")
 	}
 
@@ -186,7 +187,7 @@ func TestItDoesntBackUpKnownReleasesWhenUnchanged(t *testing.T) {
 	UpdateKnownReleases([]FolderInfo{}, knownReleasesFile(), knownReleasesBackup(), 0)
 
 	_, backup := knownReleasesBackupLines()
-	if (len(backup) > 0) {
+	if len(backup) > 0 {
 		t.Error("Expected UpdateKnownReleases to not create backup but it did")
 	}
 }

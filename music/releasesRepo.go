@@ -1,11 +1,11 @@
 package music
 
 import (
-	"os"
 	"bufio"
 	"fmt"
-	"sort"
 	"log"
+	"os"
+	"sort"
 )
 
 const present = 1
@@ -15,7 +15,7 @@ type SortableStrings []string
 func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, knownReleasesBackupPath string, limit int) []string {
 	if _, err := os.Stat(knownReleasesPath); os.IsNotExist(err) {
 		file, errCreate := os.Create(knownReleasesPath)
-		if (errCreate != nil) {
+		if errCreate != nil {
 			log.Printf("Could not create known releases at %v", knownReleasesPath)
 			panic(errCreate)
 		}
@@ -112,7 +112,7 @@ func backupKnownReleases(knownReleasesBackupPath string, releases []string) {
 	os.Remove(knownReleasesBackupPath)
 	if _, err := os.Stat(knownReleasesBackupPath); os.IsNotExist(err) {
 		file, errCreate := os.Create(knownReleasesBackupPath)
-		if (errCreate != nil) {
+		if errCreate != nil {
 			log.Printf("Could not create known releases backup at %v", knownReleasesBackupPath)
 			panic(errCreate)
 		}
@@ -162,7 +162,7 @@ func (slice SortableStrings) Len() int {
 }
 
 func (slice SortableStrings) Less(i, j int) bool {
-	return slice[i] < slice[j];
+	return slice[i] < slice[j]
 }
 
 func (slice SortableStrings) Swap(i, j int) {

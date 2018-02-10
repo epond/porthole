@@ -1,16 +1,16 @@
 package music
 
 import (
-	"strings"
-	"strconv"
 	"path"
+	"strconv"
+	"strings"
 )
 
 type FileBasedAdditions struct {
-	musicFolder string
-	knownReleasesFile string
-	knownReleasesBackup string
-	foldersToScan string
+	musicFolder          string
+	knownReleasesFile    string
+	knownReleasesBackup  string
+	foldersToScan        string
 	latestAdditionsLimit int
 }
 

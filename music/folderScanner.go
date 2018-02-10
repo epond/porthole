@@ -1,22 +1,22 @@
 package music
 
 import (
-	"os"
-	"path"
 	"fmt"
 	"log"
-	"unicode/utf8"
+	"os"
+	"path"
 	"strings"
+	"unicode/utf8"
 )
 
 type FolderToScan struct {
 	rootFolderPath string
-	targetDepth int
+	targetDepth    int
 }
 
 type FolderInfo struct {
 	fileInfo os.FileInfo
-	parent os.FileInfo
+	parent   os.FileInfo
 }
 
 func ScanFolders(foldersToScan []FolderToScan) []FolderInfo {

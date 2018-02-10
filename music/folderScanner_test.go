@@ -1,11 +1,12 @@
 package music
 
 import (
-	"testing"
-	"path"
-	"os"
 	"bytes"
+	"os"
+	"path"
 	"sort"
+	"testing"
+
 	"github.com/epond/porthole/test"
 )
 
@@ -54,7 +55,7 @@ func pipeDelimitedString(list []FolderInfo) string {
 	var all bytes.Buffer
 	for i, element := range list {
 		all.WriteString(element.String())
-		if i < len(list) - 1 {
+		if i < len(list)-1 {
 			all.WriteString("|")
 		}
 	}
@@ -68,7 +69,7 @@ func (slice FolderInfosSortedByString) Len() int {
 }
 
 func (slice FolderInfosSortedByString) Less(i, j int) bool {
-	return slice[i].String() < slice[j].String();
+	return slice[i].String() < slice[j].String()
 }
 
 func (slice FolderInfosSortedByString) Swap(i, j int) {

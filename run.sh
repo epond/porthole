@@ -11,4 +11,4 @@ export LATEST_ADDITIONS_LIMIT=10
 export FOLDERS_TO_SCAN="dummymusic/flac-vorbis320:2,dummymusic/mp3/main:2,dummymusic/hd audio:3"
 
 ./build.sh &&
-porthole
+$GOPATH/bin/porthole

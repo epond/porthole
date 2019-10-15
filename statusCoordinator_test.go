@@ -1,14 +1,15 @@
 package main
 
 import (
-	"github.com/epond/porthole/test"
 	"testing"
 	"time"
+
+	"github.com/epond/porthole/test"
 )
 
 func TestStatusCoordinatorDoesWorkBeforeWaitingForFirstClockTick(t *testing.T) {
 	rca := &DummyWorker{workCount: 0}
-	coordinator := NewStatusCoordinator("commit", rca, make(chan time.Time, 0), 10 * time.Minute)
+	coordinator := NewStatusCoordinator("commit", rca, make(chan time.Time, 0), 10*time.Minute)
 	coordinator.status.LastRequest = time.Now()
 	time.Sleep(30 * time.Millisecond)
 	test.ExpectInt(t, "workCount", 1, rca.workCount)
@@ -18,10 +19,10 @@ func TestStatusCoordinatorDoesWorkEveryClockTick(t *testing.T) {
 	worker := &DummyWorker{workCount: 0, ticks: []time.Time{}}
 	now := time.Now()
 	tick1 := now.Add(1 * time.Minute)
-	tick2 := now.Add(1 * time.Minute)
-	tick3 := now.Add(1 * time.Minute)
+	tick2 := now.Add(2 * time.Minute)
+	tick3 := now.Add(3 * time.Minute)
 	dummyClock := make(chan time.Time, 3)
-	coordinator := NewStatusCoordinator("commit", worker, dummyClock, 10 * time.Minute)
+	coordinator := NewStatusCoordinator("commit", worker, dummyClock, 10*time.Minute)
 	coordinator.status.LastRequest = time.Now()
 	dummyClock <- tick1
 	dummyClock <- tick2
@@ -42,7 +43,7 @@ func TestStatusCoordinatorDoesNoWorkWhenLastRequestWasALongTimeAgo(t *testing.T)
 	tick4 := now.Add(15 * time.Minute)
 	tick5 := now.Add(101 * time.Minute)
 	dummyClock := make(chan time.Time, 5)
-	coordinator := NewStatusCoordinator("commit", worker, dummyClock, 10 * time.Minute)
+	coordinator := NewStatusCoordinator("commit", worker, dummyClock, 10*time.Minute)
 	coordinator.status.LastRequest = time.Now()
 	dummyClock <- tick1
 	dummyClock <- tick2
@@ -65,7 +66,7 @@ func TestStatusCoordinatorResumesWorkWhenRequestsResume(t *testing.T) {
 	tick5 := now.Add(101 * time.Minute)
 	tick6 := now.Add(109 * time.Minute)
 	dummyClock := make(chan time.Time, 10)
-	coordinator := NewStatusCoordinator("commit", worker, dummyClock, 10 * time.Minute)
+	coordinator := NewStatusCoordinator("commit", worker, dummyClock, 10*time.Minute)
 	coordinator.status.LastRequest = time.Now()
 	dummyClock <- tick1
 	dummyClock <- tick2
@@ -89,7 +90,7 @@ func TestLastFetchIsTimeOfLastTickThatDidWork(t *testing.T) {
 	tick1 := now.Add(9 * time.Minute)
 	tick2 := now.Add(11 * time.Minute)
 	dummyClock := make(chan time.Time, 2)
-	coordinator := NewStatusCoordinator("commit", worker, dummyClock, 10 * time.Minute)
+	coordinator := NewStatusCoordinator("commit", worker, dummyClock, 10*time.Minute)
 	coordinator.status.LastRequest = time.Now()
 	dummyClock <- tick1
 	dummyClock <- tick2
@@ -99,7 +100,7 @@ func TestLastFetchIsTimeOfLastTickThatDidWork(t *testing.T) {
 
 type DummyWorker struct {
 	workCount int
-	ticks []time.Time
+	ticks     []time.Time
 }
 
 func (d *DummyWorker) UpdateStatus(timestamp time.Time, status *Status) {

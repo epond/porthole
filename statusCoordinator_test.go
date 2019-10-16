@@ -16,7 +16,7 @@ func TestStatusCoordinatorDoesWorkBeforeWaitingForFirstClockTick(t *testing.T) {
 }
 
 func TestStatusCoordinatorDoesWorkEveryClockTick(t *testing.T) {
-	worker := &DummyWorker{workCount: 0, ticks: []time.Time{}}
+	worker := &DummyWorker{workCount: 0, workedTicks: []time.Time{}}
 	now := time.Now()
 	tick1 := now.Add(1 * time.Minute)
 	tick2 := now.Add(2 * time.Minute)
@@ -29,13 +29,13 @@ func TestStatusCoordinatorDoesWorkEveryClockTick(t *testing.T) {
 	dummyClock <- tick3
 	time.Sleep(30 * time.Millisecond)
 	test.ExpectInt(t, "workCount", 4, worker.workCount)
-	test.Expect(t, "tick1", tick1.Format(time.RFC822), worker.ticks[1].Format(time.RFC822))
-	test.Expect(t, "tick2", tick2.Format(time.RFC822), worker.ticks[2].Format(time.RFC822))
-	test.Expect(t, "tick3", tick3.Format(time.RFC822), worker.ticks[3].Format(time.RFC822))
+	test.Expect(t, "tick1", tick1.Format(time.RFC822), worker.workedTicks[1].Format(time.RFC822))
+	test.Expect(t, "tick2", tick2.Format(time.RFC822), worker.workedTicks[2].Format(time.RFC822))
+	test.Expect(t, "tick3", tick3.Format(time.RFC822), worker.workedTicks[3].Format(time.RFC822))
 }
 
 func TestStatusCoordinatorDoesNoWorkWhenLastRequestWasALongTimeAgo(t *testing.T) {
-	worker := &DummyWorker{workCount: 0, ticks: []time.Time{}}
+	worker := &DummyWorker{workCount: 0, workedTicks: []time.Time{}}
 	now := time.Now()
 	tick1 := now.Add(1 * time.Minute)
 	tick2 := now.Add(9 * time.Minute)
@@ -52,12 +52,12 @@ func TestStatusCoordinatorDoesNoWorkWhenLastRequestWasALongTimeAgo(t *testing.T)
 	dummyClock <- tick5
 	time.Sleep(30 * time.Millisecond)
 	test.ExpectInt(t, "workCount", 3, worker.workCount)
-	test.Expect(t, "tick1", tick1.Format(time.RFC822), worker.ticks[1].Format(time.RFC822))
-	test.Expect(t, "tick2", tick2.Format(time.RFC822), worker.ticks[2].Format(time.RFC822))
+	test.Expect(t, "tick1", tick1.Format(time.RFC822), worker.workedTicks[1].Format(time.RFC822))
+	test.Expect(t, "tick2", tick2.Format(time.RFC822), worker.workedTicks[2].Format(time.RFC822))
 }
 
 func TestStatusCoordinatorResumesWorkWhenRequestsResume(t *testing.T) {
-	worker := &DummyWorker{workCount: 0, ticks: []time.Time{}}
+	worker := &DummyWorker{workCount: 0, workedTicks: []time.Time{}}
 	now := time.Now()
 	tick1 := now.Add(1 * time.Minute)
 	tick2 := now.Add(9 * time.Minute)
@@ -78,14 +78,14 @@ func TestStatusCoordinatorResumesWorkWhenRequestsResume(t *testing.T) {
 	dummyClock <- tick6
 	time.Sleep(30 * time.Millisecond)
 	test.ExpectInt(t, "workCount", 5, worker.workCount)
-	test.Expect(t, "tick1", tick1.Format(time.RFC822), worker.ticks[1].Format(time.RFC822))
-	test.Expect(t, "tick2", tick2.Format(time.RFC822), worker.ticks[2].Format(time.RFC822))
-	test.Expect(t, "tick5", tick5.Format(time.RFC822), worker.ticks[3].Format(time.RFC822))
-	test.Expect(t, "tick6", tick6.Format(time.RFC822), worker.ticks[4].Format(time.RFC822))
+	test.Expect(t, "tick1", tick1.Format(time.RFC822), worker.workedTicks[1].Format(time.RFC822))
+	test.Expect(t, "tick2", tick2.Format(time.RFC822), worker.workedTicks[2].Format(time.RFC822))
+	test.Expect(t, "tick5", tick5.Format(time.RFC822), worker.workedTicks[3].Format(time.RFC822))
+	test.Expect(t, "tick6", tick6.Format(time.RFC822), worker.workedTicks[4].Format(time.RFC822))
 }
 
 func TestLastFetchIsTimeOfLastTickThatDidWork(t *testing.T) {
-	worker := &DummyWorker{workCount: 0, ticks: []time.Time{}}
+	worker := &DummyWorker{workCount: 0, workedTicks: []time.Time{}}
 	now := time.Now()
 	tick1 := now.Add(9 * time.Minute)
 	tick2 := now.Add(11 * time.Minute)
@@ -99,11 +99,11 @@ func TestLastFetchIsTimeOfLastTickThatDidWork(t *testing.T) {
 }
 
 type DummyWorker struct {
-	workCount int
-	ticks     []time.Time
+	workCount   int
+	workedTicks []time.Time
 }
 
 func (d *DummyWorker) UpdateStatus(timestamp time.Time, status *Status) {
 	d.workCount += 1
-	d.ticks = append(d.ticks, timestamp)
+	d.workedTicks = append(d.workedTicks, timestamp)
 }

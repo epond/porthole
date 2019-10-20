@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/epond/porthole/music"
 	"html/template"
 	"log"
 	"net/http"
@@ -9,6 +8,8 @@ import (
 	"path"
 	"strconv"
 	"time"
+
+	"github.com/epond/porthole/music"
 )
 
 func main() {
@@ -23,7 +24,7 @@ func main() {
 	foldersToScan := os.Getenv("FOLDERS_TO_SCAN")
 	latestAdditionsLimit, _ := strconv.Atoi(os.Getenv("LATEST_ADDITIONS_LIMIT"))
 
-	log.Printf("Starting porthole. Music folder: %v, Known releases file: %v, Backup: %v", musicFolder, knownReleasesFile, knownReleasesBackup)
+	log.Printf("Starting porthole. Music folder: %v, Known releases file: %v, Backup: %v, Folders to scan: %v", musicFolder, knownReleasesFile, knownReleasesBackup, foldersToScan)
 
 	recordCollectionAdditions := music.NewFileBasedAdditions(
 		musicFolder,
@@ -36,7 +37,7 @@ func main() {
 		gitCommit,
 		&MusicStatusWorker{recordCollectionAdditions},
 		clock,
-		time.Duration(sleepAfter) * time.Millisecond)
+		time.Duration(sleepAfter)*time.Millisecond)
 
 	http.HandleFunc("/", templateHandler("dashboard.html", dashboardRefreshInterval))
 	http.HandleFunc("/dashinfo", dashinfoHandler(statusCoordinator.status))

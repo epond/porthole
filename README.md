@@ -24,7 +24,6 @@ A dashboard presented as a web page that shows the most recent additions to a re
 
 # improvements
 
-* Display error message if folder depth omitted
 * Use seconds for time values in config (is it currently milliseconds?)
 * StatusCoordinator only does work when user presses button
 * Display to the user whether the app is working or sleeping

@@ -24,11 +24,15 @@ func NewFileBasedAdditions(
 }
 
 func (f *FileBasedAdditions) FetchLatestAdditions() []string {
-	return UpdateKnownReleases(
-		ScanFolders(parseFoldersToScan(f.musicFolder, f.foldersToScan)),
+	foldersToScan := parseFoldersToScan(f.musicFolder, f.foldersToScan)
+	scannedReleases := ScanFolders(foldersToScan)
+	latestAdditions := UpdateKnownReleases(
+		scannedReleases,
 		f.knownReleasesFile,
 		f.knownReleasesBackup,
 		f.latestAdditionsLimit)
+
+	return latestAdditions
 }
 
 func parseFoldersToScan(musicFolder string, folders string) []FolderToScan {

@@ -16,7 +16,7 @@ A dashboard presented as a web page that shows the most recent additions to a re
 # implementation
 
 * The dashboard html page periodically calls the /dashinfo endpoint, the response of which is used to fill an 'infoarea' div.
-* The /dashinfo endpoint serves a template whose dynamic content is the 'status' object.
+* The /dashinfo endpoint serves a template whose dynamic content is the 'status' object, and it also sets the status object's LastRequest timestamp value to now.
 * The status object is a member of StatusCoordinator and is used to store the result of a scan and related information.
 * Every FETCH_INTERVAL, a time.Tick is emitted and StatusCoordinator tries to do work, which it will do unless the time from LastRequest until tick exceeds SLEEP_AFTER.
 * A 'release' is an individual recording represented by a folder on the filesystem at the specified depth for each folder to scan.
@@ -25,6 +25,6 @@ A dashboard presented as a web page that shows the most recent additions to a re
 # improvements
 
 * Use seconds for time values in config (is it currently milliseconds?)
-* StatusCoordinator only does work when user presses button
+* StatusCoordinator only does work when user presses button. Introduce /scan endpoint that sets LastRequest and stop doing that in /dashinfo
 * Display to the user whether the app is working or sleeping
 * Deprecate Dashboard refresh interval - prefer manual refresh

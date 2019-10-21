@@ -41,6 +41,9 @@ func main() {
 
 	http.HandleFunc("/", templateHandler("dashboard.html", dashboardRefreshInterval))
 	http.HandleFunc("/dashinfo", dashinfoHandler(statusCoordinator.status))
+	http.HandleFunc("/scan", func(w http.ResponseWriter, r *http.Request) {
+		statusCoordinator.status.LastRequest = time.Now()
+	})
 	http.HandleFunc("/log", logHandler(logFile))
 	http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, r.URL.Path[1:])
@@ -52,7 +55,6 @@ func main() {
 
 func dashinfoHandler(status *Status) func(res http.ResponseWriter, req *http.Request) {
 	return func(res http.ResponseWriter, req *http.Request) {
-		status.LastRequest = time.Now()
 		templateHandler("dashinfo.html", status)(res, req)
 	}
 }

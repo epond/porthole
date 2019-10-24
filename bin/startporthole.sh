@@ -12,7 +12,7 @@ export LATEST_ADDITIONS_LIMIT=200
 export FOLDERS_TO_SCAN="Music/flac:3,Music/flac-cd:3,Music/flac-add:2,Music/flac-vorbis320:2,Music/mp3/main:2,Music_other/hd audio:3"
 
 echo "Waiting for network..."
-/home/pi/go/src/github.com/epond/porthole/waitforip.sh
+/home/pi/go/src/github.com/epond/porthole/bin/waitforip.sh
 
 echo "Updating porthole..."
 cd /home/pi/go/src/github.com/epond/porthole

@@ -5,9 +5,9 @@ export MUSIC_FOLDER="/mnt/nasmedia"
 export KNOWN_RELEASES_FILE="/mnt/dashboard/knownreleases.txt"
 export KNOWN_RELEASES_BACKUP="/mnt/dashboard/knownreleases_backup.txt"
 export LOG_FILE="/home/pi/porthole.log"
-export FETCH_INTERVAL=180000
-export DASHBOARD_REFRESH_INTERVAL=10000
-export SLEEP_AFTER=60000
+export FETCH_INTERVAL=1000
+export DASHBOARD_REFRESH_INTERVAL=5000
+export SLEEP_AFTER=1000
 export LATEST_ADDITIONS_LIMIT=200
 export FOLDERS_TO_SCAN="Music/flac:3,Music/flac-cd:3,Music/flac-add:2,Music/flac-vorbis320:2,Music/mp3/main:2,Music_other/hd audio:3"
 

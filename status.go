@@ -53,6 +53,7 @@ func NewStatusCoordinator(
 func (s *StatusCoordinator) doWork(tick time.Time) {
 	if tick.Before(s.status.LastRequest.Add(s.sleepAfter)) {
 		log.Println("Working")
+		s.status.LastFetch = "in progress..."
 		s.statusUpdateWorker.UpdateStatus(tick, s.status)
 		s.status.LastFetch = tick.Format(time.ANSIC)
 	}

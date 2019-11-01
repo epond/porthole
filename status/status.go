@@ -1,4 +1,4 @@
-package main
+package status
 
 import (
 	"log"
@@ -13,7 +13,7 @@ type Status struct {
 }
 
 type StatusCoordinator struct {
-	status             *Status
+	Status             *Status
 	statusUpdateWorker StatusUpdateWorker
 	sleepAfter         time.Duration
 }
@@ -51,10 +51,10 @@ func NewStatusCoordinator(
 }
 
 func (s *StatusCoordinator) doWork(tick time.Time) {
-	if tick.Before(s.status.LastRequest.Add(s.sleepAfter)) {
+	if tick.Before(s.Status.LastRequest.Add(s.sleepAfter)) {
 		log.Println("Working")
-		s.status.LastFetch = "in progress..."
-		s.statusUpdateWorker.UpdateStatus(tick, s.status)
-		s.status.LastFetch = tick.Format(time.ANSIC)
+		s.Status.LastFetch = "in progress..."
+		s.statusUpdateWorker.UpdateStatus(tick, s.Status)
+		s.Status.LastFetch = tick.Format(time.ANSIC)
 	}
 }

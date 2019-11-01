@@ -1,6 +1,8 @@
-package main
+package status
 
-import "time"
+import (
+	"time"
+)
 
 type RecordCollectionAdditions interface {
 	FetchLatestAdditions() []string

@@ -1,4 +1,4 @@
-package main
+package status
 
 import (
 	"testing"
@@ -10,7 +10,7 @@ import (
 func TestStatusCoordinatorDoesWorkBeforeWaitingForFirstClockTick(t *testing.T) {
 	rca := &DummyWorker{workCount: 0}
 	coordinator := NewStatusCoordinator("commit", rca, make(chan time.Time, 0), 10*time.Minute)
-	coordinator.status.LastRequest = time.Now()
+	coordinator.Status.LastRequest = time.Now()
 	time.Sleep(30 * time.Millisecond)
 	test.ExpectInt(t, "workCount", 1, rca.workCount)
 }
@@ -23,7 +23,7 @@ func TestStatusCoordinatorDoesWorkEveryClockTick(t *testing.T) {
 	tick3 := now.Add(3 * time.Minute)
 	dummyClock := make(chan time.Time, 3)
 	coordinator := NewStatusCoordinator("commit", worker, dummyClock, 10*time.Minute)
-	coordinator.status.LastRequest = time.Now()
+	coordinator.Status.LastRequest = time.Now()
 	dummyClock <- tick1
 	dummyClock <- tick2
 	dummyClock <- tick3
@@ -44,7 +44,7 @@ func TestStatusCoordinatorDoesNoWorkWhenLastRequestWasALongTimeAgo(t *testing.T)
 	tick5 := now.Add(101 * time.Minute)
 	dummyClock := make(chan time.Time, 5)
 	coordinator := NewStatusCoordinator("commit", worker, dummyClock, 10*time.Minute)
-	coordinator.status.LastRequest = time.Now()
+	coordinator.Status.LastRequest = time.Now()
 	dummyClock <- tick1
 	dummyClock <- tick2
 	dummyClock <- tick3
@@ -67,13 +67,13 @@ func TestStatusCoordinatorResumesWorkWhenRequestsResume(t *testing.T) {
 	tick6 := now.Add(109 * time.Minute)
 	dummyClock := make(chan time.Time, 10)
 	coordinator := NewStatusCoordinator("commit", worker, dummyClock, 10*time.Minute)
-	coordinator.status.LastRequest = time.Now()
+	coordinator.Status.LastRequest = time.Now()
 	dummyClock <- tick1
 	dummyClock <- tick2
 	dummyClock <- tick3
 	dummyClock <- tick4
 	time.Sleep(30 * time.Millisecond)
-	coordinator.status.LastRequest = now.Add(100 * time.Minute)
+	coordinator.Status.LastRequest = now.Add(100 * time.Minute)
 	dummyClock <- tick5
 	dummyClock <- tick6
 	time.Sleep(30 * time.Millisecond)
@@ -91,11 +91,11 @@ func TestLastFetchIsTimeOfLastTickThatDidWork(t *testing.T) {
 	tick2 := now.Add(11 * time.Minute)
 	dummyClock := make(chan time.Time, 2)
 	coordinator := NewStatusCoordinator("commit", worker, dummyClock, 10*time.Minute)
-	coordinator.status.LastRequest = time.Now()
+	coordinator.Status.LastRequest = time.Now()
 	dummyClock <- tick1
 	dummyClock <- tick2
 	time.Sleep(30 * time.Millisecond)
-	test.Expect(t, "LastFetch", tick1.Format(time.ANSIC), coordinator.status.LastFetch)
+	test.Expect(t, "LastFetch", tick1.Format(time.ANSIC), coordinator.Status.LastFetch)
 }
 
 type DummyWorker struct {

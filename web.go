@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/epond/porthole/music"
+	"github.com/epond/porthole/status"
 )
 
 func main() {
@@ -33,16 +34,16 @@ func main() {
 		foldersToScan,
 		latestAdditionsLimit)
 	clock := time.Tick(time.Duration(fetchInterval) * time.Millisecond)
-	statusCoordinator := NewStatusCoordinator(
+	statusCoordinator := status.NewStatusCoordinator(
 		gitCommit,
-		&MusicStatusWorker{recordCollectionAdditions},
+		&status.MusicStatusWorker{recordCollectionAdditions},
 		clock,
 		time.Duration(sleepAfter)*time.Millisecond)
 
 	http.HandleFunc("/", templateHandler("dashboard.html", dashboardRefreshInterval))
-	http.HandleFunc("/dashinfo", dashinfoHandler(statusCoordinator.status))
+	http.HandleFunc("/dashinfo", dashinfoHandler(statusCoordinator.Status))
 	http.HandleFunc("/scan", func(w http.ResponseWriter, r *http.Request) {
-		statusCoordinator.status.LastRequest = time.Now()
+		statusCoordinator.Status.LastRequest = time.Now()
 	})
 	http.HandleFunc("/log", logHandler(logFile))
 	http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
@@ -53,7 +54,7 @@ func main() {
 	http.ListenAndServe(":9000", nil)
 }
 
-func dashinfoHandler(status *Status) func(res http.ResponseWriter, req *http.Request) {
+func dashinfoHandler(status *status.Status) func(res http.ResponseWriter, req *http.Request) {
 	return func(res http.ResponseWriter, req *http.Request) {
 		templateHandler("dashinfo.html", status)(res, req)
 	}

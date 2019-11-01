@@ -9,7 +9,7 @@ import (
 
 func TestStatusCoordinatorDoesWorkBeforeWaitingForFirstClockTick(t *testing.T) {
 	rca := &DummyWorker{workCount: 0}
-	coordinator := NewStatusCoordinator("commit", rca, make(chan time.Time, 0), 10*time.Minute)
+	coordinator := NewCoordinator("commit", rca, make(chan time.Time, 0), 10*time.Minute)
 	coordinator.Status.LastRequest = time.Now()
 	time.Sleep(30 * time.Millisecond)
 	test.ExpectInt(t, "workCount", 1, rca.workCount)
@@ -22,7 +22,7 @@ func TestStatusCoordinatorDoesWorkEveryClockTick(t *testing.T) {
 	tick2 := now.Add(2 * time.Minute)
 	tick3 := now.Add(3 * time.Minute)
 	dummyClock := make(chan time.Time, 3)
-	coordinator := NewStatusCoordinator("commit", worker, dummyClock, 10*time.Minute)
+	coordinator := NewCoordinator("commit", worker, dummyClock, 10*time.Minute)
 	coordinator.Status.LastRequest = time.Now()
 	dummyClock <- tick1
 	dummyClock <- tick2
@@ -43,7 +43,7 @@ func TestStatusCoordinatorDoesNoWorkWhenLastRequestWasALongTimeAgo(t *testing.T)
 	tick4 := now.Add(15 * time.Minute)
 	tick5 := now.Add(101 * time.Minute)
 	dummyClock := make(chan time.Time, 5)
-	coordinator := NewStatusCoordinator("commit", worker, dummyClock, 10*time.Minute)
+	coordinator := NewCoordinator("commit", worker, dummyClock, 10*time.Minute)
 	coordinator.Status.LastRequest = time.Now()
 	dummyClock <- tick1
 	dummyClock <- tick2
@@ -66,7 +66,7 @@ func TestStatusCoordinatorResumesWorkWhenRequestsResume(t *testing.T) {
 	tick5 := now.Add(101 * time.Minute)
 	tick6 := now.Add(109 * time.Minute)
 	dummyClock := make(chan time.Time, 10)
-	coordinator := NewStatusCoordinator("commit", worker, dummyClock, 10*time.Minute)
+	coordinator := NewCoordinator("commit", worker, dummyClock, 10*time.Minute)
 	coordinator.Status.LastRequest = time.Now()
 	dummyClock <- tick1
 	dummyClock <- tick2
@@ -90,7 +90,7 @@ func TestLastFetchIsTimeOfLastTickThatDidWork(t *testing.T) {
 	tick1 := now.Add(9 * time.Minute)
 	tick2 := now.Add(11 * time.Minute)
 	dummyClock := make(chan time.Time, 2)
-	coordinator := NewStatusCoordinator("commit", worker, dummyClock, 10*time.Minute)
+	coordinator := NewCoordinator("commit", worker, dummyClock, 10*time.Minute)
 	coordinator.Status.LastRequest = time.Now()
 	dummyClock <- tick1
 	dummyClock <- tick2
@@ -104,6 +104,6 @@ type DummyWorker struct {
 }
 
 func (d *DummyWorker) UpdateStatus(timestamp time.Time, status *Status) {
-	d.workCount += 1
+	d.workCount++
 	d.workedTicks = append(d.workedTicks, timestamp)
 }

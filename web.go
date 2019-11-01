@@ -34,7 +34,7 @@ func main() {
 		foldersToScan,
 		latestAdditionsLimit)
 	clock := time.Tick(time.Duration(fetchInterval) * time.Millisecond)
-	statusCoordinator := status.NewStatusCoordinator(
+	statusCoordinator := status.NewCoordinator(
 		gitCommit,
 		&status.MusicStatusWorker{recordCollectionAdditions},
 		clock,

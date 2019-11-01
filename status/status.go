@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// Status represents the current spplication status
 type Status struct {
 	GitCommit       string
 	LastRequest     time.Time
@@ -12,21 +13,24 @@ type Status struct {
 	LatestAdditions []string
 }
 
-type StatusCoordinator struct {
+// Coordinator knows about application status and how to update it
+type Coordinator struct {
 	Status             *Status
-	statusUpdateWorker StatusUpdateWorker
+	statusUpdateWorker UpdateWorker
 	sleepAfter         time.Duration
 }
 
-type StatusUpdateWorker interface {
+// UpdateWorker knows how to update application status
+type UpdateWorker interface {
 	UpdateStatus(timestamp time.Time, status *Status)
 }
 
-func NewStatusCoordinator(
+// NewCoordinator constructs a new Coordinator
+func NewCoordinator(
 	gitCommit string,
-	statusUpdateWorker StatusUpdateWorker,
+	statusUpdateWorker UpdateWorker,
 	clock <-chan time.Time,
-	sleepAfter time.Duration) *StatusCoordinator {
+	sleepAfter time.Duration) *Coordinator {
 
 	status := &Status{
 		GitCommit:       gitCommit,
@@ -34,7 +38,7 @@ func NewStatusCoordinator(
 		LastFetch:       "",
 		LatestAdditions: []string{},
 	}
-	statusCoordinator := &StatusCoordinator{
+	statusCoordinator := &Coordinator{
 		status,
 		statusUpdateWorker,
 		sleepAfter,
@@ -50,7 +54,7 @@ func NewStatusCoordinator(
 	return statusCoordinator
 }
 
-func (s *StatusCoordinator) doWork(tick time.Time) {
+func (s *Coordinator) doWork(tick time.Time) {
 	if tick.Before(s.Status.LastRequest.Add(s.sleepAfter)) {
 		log.Println("Working")
 		s.Status.LastFetch = "in progress..."

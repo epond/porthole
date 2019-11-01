@@ -7,7 +7,8 @@ import (
 	"strings"
 )
 
-type FileBasedAdditions struct {
+// Additions treats folders on the filesystem as releases
+type Additions struct {
 	musicFolder          string
 	knownReleasesFile    string
 	knownReleasesBackup  string
@@ -15,16 +16,18 @@ type FileBasedAdditions struct {
 	latestAdditionsLimit int
 }
 
-func NewFileBasedAdditions(
+// NewAdditions constructs a new Additions
+func NewAdditions(
 	musicFolder string,
 	knownReleasesFile string,
 	knownReleasesBackup string,
 	foldersToScan string,
-	latestAdditionsLimit int) *FileBasedAdditions {
-	return &FileBasedAdditions{musicFolder, knownReleasesFile, knownReleasesBackup, foldersToScan, latestAdditionsLimit}
+	latestAdditionsLimit int) *Additions {
+	return &Additions{musicFolder, knownReleasesFile, knownReleasesBackup, foldersToScan, latestAdditionsLimit}
 }
 
-func (f *FileBasedAdditions) FetchLatestAdditions() []string {
+// FetchLatestAdditions finds latest releases
+func (f *Additions) FetchLatestAdditions() []string {
 	foldersToScan := parseFoldersToScan(f.musicFolder, f.foldersToScan)
 	scannedReleases := ScanFolders(foldersToScan)
 	latestAdditions := UpdateKnownReleases(

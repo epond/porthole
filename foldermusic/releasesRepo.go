@@ -10,8 +10,11 @@ import (
 
 const present = 1
 
-type SortableStrings []string
+type sortableStrings []string
 
+// UpdateKnownReleases updates the known releases file and returns an array
+// of new releases, based upon the array of folder passed in as the
+// folderScanList argument.
 func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, knownReleasesBackupPath string, limit int) []string {
 	if _, err := os.Stat(knownReleasesPath); os.IsNotExist(err) {
 		file, errCreate := os.Create(knownReleasesPath)
@@ -77,7 +80,7 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 	i := 0
 	for i < min(len(newReleases), limit) {
 		latestAdditions = append(latestAdditions, newReleases[i])
-		i += 1
+		i++
 	}
 
 	i = 0
@@ -85,7 +88,7 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 		if i < len(knownReleasesLines) {
 			latestAdditions = append(latestAdditions, knownReleasesLines[len(knownReleasesLines)-i-1])
 		}
-		i += 1
+		i++
 	}
 
 	return latestAdditions
@@ -157,24 +160,24 @@ func readFile(fileLocation string) (lines []string, lineMap map[string]int) {
 	return lines, lineMap
 }
 
-func (slice SortableStrings) Len() int {
+func (slice sortableStrings) Len() int {
 	return len(slice)
 }
 
-func (slice SortableStrings) Less(i, j int) bool {
+func (slice sortableStrings) Less(i, j int) bool {
 	return slice[i] < slice[j]
 }
 
-func (slice SortableStrings) Swap(i, j int) {
+func (slice sortableStrings) Swap(i, j int) {
 	slice[i], slice[j] = slice[j], slice[i]
 }
 
-func sortByName(strings SortableStrings) SortableStrings {
+func sortByName(strings sortableStrings) sortableStrings {
 	sort.Sort(strings)
 	return strings
 }
 
-func reverseSortByName(strings SortableStrings) SortableStrings {
+func reverseSortByName(strings sortableStrings) sortableStrings {
 	sort.Sort(sort.Reverse(strings))
 	return strings
 }

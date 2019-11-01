@@ -27,7 +27,7 @@ func main() {
 
 	log.Printf("Starting porthole. Music folder: %v, Known releases file: %v, Backup: %v, Folders to scan: %v", musicFolder, knownReleasesFile, knownReleasesBackup, foldersToScan)
 
-	recordCollectionAdditions := foldermusic.NewFileBasedAdditions(
+	recordCollectionAdditions := foldermusic.NewAdditions(
 		musicFolder,
 		knownReleasesFile,
 		knownReleasesBackup,

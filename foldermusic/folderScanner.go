@@ -9,25 +9,28 @@ import (
 	"unicode/utf8"
 )
 
+// FolderToScan represents a folder in the filesystem
 type FolderToScan struct {
 	rootFolderPath string
 	targetDepth    int
 }
 
+// FolderInfo gives information about a folder
 type FolderInfo struct {
 	fileInfo os.FileInfo
 	parent   os.FileInfo
 }
 
+// ScanFolders scans the filesystem for folders
 func ScanFolders(foldersToScan []FolderToScan) []FolderInfo {
 	var folderScanList []FolderInfo
 	for _, folder := range foldersToScan {
-		folderScanList = append(folderScanList, FolderInfoAtDepth(folder)...)
+		folderScanList = append(folderScanList, folderInfoAtDepth(folder)...)
 	}
 	return folderScanList
 }
 
-func FolderInfoAtDepthIter(folderToScan FolderToScan, parent os.FileInfo) []FolderInfo {
+func folderInfoAtDepthIter(folderToScan FolderToScan, parent os.FileInfo) []FolderInfo {
 	if folderToScan.targetDepth <= 0 {
 		return []FolderInfo{}
 	}
@@ -60,7 +63,7 @@ func FolderInfoAtDepthIter(folderToScan FolderToScan, parent os.FileInfo) []Fold
 					path.Join(folderToScan.rootFolderPath, child.Name()),
 					folderToScan.targetDepth - 1,
 				}
-				childFolderInfos := FolderInfoAtDepthIter(nextFolder, child)
+				childFolderInfos := folderInfoAtDepthIter(nextFolder, child)
 				folderInfos = append(folderInfos, childFolderInfos...)
 			}
 		}
@@ -69,8 +72,8 @@ func FolderInfoAtDepthIter(folderToScan FolderToScan, parent os.FileInfo) []Fold
 	return folderInfos
 }
 
-func FolderInfoAtDepth(folderToScan FolderToScan) []FolderInfo {
-	return FolderInfoAtDepthIter(folderToScan, nil)
+func folderInfoAtDepth(folderToScan FolderToScan) []FolderInfo {
+	return folderInfoAtDepthIter(folderToScan, nil)
 }
 
 func (f *FolderInfo) String() string {

@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/epond/porthole/music"
+	"github.com/epond/porthole/foldermusic"
 	"github.com/epond/porthole/status"
 )
 
@@ -27,7 +27,7 @@ func main() {
 
 	log.Printf("Starting porthole. Music folder: %v, Known releases file: %v, Backup: %v, Folders to scan: %v", musicFolder, knownReleasesFile, knownReleasesBackup, foldersToScan)
 
-	recordCollectionAdditions := music.NewFileBasedAdditions(
+	recordCollectionAdditions := foldermusic.NewFileBasedAdditions(
 		musicFolder,
 		knownReleasesFile,
 		knownReleasesBackup,

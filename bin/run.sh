@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 export MUSIC_FOLDER="$GOPATH/src/github.com/epond/porthole"
-export KNOWN_RELEASES_FILE="$GOPATH/src/github.com/epond/porthole/knownreleases.txt"
-export KNOWN_RELEASES_BACKUP=$MUSIC_FOLDER"/knownreleases_backup.txt"
+export KNOWN_ALBUMS_FILE="$GOPATH/src/github.com/epond/porthole/knownalbums.txt"
+export KNOWN_ALBUMS_BACKUP=$MUSIC_FOLDER"/knownalbums_backup.txt"
 export GIT_COMMIT=`git log --pretty=format:'%h' -n 1`
 export LOG_FILE="$GOPATH/src/github.com/epond/porthole/porthole.log"
 export FETCH_INTERVAL=1000

@@ -14,7 +14,7 @@ func TestGivenZeroDepthThenReturnEmptyArray(t *testing.T) {
 	test.ExpectInt(t, "number of folderInfos", 0, len(folderInfoAtDepth(FolderToScan{"anything", 0})))
 }
 
-// A folder such as a/b needs to have entry "a - b" where a is artist and b is name of release
+// A folder such as a/b needs to have entry "a - b" where a is artist and b is name of album
 func TestScanListEntriesContainTwoFolderLevels(t *testing.T) {
 	folderPath := path.Join(os.Getenv("GOPATH"), "src/github.com/epond/porthole/testdata/a1")
 	folderInfos := sortFolderInfoByString(ScanFolders([]FolderToScan{{folderPath, 1}}))

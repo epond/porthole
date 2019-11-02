@@ -12,81 +12,81 @@ const present = 1
 
 type sortableStrings []string
 
-// UpdateKnownReleases updates the known releases file and returns an array
-// of new releases, based upon the array of folder passed in as the
+// UpdateKnownAlbums updates the known albums file and returns an array
+// of new albums, based upon the array of folder passed in as the
 // folderScanList argument.
-func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, knownReleasesBackupPath string, limit int) []string {
-	if _, err := os.Stat(knownReleasesPath); os.IsNotExist(err) {
-		file, errCreate := os.Create(knownReleasesPath)
+func UpdateKnownAlbums(folderScanList []FolderInfo, knownAlbumsPath string, knownAlbumsBackupPath string, limit int) []string {
+	if _, err := os.Stat(knownAlbumsPath); os.IsNotExist(err) {
+		file, errCreate := os.Create(knownAlbumsPath)
 		if errCreate != nil {
-			log.Printf("Could not create known releases at %v", knownReleasesPath)
+			log.Printf("Could not create known albums at %v", knownAlbumsPath)
 			panic(errCreate)
 		}
 		file.Close()
 	}
 
-	ensureFileEndsInNewline(knownReleasesPath)
+	ensureFileEndsInNewline(knownAlbumsPath)
 
-	// Read knownreleases into an array of its lines and a map
-	knownReleasesLines, knownReleasesMap := readFile(knownReleasesPath)
+	// Read knownalbums into an array of its lines and a map
+	knownAlbumsLines, knownAlbumsMap := readFile(knownAlbumsPath)
 
-	// Build a list of current scan entries not present in known releases (new releases)
-	var newReleases []string
+	// Build a list of current scan entries not present in known albums (new albums)
+	var newAlbums []string
 	for _, scanItem := range folderScanList {
-		if knownReleasesMap[scanItem.String()] != present {
-			newReleases = append(newReleases, scanItem.String())
+		if knownAlbumsMap[scanItem.String()] != present {
+			newAlbums = append(newAlbums, scanItem.String())
 		}
 	}
 
-	reverseSortByName(newReleases)
-	log.Printf("Found %v known and %v new releases", len(knownReleasesMap), len(newReleases))
+	reverseSortByName(newAlbums)
+	log.Printf("Found %v known and %v new albums", len(knownAlbumsMap), len(newAlbums))
 
-	missingReleases := findMissingReleases(folderScanList, knownReleasesLines)
+	missingAlbums := findMissingAlbums(folderScanList, knownAlbumsLines)
 
-	if len(missingReleases) > 0 {
-		log.Printf("Found %v missing releases", len(missingReleases))
-		for i, missing := range missingReleases {
+	if len(missingAlbums) > 0 {
+		log.Printf("Found %v missing albums", len(missingAlbums))
+		for i, missing := range missingAlbums {
 			log.Printf("Missing #%v: %v", i+1, missing)
 		}
 	}
 
-	// Append new releases to known releases file
-	var knownReleasesFile *os.File
-	knownReleasesFile, err := os.OpenFile(knownReleasesPath, os.O_RDWR|os.O_APPEND, 0660)
+	// Append new albums to known albums file
+	var knownAlbumsFile *os.File
+	knownAlbumsFile, err := os.OpenFile(knownAlbumsPath, os.O_RDWR|os.O_APPEND, 0660)
 	if err != nil {
-		log.Printf("Could not open known releases file for appending: %v", knownReleasesPath)
+		log.Printf("Could not open known albums file for appending: %v", knownAlbumsPath)
 		panic(err)
 	}
-	defer knownReleasesFile.Close()
-	krWriter := bufio.NewWriter(knownReleasesFile)
-	for _, newRelease := range newReleases {
-		if _, err := krWriter.WriteString(fmt.Sprintf("%v\n", newRelease)); err != nil {
-			log.Printf("Could not write new release to %v", knownReleasesPath)
+	defer knownAlbumsFile.Close()
+	krWriter := bufio.NewWriter(knownAlbumsFile)
+	for _, newAlbum := range newAlbums {
+		if _, err := krWriter.WriteString(fmt.Sprintf("%v\n", newAlbum)); err != nil {
+			log.Printf("Could not write new album to %v", knownAlbumsPath)
 			panic(err)
 		}
 	}
 	if err := krWriter.Flush(); err != nil {
-		log.Printf("Could not flush %v", knownReleasesPath)
+		log.Printf("Could not flush %v", knownAlbumsPath)
 		panic(err)
 	}
 
-	if len(newReleases) > 0 {
-		backupKnownReleases(knownReleasesBackupPath, append(knownReleasesLines, newReleases...))
+	if len(newAlbums) > 0 {
+		backupKnownAlbums(knownAlbumsBackupPath, append(knownAlbumsLines, newAlbums...))
 	}
 
-	// Return sorted new releases then knownreleases from the end, up to a total of limit
-	sortByName(newReleases)
+	// Return sorted new albums then knownalbums from the end, up to a total of limit
+	sortByName(newAlbums)
 	var latestAdditions []string
 	i := 0
-	for i < min(len(newReleases), limit) {
-		latestAdditions = append(latestAdditions, newReleases[i])
+	for i < min(len(newAlbums), limit) {
+		latestAdditions = append(latestAdditions, newAlbums[i])
 		i++
 	}
 
 	i = 0
-	for i < (limit - len(newReleases)) {
-		if i < len(knownReleasesLines) {
-			latestAdditions = append(latestAdditions, knownReleasesLines[len(knownReleasesLines)-i-1])
+	for i < (limit - len(newAlbums)) {
+		if i < len(knownAlbumsLines) {
+			latestAdditions = append(latestAdditions, knownAlbumsLines[len(knownAlbumsLines)-i-1])
 		}
 		i++
 	}
@@ -94,45 +94,45 @@ func UpdateKnownReleases(folderScanList []FolderInfo, knownReleasesPath string, 
 	return latestAdditions
 }
 
-func findMissingReleases(scanned []FolderInfo, known []string) []string {
+func findMissingAlbums(scanned []FolderInfo, known []string) []string {
 	scannedMap := make(map[string]int)
-	for _, release := range scanned {
-		scannedMap[release.String()] = present
+	for _, album := range scanned {
+		scannedMap[album.String()] = present
 	}
 
-	// Build a list of known releases not present in current scan
+	// Build a list of known albums not present in current scan
 	var missingList []string
-	for _, release := range known {
-		if scannedMap[release] != present {
-			missingList = append(missingList, release)
+	for _, album := range known {
+		if scannedMap[album] != present {
+			missingList = append(missingList, album)
 		}
 	}
 
 	return missingList
 }
 
-func backupKnownReleases(knownReleasesBackupPath string, releases []string) {
-	os.Remove(knownReleasesBackupPath)
-	if _, err := os.Stat(knownReleasesBackupPath); os.IsNotExist(err) {
-		file, errCreate := os.Create(knownReleasesBackupPath)
+func backupKnownAlbums(knownAlbumsBackupPath string, albums []string) {
+	os.Remove(knownAlbumsBackupPath)
+	if _, err := os.Stat(knownAlbumsBackupPath); os.IsNotExist(err) {
+		file, errCreate := os.Create(knownAlbumsBackupPath)
 		if errCreate != nil {
-			log.Printf("Could not create known releases backup at %v", knownReleasesBackupPath)
+			log.Printf("Could not create known albums backup at %v", knownAlbumsBackupPath)
 			panic(errCreate)
 		}
 		file.Close()
 	}
 
-	knownReleasesBackupFile, _ := os.OpenFile(knownReleasesBackupPath, os.O_RDWR|os.O_APPEND, 0660)
-	defer knownReleasesBackupFile.Close()
-	krWriter := bufio.NewWriter(knownReleasesBackupFile)
-	for _, release := range releases {
-		if _, err := krWriter.WriteString(fmt.Sprintf("%v\n", release)); err != nil {
-			log.Printf("Could not write release to %v", knownReleasesBackupPath)
+	knownAlbumsBackupFile, _ := os.OpenFile(knownAlbumsBackupPath, os.O_RDWR|os.O_APPEND, 0660)
+	defer knownAlbumsBackupFile.Close()
+	krWriter := bufio.NewWriter(knownAlbumsBackupFile)
+	for _, album := range albums {
+		if _, err := krWriter.WriteString(fmt.Sprintf("%v\n", album)); err != nil {
+			log.Printf("Could not write album to %v", knownAlbumsBackupPath)
 			panic(err)
 		}
 	}
 	if err := krWriter.Flush(); err != nil {
-		log.Printf("Could not flush %v", knownReleasesBackupPath)
+		log.Printf("Could not flush %v", knownAlbumsBackupPath)
 		panic(err)
 	}
 }

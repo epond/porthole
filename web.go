@@ -15,8 +15,8 @@ import (
 
 func main() {
 	musicFolder := os.Getenv("MUSIC_FOLDER")
-	knownReleasesFile := os.Getenv("KNOWN_RELEASES_FILE")
-	knownReleasesBackup := os.Getenv("KNOWN_RELEASES_BACKUP")
+	knownAlbumsFile := os.Getenv("KNOWN_ALBUMS_FILE")
+	knownAlbumsBackup := os.Getenv("KNOWN_ALBUMS_BACKUP")
 	gitCommit := os.Getenv("GIT_COMMIT")
 	logFile := os.Getenv("LOG_FILE")
 	fetchInterval, _ := strconv.Atoi(os.Getenv("FETCH_INTERVAL"))
@@ -25,18 +25,18 @@ func main() {
 	foldersToScan := os.Getenv("FOLDERS_TO_SCAN")
 	latestAdditionsLimit, _ := strconv.Atoi(os.Getenv("LATEST_ADDITIONS_LIMIT"))
 
-	log.Printf("Starting porthole. Music folder: %v, Known releases file: %v, Backup: %v, Folders to scan: %v", musicFolder, knownReleasesFile, knownReleasesBackup, foldersToScan)
+	log.Printf("Starting porthole. Music folder: %v, Known albums file: %v, Backup: %v, Folders to scan: %v", musicFolder, knownAlbumsFile, knownAlbumsBackup, foldersToScan)
 
-	recordCollectionAdditions := foldermusic.NewAdditions(
+	albumAdditions := foldermusic.NewAdditions(
 		musicFolder,
-		knownReleasesFile,
-		knownReleasesBackup,
+		knownAlbumsFile,
+		knownAlbumsBackup,
 		foldersToScan,
 		latestAdditionsLimit)
 	clock := time.Tick(time.Duration(fetchInterval) * time.Millisecond)
 	statusCoordinator := status.NewCoordinator(
 		gitCommit,
-		&status.MusicStatusWorker{recordCollectionAdditions},
+		&status.MusicStatusWorker{albumAdditions},
 		clock,
 		time.Duration(sleepAfter)*time.Millisecond)
 

@@ -7,11 +7,11 @@ import (
 	"strings"
 )
 
-// Additions treats folders on the filesystem as releases
+// Additions treats folders on the filesystem as albums
 type Additions struct {
 	musicFolder          string
-	knownReleasesFile    string
-	knownReleasesBackup  string
+	knownAlbumsFile      string
+	knownAlbumsBackup    string
 	foldersToScan        string
 	latestAdditionsLimit int
 }
@@ -19,21 +19,21 @@ type Additions struct {
 // NewAdditions constructs a new Additions
 func NewAdditions(
 	musicFolder string,
-	knownReleasesFile string,
-	knownReleasesBackup string,
+	knownAlbumsFile string,
+	knownAlbumsBackup string,
 	foldersToScan string,
 	latestAdditionsLimit int) *Additions {
-	return &Additions{musicFolder, knownReleasesFile, knownReleasesBackup, foldersToScan, latestAdditionsLimit}
+	return &Additions{musicFolder, knownAlbumsFile, knownAlbumsBackup, foldersToScan, latestAdditionsLimit}
 }
 
-// FetchLatestAdditions finds latest releases
+// FetchLatestAdditions finds the most recently added albums
 func (f *Additions) FetchLatestAdditions() []string {
 	foldersToScan := parseFoldersToScan(f.musicFolder, f.foldersToScan)
-	scannedReleases := ScanFolders(foldersToScan)
-	latestAdditions := UpdateKnownReleases(
-		scannedReleases,
-		f.knownReleasesFile,
-		f.knownReleasesBackup,
+	scannedAlbums := ScanFolders(foldersToScan)
+	latestAdditions := UpdateKnownAlbums(
+		scannedAlbums,
+		f.knownAlbumsFile,
+		f.knownAlbumsBackup,
 		f.latestAdditionsLimit)
 
 	return latestAdditions

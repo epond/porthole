@@ -4,17 +4,17 @@ import (
 	"time"
 )
 
-// RecordCollectionAdditions gets an array of new additions as strings
-type RecordCollectionAdditions interface {
+// AlbumAdditions gets an array of new additions as strings
+type AlbumAdditions interface {
 	FetchLatestAdditions() []string
 }
 
-// MusicStatusWorker uses RecordCollectionAdditions to update Status
+// MusicStatusWorker uses AlbumAdditions to update Status
 type MusicStatusWorker struct {
-	RecordCollectionAdditions RecordCollectionAdditions
+	AlbumAdditions AlbumAdditions
 }
 
-// UpdateStatus updates Status using RecordCollectionAdditions
+// UpdateStatus updates Status using AlbumAdditions
 func (m *MusicStatusWorker) UpdateStatus(timestamp time.Time, status *Status) {
-	status.LatestAdditions = m.RecordCollectionAdditions.FetchLatestAdditions()
+	status.LatestAdditions = m.AlbumAdditions.FetchLatestAdditions()
 }

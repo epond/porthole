@@ -9,149 +9,149 @@ import (
 	"github.com/epond/porthole/test"
 )
 
-func TestItCreatesFileWhenKnownReleasesFileMissing(t *testing.T) {
+func TestItCreatesFileWhenKnownAlbumsFileMissing(t *testing.T) {
 	setUp()
 	defer tearDown()
-	UpdateKnownReleases([]FolderInfo{
+	UpdateKnownAlbums([]FolderInfo{
 		{test.DummyFileInfo{"Mouldy Old Dough", true}, test.DummyFileInfo{"Lieutenant Pigeon", true}},
-	}, knownReleasesFile(), knownReleasesBackup(), 0)
-	_, lines := knownReleasesLines()
+	}, knownAlbumsFile(), knownAlbumsBackup(), 0)
+	_, lines := knownAlbumsLines()
 	if len(lines) == 0 {
-		t.Error("Expected UpdateKnownReleases to create known releases file but it didn't")
+		t.Error("Expected UpdateKnownAlbums to create known albums file but it didn't")
 	}
 
-	file, lines := knownReleasesLines()
+	file, lines := knownAlbumsLines()
 	defer file.Close()
 
-	test.ExpectInt(t, "known releases on creation", 1, len(lines))
-	test.Expect(t, "known release", "Lieutenant Pigeon - Mouldy Old Dough", lines[len(lines)-1])
+	test.ExpectInt(t, "known albums on creation", 1, len(lines))
+	test.Expect(t, "known album", "Lieutenant Pigeon - Mouldy Old Dough", lines[len(lines)-1])
 }
 
-func TestItDoesNotChangeFileWhenNoNewReleases(t *testing.T) {
+func TestItDoesNotChangeFileWhenNoNewAlbums(t *testing.T) {
 	setUp()
 	defer tearDown()
-	test.CopyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
+	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
 	currentScan := []FolderInfo{
 		{test.DummyFileInfo{"I Do, I Do, I Do, I Do, I Do", true}, test.DummyFileInfo{"Abba", true}},
 		{test.DummyFileInfo{"It's Fan-dabi-dozi!", true}, test.DummyFileInfo{"The Krankies", true}},
 		{test.DummyFileInfo{"Discipline", true}, test.DummyFileInfo{"Throbbing Gristle", true}},
 	}
-	UpdateKnownReleases(currentScan, knownReleasesFile(), knownReleasesBackup(), 0)
+	UpdateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
-	file, lines := knownReleasesLines()
+	file, lines := knownAlbumsLines()
 	defer file.Close()
 
-	test.ExpectInt(t, "number of known releases", 3, len(lines))
-	test.Expect(t, "known release 1", "The Krankies - It's Fan-dabi-dozi!", lines[len(lines)-1])
-	test.Expect(t, "known release 2", "Throbbing Gristle - Discipline", lines[len(lines)-2])
-	test.Expect(t, "known release 3", "Abba - I Do, I Do, I Do, I Do, I Do", lines[len(lines)-3])
+	test.ExpectInt(t, "number of known albums", 3, len(lines))
+	test.Expect(t, "known album 1", "The Krankies - It's Fan-dabi-dozi!", lines[len(lines)-1])
+	test.Expect(t, "known album 2", "Throbbing Gristle - Discipline", lines[len(lines)-2])
+	test.Expect(t, "known album 3", "Abba - I Do, I Do, I Do, I Do, I Do", lines[len(lines)-3])
 }
 
-func TestItAddsReleasesToEndOfFile(t *testing.T) {
+func TestItAddsAlbumsToEndOfFile(t *testing.T) {
 	setUp()
 	defer tearDown()
-	test.CopyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
+	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
 	currentScan := []FolderInfo{
 		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
 		{test.DummyFileInfo{"Iconoclastic Diaries", true}, test.DummyFileInfo{"Shake", true}},
 	}
-	UpdateKnownReleases(currentScan, knownReleasesFile(), knownReleasesBackup(), 0)
+	UpdateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
-	file, lines := knownReleasesLines()
+	file, lines := knownAlbumsLines()
 	defer file.Close()
 
-	test.ExpectInt(t, "number of known releases", 5, len(lines))
-	test.Expect(t, "known release 1", "Daniel Menche - Vent", lines[len(lines)-1])
-	test.Expect(t, "known release 2", "Shake - Iconoclastic Diaries", lines[len(lines)-2])
-	test.Expect(t, "known release 3", "The Krankies - It's Fan-dabi-dozi!", lines[len(lines)-3])
+	test.ExpectInt(t, "number of known albums", 5, len(lines))
+	test.Expect(t, "known album 1", "Daniel Menche - Vent", lines[len(lines)-1])
+	test.Expect(t, "known album 2", "Shake - Iconoclastic Diaries", lines[len(lines)-2])
+	test.Expect(t, "known album 3", "The Krankies - It's Fan-dabi-dozi!", lines[len(lines)-3])
 }
 
-func TestItIgnoresReleasesAlreadyKnown(t *testing.T) {
+func TestItIgnoresAlbumsAlreadyKnown(t *testing.T) {
 	setUp()
 	defer tearDown()
-	test.CopyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
+	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
 	currentScan := []FolderInfo{
 		{test.DummyFileInfo{"Iconoclastic Diaries", true}, test.DummyFileInfo{"Shake", true}},
 		{test.DummyFileInfo{"I Do, I Do, I Do, I Do, I Do", true}, test.DummyFileInfo{"Abba", true}},
 		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
 		{test.DummyFileInfo{"Discipline", true}, test.DummyFileInfo{"Throbbing Gristle", true}},
 	}
-	UpdateKnownReleases(currentScan, knownReleasesFile(), knownReleasesBackup(), 0)
+	UpdateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
-	file, lines := knownReleasesLines()
+	file, lines := knownAlbumsLines()
 	defer file.Close()
 
-	test.ExpectInt(t, "number of known releases", 5, len(lines))
-	test.Expect(t, "known release 1", "Daniel Menche - Vent", lines[len(lines)-1])
-	test.Expect(t, "known release 2", "Shake - Iconoclastic Diaries", lines[len(lines)-2])
+	test.ExpectInt(t, "number of known albums", 5, len(lines))
+	test.Expect(t, "known album 1", "Daniel Menche - Vent", lines[len(lines)-1])
+	test.Expect(t, "known album 2", "Shake - Iconoclastic Diaries", lines[len(lines)-2])
 }
 
-func TestItHandlesWhenKnownReleasesFileMayNotEndInNewline(t *testing.T) {
+func TestItHandlesWhenKnownAlbumsFileMayNotEndInNewline(t *testing.T) {
 	setUp()
 	defer tearDown()
-	test.CopyFile(knownReleasesFile(), path.Join(testData(), "knownreleases_endwithoutnewline"))
+	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "knownalbums_endwithoutnewline"))
 	currentScan := []FolderInfo{
 		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
 	}
-	UpdateKnownReleases(currentScan, knownReleasesFile(), knownReleasesBackup(), 0)
+	UpdateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
-	file, lines := knownReleasesLines()
+	file, lines := knownAlbumsLines()
 	defer file.Close()
 
-	test.ExpectInt(t, "number of known releases", 2, len(lines))
-	test.Expect(t, "known release 1", "Daniel Menche - Vent", lines[len(lines)-1])
-	test.Expect(t, "known release 2", "The Krankies - It's Fan-dabi-dozi!", lines[len(lines)-2])
+	test.ExpectInt(t, "number of known albums", 2, len(lines))
+	test.Expect(t, "known album 1", "Daniel Menche - Vent", lines[len(lines)-1])
+	test.Expect(t, "known album 2", "The Krankies - It's Fan-dabi-dozi!", lines[len(lines)-2])
 }
 
-func TestUpdateKnownReleasesReturnValueWhenNoNewReleasesAndKnownReleasesAboveLimit(t *testing.T) {
+func TestUpdateKnownAlbumsReturnValueWhenNoNewAlbumsAndKnownAlbumsAboveLimit(t *testing.T) {
 	setUp()
 	defer tearDown()
-	test.CopyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
-	latestAdditions := UpdateKnownReleases([]FolderInfo{}, knownReleasesFile(), knownReleasesBackup(), 2)
+	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
+	latestAdditions := UpdateKnownAlbums([]FolderInfo{}, knownAlbumsFile(), knownAlbumsBackup(), 2)
 
 	test.ExpectInt(t, "number of latest additions", 2, len(latestAdditions))
 	test.Expect(t, "latest addition 1", "The Krankies - It's Fan-dabi-dozi!", latestAdditions[0])
 	test.Expect(t, "latest addition 2", "Throbbing Gristle - Discipline", latestAdditions[1])
 }
 
-func TestUpdateKnownReleasesReturnValueWhenNewReleasesAboveLimit(t *testing.T) {
+func TestUpdateKnownAlbumsReturnValueWhenNewAlbumsAboveLimit(t *testing.T) {
 	setUp()
 	defer tearDown()
-	test.CopyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
+	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
 	currentScan := []FolderInfo{
 		{test.DummyFileInfo{"Iconoclastic Diaries", true}, test.DummyFileInfo{"Shake", true}},
 		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
 		{test.DummyFileInfo{"Mouldy Old Dough", true}, test.DummyFileInfo{"Lieutenant Pigeon", true}},
 	}
-	latestAdditions := UpdateKnownReleases(currentScan, knownReleasesFile(), knownReleasesBackup(), 2)
+	latestAdditions := UpdateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 2)
 
 	test.ExpectInt(t, "number of latest additions", 2, len(latestAdditions))
 	test.Expect(t, "latest addition 1", "Daniel Menche - Vent", latestAdditions[0])
 	test.Expect(t, "latest addition 2", "Lieutenant Pigeon - Mouldy Old Dough", latestAdditions[1])
 }
 
-func TestUpdateKnownReleasesReturnValueWhenNewReleasesBelowLimit(t *testing.T) {
+func TestUpdateKnownAlbumsReturnValueWhenNewAlbumsBelowLimit(t *testing.T) {
 	setUp()
 	defer tearDown()
-	test.CopyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
+	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
 	currentScan := []FolderInfo{
 		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
 	}
-	latestAdditions := UpdateKnownReleases(currentScan, knownReleasesFile(), knownReleasesBackup(), 2)
+	latestAdditions := UpdateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 2)
 
 	test.ExpectInt(t, "number of latest additions", 2, len(latestAdditions))
 	test.Expect(t, "latest addition 1", "Daniel Menche - Vent", latestAdditions[0])
 	test.Expect(t, "latest addition 2", "The Krankies - It's Fan-dabi-dozi!", latestAdditions[1])
 }
 
-func TestUpdateKnownReleasesReturnValueWhenNewAndKnownReleasesCombinedAreBelowLimit(t *testing.T) {
+func TestUpdateKnownAlbumsReturnValueWhenNewAndKnownAlbumsCombinedAreBelowLimit(t *testing.T) {
 	setUp()
 	defer tearDown()
-	test.CopyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
+	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
 	currentScan := []FolderInfo{
 		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
 	}
-	latestAdditions := UpdateKnownReleases(currentScan, knownReleasesFile(), knownReleasesBackup(), 5)
+	latestAdditions := UpdateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 5)
 
 	test.ExpectInt(t, "number of latest additions", 4, len(latestAdditions))
 	test.Expect(t, "latest addition 1", "Daniel Menche - Vent", latestAdditions[0])
@@ -160,39 +160,39 @@ func TestUpdateKnownReleasesReturnValueWhenNewAndKnownReleasesCombinedAreBelowLi
 	test.Expect(t, "latest addition 4", "Abba - I Do, I Do, I Do, I Do, I Do", latestAdditions[3])
 }
 
-func TestItBacksUpKnownReleasesWhenChanged(t *testing.T) {
+func TestItBacksUpKnownAlbumsWhenChanged(t *testing.T) {
 	setUp()
 	defer tearDown()
-	test.CopyFile(knownReleasesFile(), path.Join(testData(), "3knownreleases"))
-	UpdateKnownReleases([]FolderInfo{
+	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
+	UpdateKnownAlbums([]FolderInfo{
 		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
 		{test.DummyFileInfo{"Iconoclastic Diaries", true}, test.DummyFileInfo{"Shake", true}},
-	}, knownReleasesFile(), knownReleasesBackup(), 0)
+	}, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
-	backupFile, backupLines := knownReleasesBackupLines()
+	backupFile, backupLines := knownAlbumsBackupLines()
 	defer backupFile.Close()
 	if len(backupLines) == 0 {
-		t.Error("Expected UpdateKnownReleases to create backup but it didn't")
+		t.Error("Expected UpdateKnownAlbums to create backup but it didn't")
 	}
 
 	test.ExpectInt(t, "number of lines in backup", 5, len(backupLines))
-	test.Expect(t, "backup release 1", "Daniel Menche - Vent", backupLines[len(backupLines)-1])
-	test.Expect(t, "backup release 2", "Shake - Iconoclastic Diaries", backupLines[len(backupLines)-2])
-	test.Expect(t, "backup release 3", "The Krankies - It's Fan-dabi-dozi!", backupLines[len(backupLines)-3])
+	test.Expect(t, "backup album 1", "Daniel Menche - Vent", backupLines[len(backupLines)-1])
+	test.Expect(t, "backup album 2", "Shake - Iconoclastic Diaries", backupLines[len(backupLines)-2])
+	test.Expect(t, "backup album 3", "The Krankies - It's Fan-dabi-dozi!", backupLines[len(backupLines)-3])
 }
 
-func TestItDoesntBackUpKnownReleasesWhenUnchanged(t *testing.T) {
+func TestItDoesntBackUpKnownAlbumsWhenUnchanged(t *testing.T) {
 	setUp()
 	defer tearDown()
-	UpdateKnownReleases([]FolderInfo{}, knownReleasesFile(), knownReleasesBackup(), 0)
+	UpdateKnownAlbums([]FolderInfo{}, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
-	_, backup := knownReleasesBackupLines()
+	_, backup := knownAlbumsBackupLines()
 	if len(backup) > 0 {
-		t.Error("Expected UpdateKnownReleases to not create backup but it did")
+		t.Error("Expected UpdateKnownAlbums to not create backup but it did")
 	}
 }
 
-func TestNoMissingReleases(t *testing.T) {
+func TestNoMissingAlbums(t *testing.T) {
 	scanned := []FolderInfo{
 		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
 		{test.DummyFileInfo{"Iconoclastic Diaries", true}, test.DummyFileInfo{"Shake", true}},
@@ -201,11 +201,11 @@ func TestNoMissingReleases(t *testing.T) {
 		"Daniel Menche - Vent",
 		"Shake - Iconoclastic Diaries",
 	}
-	missing := findMissingReleases(scanned, known)
-	test.ExpectInt(t, "number of missing releases", 0, len(missing))
+	missing := findMissingAlbums(scanned, known)
+	test.ExpectInt(t, "number of missing albums", 0, len(missing))
 }
 
-func TestOneMissingRelease(t *testing.T) {
+func TestOneMissingAlbum(t *testing.T) {
 	scanned := []FolderInfo{
 		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
 		{test.DummyFileInfo{"Iconoclastic Diaries", true}, test.DummyFileInfo{"Shake", true}},
@@ -215,12 +215,12 @@ func TestOneMissingRelease(t *testing.T) {
 		"The Krankies - It's Fan-dabi-dozi!",
 		"Shake - Iconoclastic Diaries",
 	}
-	missing := findMissingReleases(scanned, known)
-	test.ExpectInt(t, "number of missing releases", 1, len(missing))
-	test.Expect(t, "missing release", "The Krankies - It's Fan-dabi-dozi!", missing[0])
+	missing := findMissingAlbums(scanned, known)
+	test.ExpectInt(t, "number of missing albums", 1, len(missing))
+	test.Expect(t, "missing album", "The Krankies - It's Fan-dabi-dozi!", missing[0])
 }
 
-func TestTwoMissingReleases(t *testing.T) {
+func TestTwoMissingAlbums(t *testing.T) {
 	scanned := []FolderInfo{
 		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
 		{test.DummyFileInfo{"Iconoclastic Diaries", true}, test.DummyFileInfo{"Shake", true}},
@@ -231,10 +231,10 @@ func TestTwoMissingReleases(t *testing.T) {
 		"Shake - Iconoclastic Diaries",
 		"Throbbing Gristle - Discipline",
 	}
-	missing := findMissingReleases(scanned, known)
-	test.ExpectInt(t, "number of missing releases", 2, len(missing))
-	test.Expect(t, "missing release 1", "The Krankies - It's Fan-dabi-dozi!", missing[0])
-	test.Expect(t, "missing release 2", "Throbbing Gristle - Discipline", missing[1])
+	missing := findMissingAlbums(scanned, known)
+	test.ExpectInt(t, "number of missing albums", 2, len(missing))
+	test.Expect(t, "missing album 1", "The Krankies - It's Fan-dabi-dozi!", missing[0])
+	test.Expect(t, "missing album 2", "Throbbing Gristle - Discipline", missing[1])
 }
 
 func setUp() {
@@ -244,20 +244,20 @@ func tearDown() {
 	os.RemoveAll(tempDir())
 }
 
-func knownReleasesFile() string {
-	return path.Join(tempDir(), "knownreleases")
+func knownAlbumsFile() string {
+	return path.Join(tempDir(), "knownalbums")
 }
 
-func knownReleasesBackup() string {
-	return path.Join(tempDir(), "knownreleases_backup")
+func knownAlbumsBackup() string {
+	return path.Join(tempDir(), "knownalbums_backup")
 }
 
-func knownReleasesLines() (file *os.File, lines []string) {
-	return fileLines(knownReleasesFile())
+func knownAlbumsLines() (file *os.File, lines []string) {
+	return fileLines(knownAlbumsFile())
 }
 
-func knownReleasesBackupLines() (file *os.File, lines []string) {
-	return fileLines(knownReleasesBackup())
+func knownAlbumsBackupLines() (file *os.File, lines []string) {
+	return fileLines(knownAlbumsBackup())
 }
 
 func fileLines(filePath string) (file *os.File, lines []string) {

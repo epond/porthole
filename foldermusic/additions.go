@@ -14,6 +14,12 @@ type Additions struct {
 	knownAlbumsBackup    string
 	foldersToScan        string
 	latestAdditionsLimit int
+	folderScanner        FolderInfoScanner
+}
+
+// FolderInfoScanner can scan for folder information
+type FolderInfoScanner interface {
+	ScanFolders(foldersToScan []FolderToScan) []FolderInfo
 }
 
 // NewAdditions constructs a new Additions
@@ -23,13 +29,20 @@ func NewAdditions(
 	knownAlbumsBackup string,
 	foldersToScan string,
 	latestAdditionsLimit int) *Additions {
-	return &Additions{musicFolder, knownAlbumsFile, knownAlbumsBackup, foldersToScan, latestAdditionsLimit}
+	return &Additions{
+		musicFolder,
+		knownAlbumsFile,
+		knownAlbumsBackup,
+		foldersToScan,
+		latestAdditionsLimit,
+		&FolderScanner{},
+	}
 }
 
 // FetchLatestAdditions finds the most recently added albums
 func (f *Additions) FetchLatestAdditions() []string {
 	foldersToScan := parseFoldersToScan(f.musicFolder, f.foldersToScan)
-	scannedAlbums := ScanFolders(foldersToScan)
+	scannedAlbums := f.folderScanner.ScanFolders(foldersToScan)
 	latestAdditions := UpdateKnownAlbums(
 		scannedAlbums,
 		f.knownAlbumsFile,

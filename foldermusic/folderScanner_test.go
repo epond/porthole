@@ -17,14 +17,14 @@ func TestGivenZeroDepthThenReturnEmptyArray(t *testing.T) {
 // A folder such as a/b needs to have entry "a - b" where a is artist and b is name of album
 func TestScanListEntriesContainTwoFolderLevels(t *testing.T) {
 	folderPath := path.Join(os.Getenv("GOPATH"), "src/github.com/epond/porthole/testdata/a1")
-	folderInfos := sortFolderInfoByString(ScanFolders([]FolderToScan{{folderPath, 1}}))
+	folderInfos := sortFolderInfoByString(scanFolders([]FolderToScan{{folderPath, 1}}))
 	test.ExpectInt(t, "number of folderInfos", 3, len(folderInfos))
 	test.Expect(t, "folderInfo strings", "A1 - A2|A1 - B2|A1 - C2", pipeDelimitedString(folderInfos))
 }
 
 func TestScanListAtGreaterDepth(t *testing.T) {
 	folderPath := path.Join(os.Getenv("GOPATH"), "src/github.com/epond/porthole/testdata/a1")
-	folderInfos := sortFolderInfoByString(ScanFolders([]FolderToScan{{folderPath, 2}}))
+	folderInfos := sortFolderInfoByString(scanFolders([]FolderToScan{{folderPath, 2}}))
 	test.ExpectInt(t, "number of folderInfos", 4, len(folderInfos))
 	test.Expect(t, "folderInfo strings", "B2 - A3b2|B2 - B3b2|C2 - A3c2|C2 - B3c2", pipeDelimitedString(folderInfos))
 }
@@ -79,4 +79,9 @@ func (slice FolderInfosSortedByString) Swap(i, j int) {
 func sortFolderInfoByString(folderInfos FolderInfosSortedByString) FolderInfosSortedByString {
 	sort.Sort(folderInfos)
 	return folderInfos
+}
+
+func scanFolders(foldersToScan []FolderToScan) []FolderInfo {
+	fs := &FolderScanner{}
+	return fs.ScanFolders(foldersToScan)
 }

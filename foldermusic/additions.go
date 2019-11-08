@@ -5,6 +5,8 @@ import (
 	"path"
 	"strconv"
 	"strings"
+
+	"github.com/epond/porthole/status"
 )
 
 // Additions treats folders on the filesystem as albums
@@ -40,7 +42,7 @@ func NewAdditions(
 }
 
 // FetchLatestAdditions finds the most recently added albums
-func (f *Additions) FetchLatestAdditions() []string {
+func (f *Additions) FetchLatestAdditions() []status.Album {
 	foldersToScan := parseFoldersToScan(f.musicFolder, f.foldersToScan)
 	scannedAlbums := f.folderScanner.ScanFolders(foldersToScan)
 	latestAdditions := UpdateKnownAlbums(

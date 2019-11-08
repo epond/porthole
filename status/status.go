@@ -10,7 +10,7 @@ type Status struct {
 	GitCommit       string
 	LastRequest     time.Time
 	LastFetch       string
-	LatestAdditions []string
+	LatestAdditions []Album
 }
 
 // Coordinator knows about application status and how to update it

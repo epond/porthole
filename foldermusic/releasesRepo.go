@@ -27,7 +27,7 @@ func UpdateKnownAlbums(folderScanList []FolderInfo, knownAlbumsPath string, know
 
 	ensureFileEndsInNewline(knownAlbumsPath)
 
-	// Read knownalbums into an array of its lines and a map
+	// Read knownalbums into an array of its lines and a map that conveys if a line is present
 	knownAlbumsLines, knownAlbumsMap := readFile(knownAlbumsPath)
 
 	// Build a list of current scan entries not present in known albums (new albums)

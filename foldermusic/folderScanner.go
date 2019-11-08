@@ -24,6 +24,13 @@ type FolderInfo struct {
 // DepthAwareFolderScanner knows how to use the filesystem to scan for folders
 type DepthAwareFolderScanner struct{}
 
+func (f *FolderInfo) String() string {
+	if f.parent == nil {
+		return f.fileInfo.Name()
+	}
+	return fmt.Sprintf("%v - %v", capitalise(f.parent.Name()), capitalise(f.fileInfo.Name()))
+}
+
 // ScanFolders scans the filesystem for folders
 func (f *DepthAwareFolderScanner) ScanFolders(foldersToScan []FolderToScan) []FolderInfo {
 	var folderScanList []FolderInfo
@@ -77,13 +84,6 @@ func folderInfoAtDepthIter(folderToScan FolderToScan, parent os.FileInfo) []Fold
 
 func folderInfoAtDepth(folderToScan FolderToScan) []FolderInfo {
 	return folderInfoAtDepthIter(folderToScan, nil)
-}
-
-func (f *FolderInfo) String() string {
-	if f.parent == nil {
-		return f.fileInfo.Name()
-	}
-	return fmt.Sprintf("%v - %v", capitalise(f.parent.Name()), capitalise(f.fileInfo.Name()))
 }
 
 func capitalise(word string) string {

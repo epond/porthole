@@ -7,6 +7,8 @@ import (
 	"path"
 	"strings"
 	"unicode/utf8"
+
+	"github.com/epond/porthole/status"
 )
 
 // FolderToScan represents a folder in the filesystem
@@ -32,12 +34,16 @@ func (f *FolderInfo) String() string {
 }
 
 // ScanFolders scans the filesystem for folders
-func (f *DepthAwareFolderScanner) ScanFolders(foldersToScan []FolderToScan) []FolderInfo {
+func (f *DepthAwareFolderScanner) ScanFolders(foldersToScan []FolderToScan) []status.Album {
 	var folderScanList []FolderInfo
 	for _, folder := range foldersToScan {
 		folderScanList = append(folderScanList, folderInfoAtDepth(folder)...)
 	}
-	return folderScanList
+	albums := make([]status.Album, 0)
+	for _, folderInfo := range folderScanList {
+		albums = append(albums, folderInfo.String())
+	}
+	return albums
 }
 
 func folderInfoAtDepthIter(folderToScan FolderToScan, parent os.FileInfo) []FolderInfo {

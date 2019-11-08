@@ -6,6 +6,8 @@ import (
 	"log"
 	"os"
 	"sort"
+
+	"github.com/epond/porthole/status"
 )
 
 const present = 1
@@ -15,7 +17,7 @@ type sortableStrings []string
 // UpdateKnownAlbums updates the known albums file and returns an array
 // of new albums, based upon the array of folder passed in as the
 // folderScanList argument.
-func UpdateKnownAlbums(folderScanList []FolderInfo, knownAlbumsPath string, knownAlbumsBackupPath string, limit int) []string {
+func UpdateKnownAlbums(folderScanList []status.Album, knownAlbumsPath string, knownAlbumsBackupPath string, limit int) []status.Album {
 	if _, err := os.Stat(knownAlbumsPath); os.IsNotExist(err) {
 		file, errCreate := os.Create(knownAlbumsPath)
 		if errCreate != nil {
@@ -33,8 +35,8 @@ func UpdateKnownAlbums(folderScanList []FolderInfo, knownAlbumsPath string, know
 	// Build a list of current scan entries not present in known albums (new albums)
 	var newAlbums []string
 	for _, scanItem := range folderScanList {
-		if knownAlbumsMap[scanItem.String()] != present {
-			newAlbums = append(newAlbums, scanItem.String())
+		if knownAlbumsMap[scanItem] != present {
+			newAlbums = append(newAlbums, scanItem)
 		}
 	}
 
@@ -94,10 +96,10 @@ func UpdateKnownAlbums(folderScanList []FolderInfo, knownAlbumsPath string, know
 	return latestAdditions
 }
 
-func findMissingAlbums(scanned []FolderInfo, known []string) []string {
+func findMissingAlbums(scanned []status.Album, known []string) []string {
 	scannedMap := make(map[string]int)
 	for _, album := range scanned {
-		scannedMap[album.String()] = present
+		scannedMap[album] = present
 	}
 
 	// Build a list of known albums not present in current scan

@@ -21,7 +21,7 @@ type Additions struct {
 
 // FolderScanner can scan for folder information
 type FolderScanner interface {
-	ScanFolders(foldersToScan []FolderToScan) []FolderInfo
+	ScanFolders(foldersToScan []FolderToScan) []status.Album
 }
 
 // NewAdditions constructs a new Additions

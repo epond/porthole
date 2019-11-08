@@ -13,6 +13,12 @@ A dashboard presented as a web page that shows the most recent album additions t
 * Use the FOLDERS_TO_SCAN environment variable to indicate any number of locations where albums are found, separated by commas.
 * Each location in FOLDERS_TO_SCAN is split into `<root>:<depth>` where `<depth>` indicates how many levels beneath `<root>` the album folders can be found. This allows for splitting the collection by each artist's first letter.
 
+# build and test
+
+* Build and test with `build.sh`
+* Run a specific test with
+`go test ./... -run TestScanListEntriesContainTwoFolderLevels`
+
 # implementation
 
 * The dashboard html page periodically calls the /dashinfo endpoint, the response of which is used to fill an 'infoarea' div.

@@ -7,26 +7,28 @@ import (
 	"sort"
 	"testing"
 
+	"github.com/epond/porthole/status"
 	"github.com/epond/porthole/test"
 )
 
 func TestGivenZeroDepthThenReturnEmptyArray(t *testing.T) {
-	test.ExpectInt(t, "number of folderInfos", 0, len(folderInfoAtDepth(FolderToScan{"anything", 0})))
+	test.ExpectInt(t, "number of albums", 0, len(folderInfoAtDepth(FolderToScan{"anything", 0})))
 }
 
 // A folder such as a/b needs to have entry "a - b" where a is artist and b is name of album
 func TestScanListEntriesContainTwoFolderLevels(t *testing.T) {
 	folderPath := path.Join(os.Getenv("GOPATH"), "src/github.com/epond/porthole/testdata/a1")
-	folderInfos := sortFolderInfoByString(scanFolders([]FolderToScan{{folderPath, 1}}))
-	test.ExpectInt(t, "number of folderInfos", 3, len(folderInfos))
-	test.Expect(t, "folderInfo strings", "A1 - A2|A1 - B2|A1 - C2", pipeDelimitedString(folderInfos))
+	unsortedAlbums := scanFolders([]FolderToScan{{folderPath, 1}})
+	albums := sortAlbums(unsortedAlbums)
+	test.ExpectInt(t, "number of albums", 3, len(albums))
+	test.Expect(t, "album strings", "A1 - A2|A1 - B2|A1 - C2", pipeDelimitedString(albums))
 }
 
 func TestScanListAtGreaterDepth(t *testing.T) {
 	folderPath := path.Join(os.Getenv("GOPATH"), "src/github.com/epond/porthole/testdata/a1")
-	folderInfos := sortFolderInfoByString(scanFolders([]FolderToScan{{folderPath, 2}}))
-	test.ExpectInt(t, "number of folderInfos", 4, len(folderInfos))
-	test.Expect(t, "folderInfo strings", "B2 - A3b2|B2 - B3b2|C2 - A3c2|C2 - B3c2", pipeDelimitedString(folderInfos))
+	albums := sortAlbums(scanFolders([]FolderToScan{{folderPath, 2}}))
+	test.ExpectInt(t, "number of albums", 4, len(albums))
+	test.Expect(t, "folderInfo strings", "B2 - A3b2|B2 - B3b2|C2 - A3c2|C2 - B3c2", pipeDelimitedString(albums))
 }
 
 func TestFolderInfoStringCapitalisesFirstLettersOnly(t *testing.T) {
@@ -51,10 +53,10 @@ func TestFolderInfoStringCapitalisesEdgeCases(t *testing.T) {
 	test.Expect(t, "FolderInfo String()", "Ab Cd - Ef  Gh", folderInfo.String())
 }
 
-func pipeDelimitedString(list []FolderInfo) string {
+func pipeDelimitedString(list []status.Album) string {
 	var all bytes.Buffer
 	for i, element := range list {
-		all.WriteString(element.String())
+		all.WriteString(element)
 		if i < len(list)-1 {
 			all.WriteString("|")
 		}
@@ -62,26 +64,26 @@ func pipeDelimitedString(list []FolderInfo) string {
 	return all.String()
 }
 
-type FolderInfosSortedByString []FolderInfo
+type SortedAlbums []status.Album
 
-func (slice FolderInfosSortedByString) Len() int {
+func (slice SortedAlbums) Len() int {
 	return len(slice)
 }
 
-func (slice FolderInfosSortedByString) Less(i, j int) bool {
-	return slice[i].String() < slice[j].String()
+func (slice SortedAlbums) Less(i, j int) bool {
+	return slice[i] < slice[j]
 }
 
-func (slice FolderInfosSortedByString) Swap(i, j int) {
+func (slice SortedAlbums) Swap(i, j int) {
 	slice[i], slice[j] = slice[j], slice[i]
 }
 
-func sortFolderInfoByString(folderInfos FolderInfosSortedByString) FolderInfosSortedByString {
-	sort.Sort(folderInfos)
-	return folderInfos
+func sortAlbums(albums SortedAlbums) SortedAlbums {
+	sort.Sort(albums)
+	return albums
 }
 
-func scanFolders(foldersToScan []FolderToScan) []FolderInfo {
+func scanFolders(foldersToScan []FolderToScan) []status.Album {
 	fs := &DepthAwareFolderScanner{}
 	return fs.ScanFolders(foldersToScan)
 }

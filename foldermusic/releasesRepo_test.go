@@ -12,9 +12,7 @@ import (
 func TestItCreatesFileWhenKnownAlbumsFileMissing(t *testing.T) {
 	setUp()
 	defer tearDown()
-	UpdateKnownAlbums([]FolderInfo{
-		{test.DummyFileInfo{"Mouldy Old Dough", true}, test.DummyFileInfo{"Lieutenant Pigeon", true}},
-	}, knownAlbumsFile(), knownAlbumsBackup(), 0)
+	UpdateKnownAlbums([]string{"Lieutenant Pigeon - Mouldy Old Dough"}, knownAlbumsFile(), knownAlbumsBackup(), 0)
 	_, lines := knownAlbumsLines()
 	if len(lines) == 0 {
 		t.Error("Expected UpdateKnownAlbums to create known albums file but it didn't")
@@ -31,10 +29,10 @@ func TestItDoesNotChangeFileWhenNoNewAlbums(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	currentScan := []FolderInfo{
-		{test.DummyFileInfo{"I Do, I Do, I Do, I Do, I Do", true}, test.DummyFileInfo{"Abba", true}},
-		{test.DummyFileInfo{"It's Fan-dabi-dozi!", true}, test.DummyFileInfo{"The Krankies", true}},
-		{test.DummyFileInfo{"Discipline", true}, test.DummyFileInfo{"Throbbing Gristle", true}},
+	currentScan := []string{
+		"Abba - I Do, I Do, I Do, I Do, I Do",
+		"The Krankies - It's Fan-dabi-dozi!",
+		"Throbbing Gristle - Discipline",
 	}
 	UpdateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
@@ -51,9 +49,9 @@ func TestItAddsAlbumsToEndOfFile(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	currentScan := []FolderInfo{
-		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
-		{test.DummyFileInfo{"Iconoclastic Diaries", true}, test.DummyFileInfo{"Shake", true}},
+	currentScan := []string{
+		"Daniel Menche - Vent",
+		"Shake - Iconoclastic Diaries",
 	}
 	UpdateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
@@ -70,11 +68,11 @@ func TestItIgnoresAlbumsAlreadyKnown(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	currentScan := []FolderInfo{
-		{test.DummyFileInfo{"Iconoclastic Diaries", true}, test.DummyFileInfo{"Shake", true}},
-		{test.DummyFileInfo{"I Do, I Do, I Do, I Do, I Do", true}, test.DummyFileInfo{"Abba", true}},
-		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
-		{test.DummyFileInfo{"Discipline", true}, test.DummyFileInfo{"Throbbing Gristle", true}},
+	currentScan := []string{
+		"Shake - Iconoclastic Diaries",
+		"Abba - I Do, I Do, I Do, I Do, I Do",
+		"Daniel Menche - Vent",
+		"Throbbing Gristle - Discipline",
 	}
 	UpdateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
@@ -90,8 +88,8 @@ func TestItHandlesWhenKnownAlbumsFileMayNotEndInNewline(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "knownalbums_endwithoutnewline"))
-	currentScan := []FolderInfo{
-		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
+	currentScan := []string{
+		"Daniel Menche - Vent",
 	}
 	UpdateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
@@ -107,7 +105,7 @@ func TestUpdateKnownAlbumsReturnValueWhenNoNewAlbumsAndKnownAlbumsAboveLimit(t *
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	latestAdditions := UpdateKnownAlbums([]FolderInfo{}, knownAlbumsFile(), knownAlbumsBackup(), 2)
+	latestAdditions := UpdateKnownAlbums([]string{}, knownAlbumsFile(), knownAlbumsBackup(), 2)
 
 	test.ExpectInt(t, "number of latest additions", 2, len(latestAdditions))
 	test.Expect(t, "latest addition 1", "The Krankies - It's Fan-dabi-dozi!", latestAdditions[0])
@@ -118,10 +116,10 @@ func TestUpdateKnownAlbumsReturnValueWhenNewAlbumsAboveLimit(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	currentScan := []FolderInfo{
-		{test.DummyFileInfo{"Iconoclastic Diaries", true}, test.DummyFileInfo{"Shake", true}},
-		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
-		{test.DummyFileInfo{"Mouldy Old Dough", true}, test.DummyFileInfo{"Lieutenant Pigeon", true}},
+	currentScan := []string{
+		"Shake - Iconoclastic Diaries",
+		"Daniel Menche - Vent",
+		"Lieutenant Pigeon - Mouldy Old Dough",
 	}
 	latestAdditions := UpdateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 2)
 
@@ -134,8 +132,8 @@ func TestUpdateKnownAlbumsReturnValueWhenNewAlbumsBelowLimit(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	currentScan := []FolderInfo{
-		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
+	currentScan := []string{
+		"Daniel Menche - Vent",
 	}
 	latestAdditions := UpdateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 2)
 
@@ -148,8 +146,8 @@ func TestUpdateKnownAlbumsReturnValueWhenNewAndKnownAlbumsCombinedAreBelowLimit(
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	currentScan := []FolderInfo{
-		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
+	currentScan := []string{
+		"Daniel Menche - Vent",
 	}
 	latestAdditions := UpdateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 5)
 
@@ -164,9 +162,9 @@ func TestItBacksUpKnownAlbumsWhenChanged(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	UpdateKnownAlbums([]FolderInfo{
-		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
-		{test.DummyFileInfo{"Iconoclastic Diaries", true}, test.DummyFileInfo{"Shake", true}},
+	UpdateKnownAlbums([]string{
+		"Daniel Menche - Vent",
+		"Shake - Iconoclastic Diaries",
 	}, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
 	backupFile, backupLines := knownAlbumsBackupLines()
@@ -184,7 +182,7 @@ func TestItBacksUpKnownAlbumsWhenChanged(t *testing.T) {
 func TestItDoesntBackUpKnownAlbumsWhenUnchanged(t *testing.T) {
 	setUp()
 	defer tearDown()
-	UpdateKnownAlbums([]FolderInfo{}, knownAlbumsFile(), knownAlbumsBackup(), 0)
+	UpdateKnownAlbums([]string{}, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
 	_, backup := knownAlbumsBackupLines()
 	if len(backup) > 0 {
@@ -193,9 +191,9 @@ func TestItDoesntBackUpKnownAlbumsWhenUnchanged(t *testing.T) {
 }
 
 func TestNoMissingAlbums(t *testing.T) {
-	scanned := []FolderInfo{
-		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
-		{test.DummyFileInfo{"Iconoclastic Diaries", true}, test.DummyFileInfo{"Shake", true}},
+	scanned := []string{
+		"Daniel Menche - Vent",
+		"Shake - Iconoclastic Diaries",
 	}
 	known := []string{
 		"Daniel Menche - Vent",
@@ -206,9 +204,9 @@ func TestNoMissingAlbums(t *testing.T) {
 }
 
 func TestOneMissingAlbum(t *testing.T) {
-	scanned := []FolderInfo{
-		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
-		{test.DummyFileInfo{"Iconoclastic Diaries", true}, test.DummyFileInfo{"Shake", true}},
+	scanned := []string{
+		"Daniel Menche - Vent",
+		"Shake - Iconoclastic Diaries",
 	}
 	known := []string{
 		"Daniel Menche - Vent",
@@ -221,9 +219,9 @@ func TestOneMissingAlbum(t *testing.T) {
 }
 
 func TestTwoMissingAlbums(t *testing.T) {
-	scanned := []FolderInfo{
-		{test.DummyFileInfo{"Vent", true}, test.DummyFileInfo{"Daniel Menche", true}},
-		{test.DummyFileInfo{"Iconoclastic Diaries", true}, test.DummyFileInfo{"Shake", true}},
+	scanned := []string{
+		"Daniel Menche - Vent",
+		"Shake - Iconoclastic Diaries",
 	}
 	known := []string{
 		"Daniel Menche - Vent",

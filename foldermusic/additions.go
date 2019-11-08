@@ -35,7 +35,7 @@ func NewAdditions(
 		knownAlbumsBackup,
 		foldersToScan,
 		latestAdditionsLimit,
-		&FolderScanner{},
+		&DepthAwareFolderScanner{},
 	}
 }
 

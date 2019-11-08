@@ -82,6 +82,6 @@ func sortFolderInfoByString(folderInfos FolderInfosSortedByString) FolderInfosSo
 }
 
 func scanFolders(foldersToScan []FolderToScan) []FolderInfo {
-	fs := &FolderScanner{}
+	fs := &DepthAwareFolderScanner{}
 	return fs.ScanFolders(foldersToScan)
 }

@@ -21,11 +21,11 @@ type FolderInfo struct {
 	parent   os.FileInfo
 }
 
-// FolderScanner knows how to use the filesystem to scan for folders
-type FolderScanner struct{}
+// DepthAwareFolderScanner knows how to use the filesystem to scan for folders
+type DepthAwareFolderScanner struct{}
 
 // ScanFolders scans the filesystem for folders
-func (f *FolderScanner) ScanFolders(foldersToScan []FolderToScan) []FolderInfo {
+func (f *DepthAwareFolderScanner) ScanFolders(foldersToScan []FolderToScan) []FolderInfo {
 	var folderScanList []FolderInfo
 	for _, folder := range foldersToScan {
 		folderScanList = append(folderScanList, folderInfoAtDepth(folder)...)

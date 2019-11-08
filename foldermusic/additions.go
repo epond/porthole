@@ -14,11 +14,11 @@ type Additions struct {
 	knownAlbumsBackup    string
 	foldersToScan        string
 	latestAdditionsLimit int
-	folderScanner        FolderInfoScanner
+	folderScanner        FolderScanner
 }
 
-// FolderInfoScanner can scan for folder information
-type FolderInfoScanner interface {
+// FolderScanner can scan for folder information
+type FolderScanner interface {
 	ScanFolders(foldersToScan []FolderToScan) []FolderInfo
 }
 

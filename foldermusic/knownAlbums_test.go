@@ -244,8 +244,8 @@ func tearDown() {
 }
 
 func updateKnownAlbums(folderScanList []status.Album, knownAlbumsPath string, knownAlbumsBackupPath string, limit int) []status.Album {
-	knownAlbums := &KnownAlbumsWithBackup{}
-	return knownAlbums.UpdateKnownAlbums(folderScanList, knownAlbumsPath, knownAlbumsBackupPath, limit)
+	knownAlbums := &KnownAlbumsWithBackup{knownAlbumsPath, knownAlbumsBackupPath, limit}
+	return knownAlbums.UpdateKnownAlbums(folderScanList)
 }
 
 func knownAlbumsFile() string {

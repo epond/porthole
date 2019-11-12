@@ -27,7 +27,7 @@ type FolderScanner interface {
 
 // KnownAlbums provides access to the persisted known albums
 type KnownAlbums interface {
-	UpdateKnownAlbums(folderScanList []status.Album, knownAlbumsPath string, knownAlbumsBackupPath string, limit int) []status.Album
+	UpdateKnownAlbums(folderScanList []status.Album) []status.Album
 }
 
 // NewAdditions constructs a new Additions
@@ -43,7 +43,11 @@ func NewAdditions(
 		knownAlbumsBackup,
 		foldersToScan,
 		latestAdditionsLimit,
-		&KnownAlbumsWithBackup{},
+		&KnownAlbumsWithBackup{
+			knownAlbumsFile,
+			knownAlbumsBackup,
+			latestAdditionsLimit,
+		},
 		&DepthAwareFolderScanner{},
 	}
 }
@@ -52,11 +56,7 @@ func NewAdditions(
 func (f *Additions) FetchLatestAdditions() []status.Album {
 	foldersToScan := parseFoldersToScan(f.musicFolder, f.foldersToScan)
 	scannedAlbums := f.folderScanner.ScanFolders(foldersToScan)
-	latestAdditions := f.knownAlbums.UpdateKnownAlbums(
-		scannedAlbums,
-		f.knownAlbumsFile,
-		f.knownAlbumsBackup,
-		f.latestAdditionsLimit)
+	latestAdditions := f.knownAlbums.UpdateKnownAlbums(scannedAlbums)
 
 	return latestAdditions
 }

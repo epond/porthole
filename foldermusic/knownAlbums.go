@@ -34,8 +34,6 @@ func (k *KnownAlbumsWithBackup) UpdateKnownAlbums(folderScanList []status.Album)
 		file.Close()
 	}
 
-	ensureFileEndsInNewline(k.knownAlbumsPath)
-
 	// Read knownalbums into an array of its lines and a map that conveys if a line is present
 	knownAlbumsLines, knownAlbumsMap := readFile(k.knownAlbumsPath)
 
@@ -60,6 +58,7 @@ func (k *KnownAlbumsWithBackup) UpdateKnownAlbums(folderScanList []status.Album)
 	}
 
 	// Append new albums to known albums file
+	ensureFileEndsInNewline(k.knownAlbumsPath)
 	var knownAlbumsFile *os.File
 	knownAlbumsFile, err := os.OpenFile(k.knownAlbumsPath, os.O_RDWR|os.O_APPEND, 0660)
 	if err != nil {

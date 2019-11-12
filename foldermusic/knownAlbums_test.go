@@ -6,13 +6,14 @@ import (
 	"path"
 	"testing"
 
+	"github.com/epond/porthole/status"
 	"github.com/epond/porthole/test"
 )
 
 func TestItCreatesFileWhenKnownAlbumsFileMissing(t *testing.T) {
 	setUp()
 	defer tearDown()
-	UpdateKnownAlbums([]string{"Lieutenant Pigeon - Mouldy Old Dough"}, knownAlbumsFile(), knownAlbumsBackup(), 0)
+	updateKnownAlbums([]string{"Lieutenant Pigeon - Mouldy Old Dough"}, knownAlbumsFile(), knownAlbumsBackup(), 0)
 	_, lines := knownAlbumsLines()
 	if len(lines) == 0 {
 		t.Error("Expected UpdateKnownAlbums to create known albums file but it didn't")
@@ -34,7 +35,7 @@ func TestItDoesNotChangeFileWhenNoNewAlbums(t *testing.T) {
 		"The Krankies - It's Fan-dabi-dozi!",
 		"Throbbing Gristle - Discipline",
 	}
-	UpdateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 0)
+	updateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
 	file, lines := knownAlbumsLines()
 	defer file.Close()
@@ -53,7 +54,7 @@ func TestItAddsAlbumsToEndOfFile(t *testing.T) {
 		"Daniel Menche - Vent",
 		"Shake - Iconoclastic Diaries",
 	}
-	UpdateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 0)
+	updateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
 	file, lines := knownAlbumsLines()
 	defer file.Close()
@@ -74,7 +75,7 @@ func TestItIgnoresAlbumsAlreadyKnown(t *testing.T) {
 		"Daniel Menche - Vent",
 		"Throbbing Gristle - Discipline",
 	}
-	UpdateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 0)
+	updateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
 	file, lines := knownAlbumsLines()
 	defer file.Close()
@@ -91,7 +92,7 @@ func TestItHandlesWhenKnownAlbumsFileMayNotEndInNewline(t *testing.T) {
 	currentScan := []string{
 		"Daniel Menche - Vent",
 	}
-	UpdateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 0)
+	updateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
 	file, lines := knownAlbumsLines()
 	defer file.Close()
@@ -105,7 +106,7 @@ func TestUpdateKnownAlbumsReturnValueWhenNoNewAlbumsAndKnownAlbumsAboveLimit(t *
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	latestAdditions := UpdateKnownAlbums([]string{}, knownAlbumsFile(), knownAlbumsBackup(), 2)
+	latestAdditions := updateKnownAlbums([]string{}, knownAlbumsFile(), knownAlbumsBackup(), 2)
 
 	test.ExpectInt(t, "number of latest additions", 2, len(latestAdditions))
 	test.Expect(t, "latest addition 1", "The Krankies - It's Fan-dabi-dozi!", latestAdditions[0])
@@ -121,7 +122,7 @@ func TestUpdateKnownAlbumsReturnValueWhenNewAlbumsAboveLimit(t *testing.T) {
 		"Daniel Menche - Vent",
 		"Lieutenant Pigeon - Mouldy Old Dough",
 	}
-	latestAdditions := UpdateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 2)
+	latestAdditions := updateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 2)
 
 	test.ExpectInt(t, "number of latest additions", 2, len(latestAdditions))
 	test.Expect(t, "latest addition 1", "Daniel Menche - Vent", latestAdditions[0])
@@ -135,7 +136,7 @@ func TestUpdateKnownAlbumsReturnValueWhenNewAlbumsBelowLimit(t *testing.T) {
 	currentScan := []string{
 		"Daniel Menche - Vent",
 	}
-	latestAdditions := UpdateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 2)
+	latestAdditions := updateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 2)
 
 	test.ExpectInt(t, "number of latest additions", 2, len(latestAdditions))
 	test.Expect(t, "latest addition 1", "Daniel Menche - Vent", latestAdditions[0])
@@ -149,7 +150,7 @@ func TestUpdateKnownAlbumsReturnValueWhenNewAndKnownAlbumsCombinedAreBelowLimit(
 	currentScan := []string{
 		"Daniel Menche - Vent",
 	}
-	latestAdditions := UpdateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 5)
+	latestAdditions := updateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 5)
 
 	test.ExpectInt(t, "number of latest additions", 4, len(latestAdditions))
 	test.Expect(t, "latest addition 1", "Daniel Menche - Vent", latestAdditions[0])
@@ -162,7 +163,7 @@ func TestItBacksUpKnownAlbumsWhenChanged(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	UpdateKnownAlbums([]string{
+	updateKnownAlbums([]string{
 		"Daniel Menche - Vent",
 		"Shake - Iconoclastic Diaries",
 	}, knownAlbumsFile(), knownAlbumsBackup(), 0)
@@ -182,7 +183,7 @@ func TestItBacksUpKnownAlbumsWhenChanged(t *testing.T) {
 func TestItDoesntBackUpKnownAlbumsWhenUnchanged(t *testing.T) {
 	setUp()
 	defer tearDown()
-	UpdateKnownAlbums([]string{}, knownAlbumsFile(), knownAlbumsBackup(), 0)
+	updateKnownAlbums([]string{}, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
 	_, backup := knownAlbumsBackupLines()
 	if len(backup) > 0 {
@@ -240,6 +241,11 @@ func setUp() {
 }
 func tearDown() {
 	os.RemoveAll(tempDir())
+}
+
+func updateKnownAlbums(folderScanList []status.Album, knownAlbumsPath string, knownAlbumsBackupPath string, limit int) []status.Album {
+	knownAlbums := &KnownAlbumsWithBackup{}
+	return knownAlbums.UpdateKnownAlbums(folderScanList, knownAlbumsPath, knownAlbumsBackupPath, limit)
 }
 
 func knownAlbumsFile() string {

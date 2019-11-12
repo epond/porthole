@@ -14,10 +14,12 @@ const present = 1
 
 type sortableStrings []string
 
+type KnownAlbumsWithBackup struct{}
+
 // UpdateKnownAlbums updates the known albums file and returns an array
 // of new albums, based upon the array of folder passed in as the
 // folderScanList argument.
-func UpdateKnownAlbums(folderScanList []status.Album, knownAlbumsPath string, knownAlbumsBackupPath string, limit int) []status.Album {
+func (k *KnownAlbumsWithBackup) UpdateKnownAlbums(folderScanList []status.Album, knownAlbumsPath string, knownAlbumsBackupPath string, limit int) []status.Album {
 	if _, err := os.Stat(knownAlbumsPath); os.IsNotExist(err) {
 		file, errCreate := os.Create(knownAlbumsPath)
 		if errCreate != nil {

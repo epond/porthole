@@ -41,7 +41,7 @@ func (f *DepthAwareFolderScanner) ScanFolders(foldersToScan []FolderToScan) []st
 	}
 	albums := make([]status.Album, 0)
 	for _, folderInfo := range folderScanList {
-		albums = append(albums, folderInfo.String())
+		albums = append(albums, status.Album{folderInfo.String()})
 	}
 	return albums
 }

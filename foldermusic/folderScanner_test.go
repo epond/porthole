@@ -56,7 +56,7 @@ func TestFolderInfoStringCapitalisesEdgeCases(t *testing.T) {
 func pipeDelimitedString(list []status.Album) string {
 	var all bytes.Buffer
 	for i, element := range list {
-		all.WriteString(element)
+		all.WriteString(element.Text)
 		if i < len(list)-1 {
 			all.WriteString("|")
 		}
@@ -71,7 +71,7 @@ func (slice SortedAlbums) Len() int {
 }
 
 func (slice SortedAlbums) Less(i, j int) bool {
-	return slice[i] < slice[j]
+	return slice[i].Text < slice[j].Text
 }
 
 func (slice SortedAlbums) Swap(i, j int) {

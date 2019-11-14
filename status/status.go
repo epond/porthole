@@ -36,7 +36,7 @@ func NewCoordinator(
 		GitCommit:       gitCommit,
 		LastRequest:     time.Now(),
 		LastFetch:       "",
-		LatestAdditions: []string{},
+		LatestAdditions: []Album{},
 	}
 	statusCoordinator := &Coordinator{
 		status,

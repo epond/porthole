@@ -13,7 +13,7 @@ import (
 func TestItCreatesFileWhenKnownAlbumsFileMissing(t *testing.T) {
 	setUp()
 	defer tearDown()
-	updateKnownAlbums([]string{"Lieutenant Pigeon - Mouldy Old Dough"}, knownAlbumsFile(), knownAlbumsBackup(), 0)
+	updateKnownAlbums([]status.Album{status.Album{"Lieutenant Pigeon - Mouldy Old Dough"}}, knownAlbumsFile(), knownAlbumsBackup(), 0)
 	_, lines := knownAlbumsLines()
 	if len(lines) == 0 {
 		t.Error("Expected UpdateKnownAlbums to create known albums file but it didn't")
@@ -30,10 +30,10 @@ func TestItDoesNotChangeFileWhenNoNewAlbums(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	currentScan := []string{
-		"Abba - I Do, I Do, I Do, I Do, I Do",
-		"The Krankies - It's Fan-dabi-dozi!",
-		"Throbbing Gristle - Discipline",
+	currentScan := []status.Album{
+		status.Album{"Abba - I Do, I Do, I Do, I Do, I Do"},
+		status.Album{"The Krankies - It's Fan-dabi-dozi!"},
+		status.Album{"Throbbing Gristle - Discipline"},
 	}
 	updateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
@@ -50,9 +50,9 @@ func TestItAddsAlbumsToEndOfFile(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	currentScan := []string{
-		"Daniel Menche - Vent",
-		"Shake - Iconoclastic Diaries",
+	currentScan := []status.Album{
+		status.Album{"Daniel Menche - Vent"},
+		status.Album{"Shake - Iconoclastic Diaries"},
 	}
 	updateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
@@ -69,11 +69,11 @@ func TestItIgnoresAlbumsAlreadyKnown(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	currentScan := []string{
-		"Shake - Iconoclastic Diaries",
-		"Abba - I Do, I Do, I Do, I Do, I Do",
-		"Daniel Menche - Vent",
-		"Throbbing Gristle - Discipline",
+	currentScan := []status.Album{
+		status.Album{"Shake - Iconoclastic Diaries"},
+		status.Album{"Abba - I Do, I Do, I Do, I Do, I Do"},
+		status.Album{"Daniel Menche - Vent"},
+		status.Album{"Throbbing Gristle - Discipline"},
 	}
 	updateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
@@ -89,8 +89,8 @@ func TestItHandlesWhenKnownAlbumsFileMayNotEndInNewline(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "knownalbums_endwithoutnewline"))
-	currentScan := []string{
-		"Daniel Menche - Vent",
+	currentScan := []status.Album{
+		status.Album{"Daniel Menche - Vent"},
 	}
 	updateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
@@ -106,66 +106,66 @@ func TestUpdateKnownAlbumsReturnValueWhenNoNewAlbumsAndKnownAlbumsAboveLimit(t *
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	latestAdditions := updateKnownAlbums([]string{}, knownAlbumsFile(), knownAlbumsBackup(), 2)
+	latestAdditions := updateKnownAlbums([]status.Album{}, knownAlbumsFile(), knownAlbumsBackup(), 2)
 
 	test.ExpectInt(t, "number of latest additions", 2, len(latestAdditions))
-	test.Expect(t, "latest addition 1", "The Krankies - It's Fan-dabi-dozi!", latestAdditions[0])
-	test.Expect(t, "latest addition 2", "Throbbing Gristle - Discipline", latestAdditions[1])
+	test.Expect(t, "latest addition 1", "The Krankies - It's Fan-dabi-dozi!", latestAdditions[0].Text)
+	test.Expect(t, "latest addition 2", "Throbbing Gristle - Discipline", latestAdditions[1].Text)
 }
 
 func TestUpdateKnownAlbumsReturnValueWhenNewAlbumsAboveLimit(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	currentScan := []string{
-		"Shake - Iconoclastic Diaries",
-		"Daniel Menche - Vent",
-		"Lieutenant Pigeon - Mouldy Old Dough",
+	currentScan := []status.Album{
+		status.Album{"Shake - Iconoclastic Diaries"},
+		status.Album{"Daniel Menche - Vent"},
+		status.Album{"Lieutenant Pigeon - Mouldy Old Dough"},
 	}
 	latestAdditions := updateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 2)
 
 	test.ExpectInt(t, "number of latest additions", 2, len(latestAdditions))
-	test.Expect(t, "latest addition 1", "Daniel Menche - Vent", latestAdditions[0])
-	test.Expect(t, "latest addition 2", "Lieutenant Pigeon - Mouldy Old Dough", latestAdditions[1])
+	test.Expect(t, "latest addition 1", "Daniel Menche - Vent", latestAdditions[0].Text)
+	test.Expect(t, "latest addition 2", "Lieutenant Pigeon - Mouldy Old Dough", latestAdditions[1].Text)
 }
 
 func TestUpdateKnownAlbumsReturnValueWhenNewAlbumsBelowLimit(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	currentScan := []string{
-		"Daniel Menche - Vent",
+	currentScan := []status.Album{
+		status.Album{"Daniel Menche - Vent"},
 	}
 	latestAdditions := updateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 2)
 
 	test.ExpectInt(t, "number of latest additions", 2, len(latestAdditions))
-	test.Expect(t, "latest addition 1", "Daniel Menche - Vent", latestAdditions[0])
-	test.Expect(t, "latest addition 2", "The Krankies - It's Fan-dabi-dozi!", latestAdditions[1])
+	test.Expect(t, "latest addition 1", "Daniel Menche - Vent", latestAdditions[0].Text)
+	test.Expect(t, "latest addition 2", "The Krankies - It's Fan-dabi-dozi!", latestAdditions[1].Text)
 }
 
 func TestUpdateKnownAlbumsReturnValueWhenNewAndKnownAlbumsCombinedAreBelowLimit(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	currentScan := []string{
-		"Daniel Menche - Vent",
+	currentScan := []status.Album{
+		status.Album{"Daniel Menche - Vent"},
 	}
 	latestAdditions := updateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 5)
 
 	test.ExpectInt(t, "number of latest additions", 4, len(latestAdditions))
-	test.Expect(t, "latest addition 1", "Daniel Menche - Vent", latestAdditions[0])
-	test.Expect(t, "latest addition 2", "The Krankies - It's Fan-dabi-dozi!", latestAdditions[1])
-	test.Expect(t, "latest addition 3", "Throbbing Gristle - Discipline", latestAdditions[2])
-	test.Expect(t, "latest addition 4", "Abba - I Do, I Do, I Do, I Do, I Do", latestAdditions[3])
+	test.Expect(t, "latest addition 1", "Daniel Menche - Vent", latestAdditions[0].Text)
+	test.Expect(t, "latest addition 2", "The Krankies - It's Fan-dabi-dozi!", latestAdditions[1].Text)
+	test.Expect(t, "latest addition 3", "Throbbing Gristle - Discipline", latestAdditions[2].Text)
+	test.Expect(t, "latest addition 4", "Abba - I Do, I Do, I Do, I Do, I Do", latestAdditions[3].Text)
 }
 
 func TestItBacksUpKnownAlbumsWhenChanged(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	updateKnownAlbums([]string{
-		"Daniel Menche - Vent",
-		"Shake - Iconoclastic Diaries",
+	updateKnownAlbums([]status.Album{
+		status.Album{"Daniel Menche - Vent"},
+		status.Album{"Shake - Iconoclastic Diaries"},
 	}, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
 	backupFile, backupLines := knownAlbumsBackupLines()
@@ -183,7 +183,7 @@ func TestItBacksUpKnownAlbumsWhenChanged(t *testing.T) {
 func TestItDoesntBackUpKnownAlbumsWhenUnchanged(t *testing.T) {
 	setUp()
 	defer tearDown()
-	updateKnownAlbums([]string{}, knownAlbumsFile(), knownAlbumsBackup(), 0)
+	updateKnownAlbums([]status.Album{}, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
 	_, backup := knownAlbumsBackupLines()
 	if len(backup) > 0 {
@@ -192,48 +192,48 @@ func TestItDoesntBackUpKnownAlbumsWhenUnchanged(t *testing.T) {
 }
 
 func TestNoMissingAlbums(t *testing.T) {
-	scanned := []string{
-		"Daniel Menche - Vent",
-		"Shake - Iconoclastic Diaries",
+	scanned := []status.Album{
+		status.Album{"Daniel Menche - Vent"},
+		status.Album{"Shake - Iconoclastic Diaries"},
 	}
-	known := []string{
-		"Daniel Menche - Vent",
-		"Shake - Iconoclastic Diaries",
+	known := []status.Album{
+		status.Album{"Daniel Menche - Vent"},
+		status.Album{"Shake - Iconoclastic Diaries"},
 	}
 	missing := findMissingAlbums(scanned, known)
 	test.ExpectInt(t, "number of missing albums", 0, len(missing))
 }
 
 func TestOneMissingAlbum(t *testing.T) {
-	scanned := []string{
-		"Daniel Menche - Vent",
-		"Shake - Iconoclastic Diaries",
+	scanned := []status.Album{
+		status.Album{"Daniel Menche - Vent"},
+		status.Album{"Shake - Iconoclastic Diaries"},
 	}
-	known := []string{
-		"Daniel Menche - Vent",
-		"The Krankies - It's Fan-dabi-dozi!",
-		"Shake - Iconoclastic Diaries",
+	known := []status.Album{
+		status.Album{"Daniel Menche - Vent"},
+		status.Album{"The Krankies - It's Fan-dabi-dozi!"},
+		status.Album{"Shake - Iconoclastic Diaries"},
 	}
 	missing := findMissingAlbums(scanned, known)
 	test.ExpectInt(t, "number of missing albums", 1, len(missing))
-	test.Expect(t, "missing album", "The Krankies - It's Fan-dabi-dozi!", missing[0])
+	test.Expect(t, "missing album", "The Krankies - It's Fan-dabi-dozi!", missing[0].Text)
 }
 
 func TestTwoMissingAlbums(t *testing.T) {
-	scanned := []string{
-		"Daniel Menche - Vent",
-		"Shake - Iconoclastic Diaries",
+	scanned := []status.Album{
+		status.Album{"Daniel Menche - Vent"},
+		status.Album{"Shake - Iconoclastic Diaries"},
 	}
-	known := []string{
-		"Daniel Menche - Vent",
-		"The Krankies - It's Fan-dabi-dozi!",
-		"Shake - Iconoclastic Diaries",
-		"Throbbing Gristle - Discipline",
+	known := []status.Album{
+		status.Album{"Daniel Menche - Vent"},
+		status.Album{"The Krankies - It's Fan-dabi-dozi!"},
+		status.Album{"Shake - Iconoclastic Diaries"},
+		status.Album{"Throbbing Gristle - Discipline"},
 	}
 	missing := findMissingAlbums(scanned, known)
 	test.ExpectInt(t, "number of missing albums", 2, len(missing))
-	test.Expect(t, "missing album 1", "The Krankies - It's Fan-dabi-dozi!", missing[0])
-	test.Expect(t, "missing album 2", "Throbbing Gristle - Discipline", missing[1])
+	test.Expect(t, "missing album 1", "The Krankies - It's Fan-dabi-dozi!", missing[0].Text)
+	test.Expect(t, "missing album 2", "Throbbing Gristle - Discipline", missing[1].Text)
 }
 
 func setUp() {

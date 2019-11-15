@@ -21,10 +21,7 @@ type KnownAlbumsWithBackup struct {
 	limit                 int
 }
 
-// UpdateKnownAlbums updates the known albums file and returns an array
-// of new albums, based upon the array of folder passed in as the
-// folderScanList argument.
-func (k *KnownAlbumsWithBackup) UpdateKnownAlbums(folderScanList []status.Album) []status.Album {
+func (k *KnownAlbumsWithBackup) readKnownAlbums() (albums []status.Album, lineMap map[string]int) {
 	if _, err := os.Stat(k.knownAlbumsPath); os.IsNotExist(err) {
 		file, errCreate := os.Create(k.knownAlbumsPath)
 		if errCreate != nil {
@@ -35,7 +32,42 @@ func (k *KnownAlbumsWithBackup) UpdateKnownAlbums(folderScanList []status.Album)
 	}
 
 	// Read knownalbums into an array of its lines and a map that conveys if a line is present
-	knownAlbums, knownAlbumsMap := readFile(k.knownAlbumsPath)
+	albums, lineMap = readFile(k.knownAlbumsPath)
+	return albums, lineMap
+}
+
+func (k *KnownAlbumsWithBackup) appendNewAlbums(knownAlbums []status.Album, newAlbums []status.Album) {
+	ensureFileEndsInNewline(k.knownAlbumsPath)
+	var knownAlbumsFile *os.File
+	knownAlbumsFile, err := os.OpenFile(k.knownAlbumsPath, os.O_RDWR|os.O_APPEND, 0660)
+	if err != nil {
+		log.Printf("Could not open known albums file for appending: %v", k.knownAlbumsPath)
+		panic(err)
+	}
+	defer knownAlbumsFile.Close()
+	kaWriter := bufio.NewWriter(knownAlbumsFile)
+	for _, newAlbum := range newAlbums {
+		if _, err := kaWriter.WriteString(fmt.Sprintf("%v\n", newAlbum.Text)); err != nil {
+			log.Printf("Could not write new album to %v", k.knownAlbumsPath)
+			panic(err)
+		}
+	}
+	if err := kaWriter.Flush(); err != nil {
+		log.Printf("Could not flush %v", k.knownAlbumsPath)
+		panic(err)
+	}
+
+	if len(newAlbums) > 0 {
+		backupKnownAlbums(k.knownAlbumsBackupPath, append(knownAlbums, newAlbums...))
+	}
+}
+
+// UpdateKnownAlbums updates the known albums file and returns an array
+// of new albums, based upon the array of folder passed in as the
+// folderScanList argument.
+func (k *KnownAlbumsWithBackup) UpdateKnownAlbums(folderScanList []status.Album) []status.Album {
+	// Read knownalbums into an array of its lines and a map that conveys if a line is present
+	knownAlbums, knownAlbumsMap := k.readKnownAlbums()
 
 	// Build a list of current scan entries not present in known albums (new albums)
 	var newAlbums []status.Album
@@ -58,29 +90,7 @@ func (k *KnownAlbumsWithBackup) UpdateKnownAlbums(folderScanList []status.Album)
 	}
 
 	// Append new albums to known albums file
-	ensureFileEndsInNewline(k.knownAlbumsPath)
-	var knownAlbumsFile *os.File
-	knownAlbumsFile, err := os.OpenFile(k.knownAlbumsPath, os.O_RDWR|os.O_APPEND, 0660)
-	if err != nil {
-		log.Printf("Could not open known albums file for appending: %v", k.knownAlbumsPath)
-		panic(err)
-	}
-	defer knownAlbumsFile.Close()
-	krWriter := bufio.NewWriter(knownAlbumsFile)
-	for _, newAlbum := range newAlbums {
-		if _, err := krWriter.WriteString(fmt.Sprintf("%v\n", newAlbum.Text)); err != nil {
-			log.Printf("Could not write new album to %v", k.knownAlbumsPath)
-			panic(err)
-		}
-	}
-	if err := krWriter.Flush(); err != nil {
-		log.Printf("Could not flush %v", k.knownAlbumsPath)
-		panic(err)
-	}
-
-	if len(newAlbums) > 0 {
-		backupKnownAlbums(k.knownAlbumsBackupPath, append(knownAlbums, newAlbums...))
-	}
+	k.appendNewAlbums(knownAlbums, newAlbums)
 
 	// Return sorted new albums then knownalbums from the end, up to a total of limit
 	sortByName(newAlbums)
@@ -132,14 +142,14 @@ func backupKnownAlbums(knownAlbumsBackupPath string, albums []status.Album) {
 
 	knownAlbumsBackupFile, _ := os.OpenFile(knownAlbumsBackupPath, os.O_RDWR|os.O_APPEND, 0660)
 	defer knownAlbumsBackupFile.Close()
-	krWriter := bufio.NewWriter(knownAlbumsBackupFile)
+	kaWriter := bufio.NewWriter(knownAlbumsBackupFile)
 	for _, album := range albums {
-		if _, err := krWriter.WriteString(fmt.Sprintf("%v\n", album.Text)); err != nil {
+		if _, err := kaWriter.WriteString(fmt.Sprintf("%v\n", album.Text)); err != nil {
 			log.Printf("Could not write album to %v", knownAlbumsBackupPath)
 			panic(err)
 		}
 	}
-	if err := krWriter.Flush(); err != nil {
+	if err := kaWriter.Flush(); err != nil {
 		log.Printf("Could not flush %v", knownAlbumsBackupPath)
 		panic(err)
 	}

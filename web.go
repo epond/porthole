@@ -27,11 +27,13 @@ func main() {
 
 	log.Printf("Starting porthole. Music folder: %v, Known albums file: %v, Backup: %v, Folders to scan: %v", musicFolder, knownAlbumsFile, knownAlbumsBackup, foldersToScan)
 
+	folderScanner := &foldermusic.DepthAwareFolderScanner{
+		foldermusic.ParseFoldersToScan(musicFolder, foldersToScan),
+	}
 	albumAdditions := foldermusic.NewAdditions(
-		musicFolder,
+		folderScanner,
 		knownAlbumsFile,
 		knownAlbumsBackup,
-		foldersToScan,
 		latestAdditionsLimit)
 	clock := time.Tick(time.Duration(fetchInterval) * time.Millisecond)
 	statusCoordinator := status.NewCoordinator(

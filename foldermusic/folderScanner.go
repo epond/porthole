@@ -25,7 +25,7 @@ type FolderInfo struct {
 
 // DepthAwareFolderScanner knows how to use the filesystem to scan for folders
 type DepthAwareFolderScanner struct {
-	foldersToScan []FolderToScan
+	FoldersToScan []FolderToScan
 }
 
 func (f *FolderInfo) String() string {
@@ -38,7 +38,7 @@ func (f *FolderInfo) String() string {
 // ScanFolders scans the filesystem for folders
 func (f *DepthAwareFolderScanner) ScanFolders() []status.Album {
 	var folderScanList []FolderInfo
-	for _, folder := range f.foldersToScan {
+	for _, folder := range f.FoldersToScan {
 		folderScanList = append(folderScanList, folderInfoAtDepth(folder)...)
 	}
 	albums := make([]status.Album, 0)

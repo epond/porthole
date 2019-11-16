@@ -30,10 +30,9 @@ type KnownAlbums interface {
 
 // NewAdditions constructs a new Additions
 func NewAdditions(
-	musicFolder string,
+	folderScanner FolderScanner,
 	knownAlbumsFile string,
 	knownAlbumsBackup string,
-	foldersToScan string,
 	latestAdditionsLimit int) *Additions {
 	return &Additions{
 		knownAlbumsFile,
@@ -44,9 +43,7 @@ func NewAdditions(
 			knownAlbumsBackup,
 			latestAdditionsLimit,
 		},
-		&DepthAwareFolderScanner{
-			parseFoldersToScan(musicFolder, foldersToScan),
-		},
+		folderScanner,
 	}
 }
 
@@ -58,7 +55,7 @@ func (f *Additions) FetchLatestAdditions() []status.Album {
 	return latestAdditions
 }
 
-func parseFoldersToScan(musicFolder string, folders string) []FolderToScan {
+func ParseFoldersToScan(musicFolder string, folders string) []FolderToScan {
 	var foldersToScan []FolderToScan
 	folderPairs := strings.Split(folders, ",")
 	for _, pair := range folderPairs {

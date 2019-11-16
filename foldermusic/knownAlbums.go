@@ -16,49 +16,49 @@ type sortableAlbums []status.Album
 
 // KnownAlbumsWithBackup makes a backup each time the known albums are updated
 type KnownAlbumsWithBackup struct {
-	knownAlbumsPath       string
-	knownAlbumsBackupPath string
-	limit                 int
+	KnownAlbumsPath       string
+	KnownAlbumsBackupPath string
+	Limit                 int
 }
 
 func (k *KnownAlbumsWithBackup) readKnownAlbums() (albums []status.Album, lineMap map[string]int) {
-	if _, err := os.Stat(k.knownAlbumsPath); os.IsNotExist(err) {
-		file, errCreate := os.Create(k.knownAlbumsPath)
+	if _, err := os.Stat(k.KnownAlbumsPath); os.IsNotExist(err) {
+		file, errCreate := os.Create(k.KnownAlbumsPath)
 		if errCreate != nil {
-			log.Printf("Could not create known albums at %v", k.knownAlbumsPath)
+			log.Printf("Could not create known albums at %v", k.KnownAlbumsPath)
 			panic(errCreate)
 		}
 		file.Close()
 	}
 
 	// Read knownalbums into an array of its lines and a map that conveys if a line is present
-	albums, lineMap = readFile(k.knownAlbumsPath)
+	albums, lineMap = readFile(k.KnownAlbumsPath)
 	return albums, lineMap
 }
 
 func (k *KnownAlbumsWithBackup) appendNewAlbums(knownAlbums []status.Album, newAlbums []status.Album) {
-	ensureFileEndsInNewline(k.knownAlbumsPath)
+	ensureFileEndsInNewline(k.KnownAlbumsPath)
 	var knownAlbumsFile *os.File
-	knownAlbumsFile, err := os.OpenFile(k.knownAlbumsPath, os.O_RDWR|os.O_APPEND, 0660)
+	knownAlbumsFile, err := os.OpenFile(k.KnownAlbumsPath, os.O_RDWR|os.O_APPEND, 0660)
 	if err != nil {
-		log.Printf("Could not open known albums file for appending: %v", k.knownAlbumsPath)
+		log.Printf("Could not open known albums file for appending: %v", k.KnownAlbumsPath)
 		panic(err)
 	}
 	defer knownAlbumsFile.Close()
 	kaWriter := bufio.NewWriter(knownAlbumsFile)
 	for _, newAlbum := range newAlbums {
 		if _, err := kaWriter.WriteString(fmt.Sprintf("%v\n", newAlbum.Text)); err != nil {
-			log.Printf("Could not write new album to %v", k.knownAlbumsPath)
+			log.Printf("Could not write new album to %v", k.KnownAlbumsPath)
 			panic(err)
 		}
 	}
 	if err := kaWriter.Flush(); err != nil {
-		log.Printf("Could not flush %v", k.knownAlbumsPath)
+		log.Printf("Could not flush %v", k.KnownAlbumsPath)
 		panic(err)
 	}
 
 	if len(newAlbums) > 0 {
-		backupKnownAlbums(k.knownAlbumsBackupPath, append(knownAlbums, newAlbums...))
+		backupKnownAlbums(k.KnownAlbumsBackupPath, append(knownAlbums, newAlbums...))
 	}
 }
 
@@ -96,13 +96,13 @@ func (k *KnownAlbumsWithBackup) UpdateKnownAlbums(folderScanList []status.Album)
 	sortByName(newAlbums)
 	var latestAdditions []status.Album
 	i := 0
-	for i < min(len(newAlbums), k.limit) {
+	for i < min(len(newAlbums), k.Limit) {
 		latestAdditions = append(latestAdditions, newAlbums[i])
 		i++
 	}
 
 	i = 0
-	for i < (k.limit - len(newAlbums)) {
+	for i < (k.Limit - len(newAlbums)) {
 		if i < len(knownAlbums) {
 			latestAdditions = append(latestAdditions, knownAlbums[len(knownAlbums)-i-1])
 		}

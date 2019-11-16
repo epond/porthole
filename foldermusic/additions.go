@@ -11,11 +11,8 @@ import (
 
 // Additions treats folders on the filesystem as albums
 type Additions struct {
-	knownAlbumsFile      string
-	knownAlbumsBackup    string
-	latestAdditionsLimit int
-	knownAlbums          KnownAlbums
-	folderScanner        FolderScanner
+	folderScanner FolderScanner
+	knownAlbums   KnownAlbums
 }
 
 // FolderScanner can scan for folder information
@@ -31,19 +28,10 @@ type KnownAlbums interface {
 // NewAdditions constructs a new Additions
 func NewAdditions(
 	folderScanner FolderScanner,
-	knownAlbumsFile string,
-	knownAlbumsBackup string,
-	latestAdditionsLimit int) *Additions {
+	knownAlbums KnownAlbums) *Additions {
 	return &Additions{
-		knownAlbumsFile,
-		knownAlbumsBackup,
-		latestAdditionsLimit,
-		&KnownAlbumsWithBackup{
-			knownAlbumsFile,
-			knownAlbumsBackup,
-			latestAdditionsLimit,
-		},
 		folderScanner,
+		knownAlbums,
 	}
 }
 

@@ -30,11 +30,14 @@ func main() {
 	folderScanner := &foldermusic.DepthAwareFolderScanner{
 		foldermusic.ParseFoldersToScan(musicFolder, foldersToScan),
 	}
-	albumAdditions := foldermusic.NewAdditions(
-		folderScanner,
+	knownAlbums := &foldermusic.KnownAlbumsWithBackup{
 		knownAlbumsFile,
 		knownAlbumsBackup,
-		latestAdditionsLimit)
+		latestAdditionsLimit,
+	}
+	albumAdditions := foldermusic.NewAdditions(
+		folderScanner,
+		knownAlbums)
 	clock := time.Tick(time.Duration(fetchInterval) * time.Millisecond)
 	statusCoordinator := status.NewCoordinator(
 		gitCommit,

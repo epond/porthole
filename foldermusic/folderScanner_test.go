@@ -84,6 +84,6 @@ func sortAlbums(albums SortedAlbums) SortedAlbums {
 }
 
 func scanFolders(foldersToScan []FolderToScan) []status.Album {
-	fs := &DepthAwareFolderScanner{}
-	return fs.ScanFolders(foldersToScan)
+	fs := &DepthAwareFolderScanner{foldersToScan}
+	return fs.ScanFolders()
 }

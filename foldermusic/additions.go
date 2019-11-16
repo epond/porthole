@@ -11,10 +11,8 @@ import (
 
 // Additions treats folders on the filesystem as albums
 type Additions struct {
-	musicFolder          string
 	knownAlbumsFile      string
 	knownAlbumsBackup    string
-	foldersToScan        string
 	latestAdditionsLimit int
 	knownAlbums          KnownAlbums
 	folderScanner        FolderScanner
@@ -22,7 +20,7 @@ type Additions struct {
 
 // FolderScanner can scan for folder information
 type FolderScanner interface {
-	ScanFolders(foldersToScan []FolderToScan) []status.Album
+	ScanFolders() []status.Album
 }
 
 // KnownAlbums provides access to the persisted known albums
@@ -38,24 +36,23 @@ func NewAdditions(
 	foldersToScan string,
 	latestAdditionsLimit int) *Additions {
 	return &Additions{
-		musicFolder,
 		knownAlbumsFile,
 		knownAlbumsBackup,
-		foldersToScan,
 		latestAdditionsLimit,
 		&KnownAlbumsWithBackup{
 			knownAlbumsFile,
 			knownAlbumsBackup,
 			latestAdditionsLimit,
 		},
-		&DepthAwareFolderScanner{},
+		&DepthAwareFolderScanner{
+			parseFoldersToScan(musicFolder, foldersToScan),
+		},
 	}
 }
 
 // FetchLatestAdditions finds the most recently added albums
 func (f *Additions) FetchLatestAdditions() []status.Album {
-	foldersToScan := parseFoldersToScan(f.musicFolder, f.foldersToScan)
-	scannedAlbums := f.folderScanner.ScanFolders(foldersToScan)
+	scannedAlbums := f.folderScanner.ScanFolders()
 	latestAdditions := f.knownAlbums.UpdateKnownAlbums(scannedAlbums)
 
 	return latestAdditions

@@ -28,7 +28,8 @@ func main() {
 	log.Printf("Starting porthole. Music folder: %v, Known albums file: %v, Backup: %v, Folders to scan: %v", musicFolder, knownAlbumsFile, knownAlbumsBackup, foldersToScan)
 
 	folderScanner := &foldermusic.DepthAwareFolderScanner{
-		foldermusic.ParseFoldersToScan(musicFolder, foldersToScan),
+		musicFolder,
+		foldersToScan,
 	}
 	knownAlbums := &foldermusic.KnownAlbumsWithBackup{
 		knownAlbumsFile,

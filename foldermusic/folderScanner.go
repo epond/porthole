@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"strconv"
 	"strings"
 	"unicode/utf8"
 
@@ -25,7 +26,8 @@ type FolderInfo struct {
 
 // DepthAwareFolderScanner knows how to use the filesystem to scan for folders
 type DepthAwareFolderScanner struct {
-	FoldersToScan []FolderToScan
+	MusicFolder string
+	Folders     string
 }
 
 func (f *FolderInfo) String() string {
@@ -37,8 +39,9 @@ func (f *FolderInfo) String() string {
 
 // ScanFolders scans the filesystem for folders
 func (f *DepthAwareFolderScanner) ScanFolders() []status.Album {
+	foldersToScan := parseFoldersToScan(f.MusicFolder, f.Folders)
 	var folderScanList []FolderInfo
-	for _, folder := range f.FoldersToScan {
+	for _, folder := range foldersToScan {
 		folderScanList = append(folderScanList, folderInfoAtDepth(folder)...)
 	}
 	albums := make([]status.Album, 0)
@@ -46,6 +49,22 @@ func (f *DepthAwareFolderScanner) ScanFolders() []status.Album {
 		albums = append(albums, status.Album{folderInfo.String()})
 	}
 	return albums
+}
+
+func parseFoldersToScan(musicFolder string, folders string) []FolderToScan {
+	var foldersToScan []FolderToScan
+	folderPairs := strings.Split(folders, ",")
+	for _, pair := range folderPairs {
+		pairArray := strings.Split(pair, ":")
+		if len(pairArray) < 2 {
+			log.Fatalf("Could not read depth of folder to scan from configuration. Expected folder:depth but got %v", pair)
+		}
+		depth, _ := strconv.Atoi(pairArray[1])
+		foldersToScan = append(foldersToScan, FolderToScan{
+			path.Join(musicFolder, pairArray[0]),
+			depth})
+	}
+	return foldersToScan
 }
 
 func folderInfoAtDepthIter(folderToScan FolderToScan, parent os.FileInfo) []FolderInfo {

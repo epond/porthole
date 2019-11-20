@@ -1,0 +1,43 @@
+@startuml porthole
+
+    namespace status {
+        class Coordinator {
+        }
+
+        interface UpdateWorker  {
+            + UpdateStatus(timestamp time.Time, status *Status) 
+        }
+        class MusicStatusWorker {
+            + UpdateStatus(timestamp time.Time, status *Status) 
+
+        }
+        interface AlbumAdditions {
+            + FetchLatestAdditions() []Album
+        }
+    }
+
+    namespace foldermusic {
+        class Additions {
+            + FetchLatestAdditions() []Album
+        }
+        interface FolderScanner {
+            + ScanFolders() []Album
+        }
+        class DepthAwareFolderScanner
+        interface KnownAlbums {
+            + ReadKnownAlbums() []Album
+            + AppendNewAlbums([]Album)
+        }
+        class KnownAlbumsWithBackup
+    }
+
+status.Coordinator *-- status.UpdateWorker
+status.UpdateWorker <|-- status.MusicStatusWorker
+status.AlbumAdditions <|-- foldermusic.Additions
+status.MusicStatusWorker *-- status.AlbumAdditions
+foldermusic.FolderScanner <|-- foldermusic.DepthAwareFolderScanner
+foldermusic.Additions *-- foldermusic.FolderScanner
+foldermusic.Additions *-- foldermusic.KnownAlbums
+foldermusic.KnownAlbums <|-- foldermusic.KnownAlbumsWithBackup
+
+@enduml

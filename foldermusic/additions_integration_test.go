@@ -102,7 +102,7 @@ func TestItHandlesWhenKnownAlbumsFileMayNotEndInNewline(t *testing.T) {
 	test.Expect(t, "known album 2", "The Krankies - It's Fan-dabi-dozi!", lines[len(lines)-2])
 }
 
-func TestUpdateKnownAlbumsReturnValueWhenNoNewAlbumsAndKnownAlbumsAboveLimit(t *testing.T) {
+func TestReturnValueWhenNoNewAlbumsAndKnownAlbumsAboveLimit(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
@@ -113,7 +113,7 @@ func TestUpdateKnownAlbumsReturnValueWhenNoNewAlbumsAndKnownAlbumsAboveLimit(t *
 	test.Expect(t, "latest addition 2", "Throbbing Gristle - Discipline", latestAdditions[1].Text)
 }
 
-func TestUpdateKnownAlbumsReturnValueWhenNewAlbumsAboveLimit(t *testing.T) {
+func TestReturnValueWhenNewAlbumsAboveLimit(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
@@ -129,7 +129,7 @@ func TestUpdateKnownAlbumsReturnValueWhenNewAlbumsAboveLimit(t *testing.T) {
 	test.Expect(t, "latest addition 2", "Lieutenant Pigeon - Mouldy Old Dough", latestAdditions[1].Text)
 }
 
-func TestUpdateKnownAlbumsReturnValueWhenNewAlbumsBelowLimit(t *testing.T) {
+func TestReturnValueWhenNewAlbumsBelowLimit(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
@@ -143,7 +143,7 @@ func TestUpdateKnownAlbumsReturnValueWhenNewAlbumsBelowLimit(t *testing.T) {
 	test.Expect(t, "latest addition 2", "The Krankies - It's Fan-dabi-dozi!", latestAdditions[1].Text)
 }
 
-func TestUpdateKnownAlbumsReturnValueWhenNewAndKnownAlbumsCombinedAreBelowLimit(t *testing.T) {
+func TestReturnValueWhenNewAndKnownAlbumsCombinedAreBelowLimit(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))

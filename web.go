@@ -34,11 +34,11 @@ func main() {
 	knownAlbums := &foldermusic.KnownAlbumsWithBackup{
 		knownAlbumsFile,
 		knownAlbumsBackup,
-		latestAdditionsLimit,
 	}
 	albumAdditions := foldermusic.NewAdditions(
 		folderScanner,
-		knownAlbums)
+		knownAlbums,
+		latestAdditionsLimit)
 	clock := time.Tick(time.Duration(fetchInterval) * time.Millisecond)
 	statusCoordinator := status.NewCoordinator(
 		gitCommit,

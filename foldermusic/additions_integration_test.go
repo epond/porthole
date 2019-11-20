@@ -191,61 +191,11 @@ func TestItDoesntBackUpKnownAlbumsWhenUnchanged(t *testing.T) {
 	}
 }
 
-func TestNoMissingAlbums(t *testing.T) {
-	scanned := []status.Album{
-		status.Album{"Daniel Menche - Vent"},
-		status.Album{"Shake - Iconoclastic Diaries"},
-	}
-	known := []status.Album{
-		status.Album{"Daniel Menche - Vent"},
-		status.Album{"Shake - Iconoclastic Diaries"},
-	}
-	missing := findMissingAlbums(scanned, known)
-	test.ExpectInt(t, "number of missing albums", 0, len(missing))
-}
-
-func TestOneMissingAlbum(t *testing.T) {
-	scanned := []status.Album{
-		status.Album{"Daniel Menche - Vent"},
-		status.Album{"Shake - Iconoclastic Diaries"},
-	}
-	known := []status.Album{
-		status.Album{"Daniel Menche - Vent"},
-		status.Album{"The Krankies - It's Fan-dabi-dozi!"},
-		status.Album{"Shake - Iconoclastic Diaries"},
-	}
-	missing := findMissingAlbums(scanned, known)
-	test.ExpectInt(t, "number of missing albums", 1, len(missing))
-	test.Expect(t, "missing album", "The Krankies - It's Fan-dabi-dozi!", missing[0].Text)
-}
-
-func TestTwoMissingAlbums(t *testing.T) {
-	scanned := []status.Album{
-		status.Album{"Daniel Menche - Vent"},
-		status.Album{"Shake - Iconoclastic Diaries"},
-	}
-	known := []status.Album{
-		status.Album{"Daniel Menche - Vent"},
-		status.Album{"The Krankies - It's Fan-dabi-dozi!"},
-		status.Album{"Shake - Iconoclastic Diaries"},
-		status.Album{"Throbbing Gristle - Discipline"},
-	}
-	missing := findMissingAlbums(scanned, known)
-	test.ExpectInt(t, "number of missing albums", 2, len(missing))
-	test.Expect(t, "missing album 1", "The Krankies - It's Fan-dabi-dozi!", missing[0].Text)
-	test.Expect(t, "missing album 2", "Throbbing Gristle - Discipline", missing[1].Text)
-}
-
 func setUp() {
 	os.Mkdir(tempDir(), os.ModePerm)
 }
 func tearDown() {
 	os.RemoveAll(tempDir())
-}
-
-func updateKnownAlbums(folderScanList []status.Album, knownAlbumsPath string, knownAlbumsBackupPath string, limit int) []status.Album {
-	knownAlbums := &KnownAlbumsWithBackup{knownAlbumsPath, knownAlbumsBackupPath, limit}
-	return knownAlbums.UpdateKnownAlbums(folderScanList)
 }
 
 func knownAlbumsFile() string {
@@ -284,4 +234,19 @@ func testData() string {
 
 func tempDir() string {
 	return path.Join(os.Getenv("GOPATH"), "src/github.com/epond/porthole/temp")
+}
+
+func updateKnownAlbums(folderScanList []status.Album, knownAlbumsPath string, knownAlbumsBackupPath string, limit int) []status.Album {
+	folderScanner := &DummyFolderScanner{folderScanList}
+	knownAlbums := &KnownAlbumsWithBackup{knownAlbumsPath, knownAlbumsBackupPath}
+	additions := NewAdditions(folderScanner, knownAlbums, limit)
+	return additions.FetchLatestAdditions()
+}
+
+type DummyFolderScanner struct {
+	folderScanList []status.Album
+}
+
+func (d *DummyFolderScanner) ScanFolders() []status.Album {
+	return d.folderScanList
 }

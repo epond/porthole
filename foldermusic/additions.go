@@ -3,44 +3,34 @@ package foldermusic
 import (
 	"log"
 
+	"github.com/epond/porthole/hub"
 	"github.com/epond/porthole/status"
 )
 
 // Additions treats folders on the filesystem as albums
 type Additions struct {
-	folderScanner FolderScanner
-	knownAlbums   KnownAlbums
-	limit         int
-}
-
-// FolderScanner can scan for folder information
-type FolderScanner interface {
-	ScanFolders() []status.Album
-}
-
-// KnownAlbums provides access to the persisted known albums
-type KnownAlbums interface {
-	ReadKnownAlbums() (albums []status.Album, lineMap map[string]int)
-	AppendNewAlbums(knownAlbums []status.Album, newAlbums []status.Album)
+	scanner     hub.Scanning
+	persistence hub.Persistence
+	limit       int
 }
 
 // NewAdditions constructs a new Additions
 func NewAdditions(
-	folderScanner FolderScanner,
-	knownAlbums KnownAlbums,
+	scanner hub.Scanning,
+	persistence hub.Persistence,
 	limit int) *Additions {
 	return &Additions{
-		folderScanner,
-		knownAlbums,
+		scanner,
+		persistence,
 		limit,
 	}
 }
 
 // FetchLatestAdditions finds the most recently added albums
 func (a *Additions) FetchLatestAdditions() []status.Album {
-	scannedAlbums := a.folderScanner.ScanFolders()
+	scannedAlbums := a.scanner.ScanFolders()
 	// Read known albums file into an array of its lines and a map that conveys if a line is present
-	knownAlbums, knownAlbumsMap := a.knownAlbums.ReadKnownAlbums()
+	knownAlbums, knownAlbumsMap := a.persistence.ReadKnownAlbums()
 
 	// Build a list of current scan entries not present in known albums (new albums)
 	var newAlbums []status.Album
@@ -63,7 +53,7 @@ func (a *Additions) FetchLatestAdditions() []status.Album {
 	}
 
 	// Append new albums to known albums file
-	a.knownAlbums.AppendNewAlbums(knownAlbums, newAlbums)
+	a.persistence.AppendNewAlbums(knownAlbums, newAlbums)
 
 	// Return sorted new albums then knownalbums from the end, up to a total of limit
 	sortByName(newAlbums)

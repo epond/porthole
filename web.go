@@ -6,52 +6,43 @@ import (
 	"net/http"
 	"os"
 	"path"
-	"strconv"
 	"time"
 
 	"github.com/epond/porthole/foldermusic"
+	"github.com/epond/porthole/hub"
 	"github.com/epond/porthole/status"
 )
 
 func main() {
-	musicFolder := os.Getenv("MUSIC_FOLDER")
-	knownAlbumsFile := os.Getenv("KNOWN_ALBUMS_FILE")
-	knownAlbumsBackup := os.Getenv("KNOWN_ALBUMS_BACKUP")
-	gitCommit := os.Getenv("GIT_COMMIT")
-	logFile := os.Getenv("LOG_FILE")
-	fetchInterval, _ := strconv.Atoi(os.Getenv("FETCH_INTERVAL"))
-	dashboardRefreshInterval, _ := strconv.Atoi(os.Getenv("DASHBOARD_REFRESH_INTERVAL"))
-	sleepAfter, _ := strconv.Atoi(os.Getenv("SLEEP_AFTER"))
-	foldersToScan := os.Getenv("FOLDERS_TO_SCAN")
-	latestAdditionsLimit, _ := strconv.Atoi(os.Getenv("LATEST_ADDITIONS_LIMIT"))
+	config := hub.ConfigFromEnv()
 
-	log.Printf("Starting porthole. Music folder: %v, Known albums file: %v, Backup: %v, Folders to scan: %v", musicFolder, knownAlbumsFile, knownAlbumsBackup, foldersToScan)
+	log.Printf("Starting porthole. Music folder: %v, Known albums file: %v, Backup: %v, Folders to scan: %v", config.MusicFolder, config.KnownAlbumsFile, config.KnownAlbumsBackup, config.FoldersToScan)
 
 	folderScanner := &foldermusic.DepthAwareFolderScanner{
-		musicFolder,
-		foldersToScan,
+		config.MusicFolder,
+		config.FoldersToScan,
 	}
 	knownAlbums := &foldermusic.KnownAlbumsWithBackup{
-		knownAlbumsFile,
-		knownAlbumsBackup,
+		config.KnownAlbumsFile,
+		config.KnownAlbumsBackup,
 	}
 	albumAdditions := foldermusic.NewAdditions(
 		folderScanner,
 		knownAlbums,
-		latestAdditionsLimit)
-	clock := time.Tick(time.Duration(fetchInterval) * time.Millisecond)
+		config.LatestAdditionsLimit)
+	clock := time.Tick(time.Duration(config.FetchInterval) * time.Millisecond)
 	statusCoordinator := status.NewCoordinator(
-		gitCommit,
+		config.GitCommit,
 		&status.MusicStatusWorker{albumAdditions},
 		clock,
-		time.Duration(sleepAfter)*time.Millisecond)
+		time.Duration(config.SleepAfter)*time.Millisecond)
 
-	http.HandleFunc("/", templateHandler("dashboard.html", dashboardRefreshInterval))
+	http.HandleFunc("/", templateHandler("dashboard.html", config.DashboardRefreshInterval))
 	http.HandleFunc("/dashinfo", dashinfoHandler(statusCoordinator.Status))
 	http.HandleFunc("/scan", func(w http.ResponseWriter, r *http.Request) {
 		statusCoordinator.Status.LastRequest = time.Now()
 	})
-	http.HandleFunc("/log", logHandler(logFile))
+	http.HandleFunc("/log", logHandler(config.LogFile))
 	http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, r.URL.Path[1:])
 	})

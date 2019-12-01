@@ -30,11 +30,11 @@ func main() {
 		folderScanner,
 		knownAlbums,
 		config.LatestAdditionsLimit)
-	clock := time.Tick(time.Duration(config.FetchInterval) * time.Millisecond)
+	timeTicker := NewClockTicker(time.Duration(config.FetchInterval) * time.Millisecond)
 	statusCoordinator := status.NewCoordinator(
 		config.GitCommit,
 		&status.MusicStatusWorker{albumAdditions},
-		clock,
+		timeTicker.NewClock(),
 		time.Duration(config.SleepAfter)*time.Millisecond)
 
 	http.HandleFunc("/", templateHandler("dashboard.html", config.DashboardRefreshInterval))

@@ -38,7 +38,7 @@ func main() {
 		time.Duration(config.SleepAfter)*time.Millisecond)
 
 	http.HandleFunc("/", templateHandler("dashboard.html", config.DashboardRefreshInterval))
-	http.HandleFunc("/dashinfo", dashinfoHandler(statusCoordinator.Status))
+	http.HandleFunc("/dashinfo", templateHandler("dashinfo.html", statusCoordinator.Status))
 	http.HandleFunc("/scan", func(w http.ResponseWriter, r *http.Request) {
 		statusCoordinator.Status.LastRequest = time.Now()
 	})
@@ -51,16 +51,14 @@ func main() {
 	http.ListenAndServe(":9000", nil)
 }
 
-func dashinfoHandler(status *status.Status) func(res http.ResponseWriter, req *http.Request) {
-	return func(res http.ResponseWriter, req *http.Request) {
-		templateHandler("dashinfo.html", status)(res, req)
-	}
+func templateHandler(templateFile string, data interface{}) func(res http.ResponseWriter, req *http.Request) {
+	return templateHandlerDynamic(templateFile, func() interface{} { return data })
 }
 
-func templateHandler(templateFile string, data interface{}) func(res http.ResponseWriter, req *http.Request) {
+func templateHandlerDynamic(templateFile string, data func() interface{}) func(res http.ResponseWriter, req *http.Request) {
 	parsedTemplate, _ := template.ParseFiles(templatePath(templateFile))
 	return func(res http.ResponseWriter, req *http.Request) {
-		parsedTemplate.Execute(res, data)
+		parsedTemplate.Execute(res, data())
 	}
 }
 

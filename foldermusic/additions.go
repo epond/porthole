@@ -3,21 +3,21 @@ package foldermusic
 import (
 	"log"
 
-	"github.com/epond/porthole/hub"
+	"github.com/epond/porthole/shared"
 	"github.com/epond/porthole/status"
 )
 
 // Additions treats folders on the filesystem as albums
 type Additions struct {
-	scanner     hub.Scanning
-	persistence hub.Persistence
+	scanner     shared.Scanning
+	persistence shared.Persistence
 	limit       int
 }
 
 // NewAdditions constructs a new Additions
 func NewAdditions(
-	scanner hub.Scanning,
-	persistence hub.Persistence,
+	scanner shared.Scanning,
+	persistence shared.Persistence,
 	limit int) *Additions {
 	return &Additions{
 		scanner,

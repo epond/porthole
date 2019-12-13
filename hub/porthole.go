@@ -14,7 +14,7 @@ type Porthole struct {
 	scanner     shared.Scanning
 	persister   shared.Persistence
 	ticker      shared.Clock
-	config      Config
+	config      *Config
 	coordinator *status.Coordinator
 }
 
@@ -23,7 +23,7 @@ func NewPorthole(
 	scanner shared.Scanning,
 	persister shared.Persistence,
 	ticker shared.Clock,
-	config Config,
+	config *Config,
 ) *Porthole {
 	albumAdditions := foldermusic.NewAdditions(
 		scanner,

@@ -10,7 +10,6 @@ import (
 
 	"github.com/epond/porthole/foldermusic"
 	"github.com/epond/porthole/hub"
-	"github.com/epond/porthole/status"
 )
 
 func main() {
@@ -18,29 +17,29 @@ func main() {
 
 	log.Printf("Starting porthole. Music folder: %v, Known albums file: %v, Backup: %v, Folders to scan: %v", config.MusicFolder, config.KnownAlbumsFile, config.KnownAlbumsBackup, config.FoldersToScan)
 
-	folderScanner := &foldermusic.DepthAwareFolderScanner{
+	scanner := &foldermusic.DepthAwareFolderScanner{
 		config.MusicFolder,
 		config.FoldersToScan,
 	}
-	knownAlbums := &foldermusic.KnownAlbumsWithBackup{
+	persister := &foldermusic.KnownAlbumsWithBackup{
 		config.KnownAlbumsFile,
 		config.KnownAlbumsBackup,
 	}
-	albumAdditions := foldermusic.NewAdditions(
-		folderScanner,
-		knownAlbums,
-		config.LatestAdditionsLimit)
-	timeTicker := NewClockTicker(time.Duration(config.FetchInterval) * time.Millisecond)
-	statusCoordinator := status.NewCoordinator(
-		config.GitCommit,
-		&status.MusicStatusWorker{albumAdditions},
-		timeTicker.NewClock(),
-		time.Duration(config.SleepAfter)*time.Millisecond)
+	clock := NewClockTicker(time.Duration(config.FetchInterval) * time.Millisecond)
+
+	porthole := hub.NewPorthole(
+		scanner,
+		persister,
+		clock,
+		config,
+	)
 
 	http.HandleFunc("/", templateHandler("dashboard.html", config.DashboardRefreshInterval))
-	http.HandleFunc("/dashinfo", templateHandler("dashinfo.html", statusCoordinator.Status))
+	http.HandleFunc("/dashinfo", templateHandlerDynamic("dashinfo.html", func() interface{} {
+		return porthole.GetStatus()
+	}))
 	http.HandleFunc("/scan", func(w http.ResponseWriter, r *http.Request) {
-		statusCoordinator.Status.LastRequest = time.Now()
+		porthole.RequestScan()
 	})
 	http.HandleFunc("/log", logHandler(config.LogFile))
 	http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {

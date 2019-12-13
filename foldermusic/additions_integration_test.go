@@ -6,14 +6,14 @@ import (
 	"path"
 	"testing"
 
-	"github.com/epond/porthole/status"
+	"github.com/epond/porthole/shared"
 	"github.com/epond/porthole/test"
 )
 
 func TestItCreatesFileWhenKnownAlbumsFileMissing(t *testing.T) {
 	setUp()
 	defer tearDown()
-	updateKnownAlbums([]status.Album{status.Album{"Lieutenant Pigeon - Mouldy Old Dough"}}, knownAlbumsFile(), knownAlbumsBackup(), 0)
+	updateKnownAlbums([]shared.Album{shared.Album{"Lieutenant Pigeon - Mouldy Old Dough"}}, knownAlbumsFile(), knownAlbumsBackup(), 0)
 	_, lines := knownAlbumsLines()
 	if len(lines) == 0 {
 		t.Error("Expected UpdateKnownAlbums to create known albums file but it didn't")
@@ -30,10 +30,10 @@ func TestItDoesNotChangeFileWhenNoNewAlbums(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	currentScan := []status.Album{
-		status.Album{"Abba - I Do, I Do, I Do, I Do, I Do"},
-		status.Album{"The Krankies - It's Fan-dabi-dozi!"},
-		status.Album{"Throbbing Gristle - Discipline"},
+	currentScan := []shared.Album{
+		shared.Album{"Abba - I Do, I Do, I Do, I Do, I Do"},
+		shared.Album{"The Krankies - It's Fan-dabi-dozi!"},
+		shared.Album{"Throbbing Gristle - Discipline"},
 	}
 	updateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
@@ -50,9 +50,9 @@ func TestItAddsAlbumsToEndOfFile(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	currentScan := []status.Album{
-		status.Album{"Daniel Menche - Vent"},
-		status.Album{"Shake - Iconoclastic Diaries"},
+	currentScan := []shared.Album{
+		shared.Album{"Daniel Menche - Vent"},
+		shared.Album{"Shake - Iconoclastic Diaries"},
 	}
 	updateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
@@ -69,11 +69,11 @@ func TestItIgnoresAlbumsAlreadyKnown(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	currentScan := []status.Album{
-		status.Album{"Shake - Iconoclastic Diaries"},
-		status.Album{"Abba - I Do, I Do, I Do, I Do, I Do"},
-		status.Album{"Daniel Menche - Vent"},
-		status.Album{"Throbbing Gristle - Discipline"},
+	currentScan := []shared.Album{
+		shared.Album{"Shake - Iconoclastic Diaries"},
+		shared.Album{"Abba - I Do, I Do, I Do, I Do, I Do"},
+		shared.Album{"Daniel Menche - Vent"},
+		shared.Album{"Throbbing Gristle - Discipline"},
 	}
 	updateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
@@ -89,8 +89,8 @@ func TestItHandlesWhenKnownAlbumsFileMayNotEndInNewline(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "knownalbums_endwithoutnewline"))
-	currentScan := []status.Album{
-		status.Album{"Daniel Menche - Vent"},
+	currentScan := []shared.Album{
+		shared.Album{"Daniel Menche - Vent"},
 	}
 	updateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
@@ -106,7 +106,7 @@ func TestReturnValueWhenNoNewAlbumsAndKnownAlbumsAboveLimit(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	latestAdditions := updateKnownAlbums([]status.Album{}, knownAlbumsFile(), knownAlbumsBackup(), 2)
+	latestAdditions := updateKnownAlbums([]shared.Album{}, knownAlbumsFile(), knownAlbumsBackup(), 2)
 
 	test.ExpectInt(t, "number of latest additions", 2, len(latestAdditions))
 	test.Expect(t, "latest addition 1", "The Krankies - It's Fan-dabi-dozi!", latestAdditions[0].Text)
@@ -117,10 +117,10 @@ func TestReturnValueWhenNewAlbumsAboveLimit(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	currentScan := []status.Album{
-		status.Album{"Shake - Iconoclastic Diaries"},
-		status.Album{"Daniel Menche - Vent"},
-		status.Album{"Lieutenant Pigeon - Mouldy Old Dough"},
+	currentScan := []shared.Album{
+		shared.Album{"Shake - Iconoclastic Diaries"},
+		shared.Album{"Daniel Menche - Vent"},
+		shared.Album{"Lieutenant Pigeon - Mouldy Old Dough"},
 	}
 	latestAdditions := updateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 2)
 
@@ -133,8 +133,8 @@ func TestReturnValueWhenNewAlbumsBelowLimit(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	currentScan := []status.Album{
-		status.Album{"Daniel Menche - Vent"},
+	currentScan := []shared.Album{
+		shared.Album{"Daniel Menche - Vent"},
 	}
 	latestAdditions := updateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 2)
 
@@ -147,8 +147,8 @@ func TestReturnValueWhenNewAndKnownAlbumsCombinedAreBelowLimit(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	currentScan := []status.Album{
-		status.Album{"Daniel Menche - Vent"},
+	currentScan := []shared.Album{
+		shared.Album{"Daniel Menche - Vent"},
 	}
 	latestAdditions := updateKnownAlbums(currentScan, knownAlbumsFile(), knownAlbumsBackup(), 5)
 
@@ -163,9 +163,9 @@ func TestItBacksUpKnownAlbumsWhenChanged(t *testing.T) {
 	setUp()
 	defer tearDown()
 	test.CopyFile(knownAlbumsFile(), path.Join(testData(), "3knownalbums"))
-	updateKnownAlbums([]status.Album{
-		status.Album{"Daniel Menche - Vent"},
-		status.Album{"Shake - Iconoclastic Diaries"},
+	updateKnownAlbums([]shared.Album{
+		shared.Album{"Daniel Menche - Vent"},
+		shared.Album{"Shake - Iconoclastic Diaries"},
 	}, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
 	backupFile, backupLines := knownAlbumsBackupLines()
@@ -183,7 +183,7 @@ func TestItBacksUpKnownAlbumsWhenChanged(t *testing.T) {
 func TestItDoesntBackUpKnownAlbumsWhenUnchanged(t *testing.T) {
 	setUp()
 	defer tearDown()
-	updateKnownAlbums([]status.Album{}, knownAlbumsFile(), knownAlbumsBackup(), 0)
+	updateKnownAlbums([]shared.Album{}, knownAlbumsFile(), knownAlbumsBackup(), 0)
 
 	_, backup := knownAlbumsBackupLines()
 	if len(backup) > 0 {
@@ -236,7 +236,7 @@ func tempDir() string {
 	return path.Join(os.Getenv("GOPATH"), "src/github.com/epond/porthole/temp")
 }
 
-func updateKnownAlbums(folderScanList []status.Album, knownAlbumsPath string, knownAlbumsBackupPath string, limit int) []status.Album {
+func updateKnownAlbums(folderScanList []shared.Album, knownAlbumsPath string, knownAlbumsBackupPath string, limit int) []shared.Album {
 	folderScanner := &DummyFolderScanner{folderScanList}
 	knownAlbums := &KnownAlbumsWithBackup{knownAlbumsPath, knownAlbumsBackupPath}
 	additions := NewAdditions(folderScanner, knownAlbums, limit)
@@ -244,9 +244,9 @@ func updateKnownAlbums(folderScanList []status.Album, knownAlbumsPath string, kn
 }
 
 type DummyFolderScanner struct {
-	folderScanList []status.Album
+	folderScanList []shared.Album
 }
 
-func (d *DummyFolderScanner) ScanFolders() []status.Album {
+func (d *DummyFolderScanner) ScanFolders() []shared.Album {
 	return d.folderScanList
 }

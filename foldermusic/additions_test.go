@@ -3,32 +3,32 @@ package foldermusic
 import (
 	"testing"
 
-	"github.com/epond/porthole/status"
+	"github.com/epond/porthole/shared"
 	"github.com/epond/porthole/test"
 )
 
 func TestNoMissingAlbums(t *testing.T) {
-	scanned := []status.Album{
-		status.Album{"Daniel Menche - Vent"},
-		status.Album{"Shake - Iconoclastic Diaries"},
+	scanned := []shared.Album{
+		shared.Album{"Daniel Menche - Vent"},
+		shared.Album{"Shake - Iconoclastic Diaries"},
 	}
-	known := []status.Album{
-		status.Album{"Daniel Menche - Vent"},
-		status.Album{"Shake - Iconoclastic Diaries"},
+	known := []shared.Album{
+		shared.Album{"Daniel Menche - Vent"},
+		shared.Album{"Shake - Iconoclastic Diaries"},
 	}
 	missing := findMissingAlbums(scanned, known)
 	test.ExpectInt(t, "number of missing albums", 0, len(missing))
 }
 
 func TestOneMissingAlbum(t *testing.T) {
-	scanned := []status.Album{
-		status.Album{"Daniel Menche - Vent"},
-		status.Album{"Shake - Iconoclastic Diaries"},
+	scanned := []shared.Album{
+		shared.Album{"Daniel Menche - Vent"},
+		shared.Album{"Shake - Iconoclastic Diaries"},
 	}
-	known := []status.Album{
-		status.Album{"Daniel Menche - Vent"},
-		status.Album{"The Krankies - It's Fan-dabi-dozi!"},
-		status.Album{"Shake - Iconoclastic Diaries"},
+	known := []shared.Album{
+		shared.Album{"Daniel Menche - Vent"},
+		shared.Album{"The Krankies - It's Fan-dabi-dozi!"},
+		shared.Album{"Shake - Iconoclastic Diaries"},
 	}
 	missing := findMissingAlbums(scanned, known)
 	test.ExpectInt(t, "number of missing albums", 1, len(missing))
@@ -36,15 +36,15 @@ func TestOneMissingAlbum(t *testing.T) {
 }
 
 func TestTwoMissingAlbums(t *testing.T) {
-	scanned := []status.Album{
-		status.Album{"Daniel Menche - Vent"},
-		status.Album{"Shake - Iconoclastic Diaries"},
+	scanned := []shared.Album{
+		shared.Album{"Daniel Menche - Vent"},
+		shared.Album{"Shake - Iconoclastic Diaries"},
 	}
-	known := []status.Album{
-		status.Album{"Daniel Menche - Vent"},
-		status.Album{"The Krankies - It's Fan-dabi-dozi!"},
-		status.Album{"Shake - Iconoclastic Diaries"},
-		status.Album{"Throbbing Gristle - Discipline"},
+	known := []shared.Album{
+		shared.Album{"Daniel Menche - Vent"},
+		shared.Album{"The Krankies - It's Fan-dabi-dozi!"},
+		shared.Album{"Shake - Iconoclastic Diaries"},
+		shared.Album{"Throbbing Gristle - Discipline"},
 	}
 	missing := findMissingAlbums(scanned, known)
 	test.ExpectInt(t, "number of missing albums", 2, len(missing))

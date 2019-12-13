@@ -3,6 +3,8 @@ package status
 import (
 	"log"
 	"time"
+
+	"github.com/epond/porthole/shared"
 )
 
 // Status represents the current spplication status
@@ -10,7 +12,7 @@ type Status struct {
 	GitCommit       string
 	LastRequest     time.Time
 	LastFetch       string
-	LatestAdditions []Album
+	LatestAdditions []shared.Album
 }
 
 // Coordinator knows about application status and how to update it
@@ -36,7 +38,7 @@ func NewCoordinator(
 		GitCommit:       gitCommit,
 		LastRequest:     time.Now(),
 		LastFetch:       "",
-		LatestAdditions: []Album{},
+		LatestAdditions: []shared.Album{},
 	}
 	statusCoordinator := &Coordinator{
 		status,

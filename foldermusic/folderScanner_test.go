@@ -7,7 +7,7 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/epond/porthole/status"
+	"github.com/epond/porthole/shared"
 	"github.com/epond/porthole/test"
 )
 
@@ -50,7 +50,7 @@ func TestFolderInfoStringCapitalisesEdgeCases(t *testing.T) {
 	test.Expect(t, "FolderInfo String()", "Ab Cd - Ef  Gh", folderInfo.String())
 }
 
-func pipeDelimitedString(list []status.Album) string {
+func pipeDelimitedString(list []shared.Album) string {
 	var all bytes.Buffer
 	for i, element := range list {
 		all.WriteString(element.Text)
@@ -61,7 +61,7 @@ func pipeDelimitedString(list []status.Album) string {
 	return all.String()
 }
 
-type SortedAlbums []status.Album
+type SortedAlbums []shared.Album
 
 func (slice SortedAlbums) Len() int {
 	return len(slice)
@@ -80,7 +80,7 @@ func sortAlbums(albums SortedAlbums) SortedAlbums {
 	return albums
 }
 
-func scanFolders(foldersToScan string) []status.Album {
+func scanFolders(foldersToScan string) []shared.Album {
 	fs := &DepthAwareFolderScanner{path.Join(os.Getenv("GOPATH"), "src/github.com/epond/porthole/testdata"), foldersToScan}
 	return fs.ScanFolders()
 }

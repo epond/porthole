@@ -9,7 +9,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/epond/porthole/status"
+	"github.com/epond/porthole/shared"
 )
 
 // FolderToScan represents a folder in the filesystem
@@ -38,15 +38,15 @@ func (f *FolderInfo) String() string {
 }
 
 // ScanFolders scans the filesystem for folders
-func (f *DepthAwareFolderScanner) ScanFolders() []status.Album {
+func (f *DepthAwareFolderScanner) ScanFolders() []shared.Album {
 	foldersToScan := parseFoldersToScan(f.MusicFolder, f.Folders)
 	var folderScanList []FolderInfo
 	for _, folder := range foldersToScan {
 		folderScanList = append(folderScanList, folderInfoAtDepth(folder)...)
 	}
-	albums := make([]status.Album, 0)
+	albums := make([]shared.Album, 0)
 	for _, folderInfo := range folderScanList {
-		albums = append(albums, status.Album{folderInfo.String()})
+		albums = append(albums, shared.Album{folderInfo.String()})
 	}
 	return albums
 }

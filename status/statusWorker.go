@@ -2,16 +2,13 @@ package status
 
 import (
 	"time"
-)
 
-// Album has a one line string representing an album in the record collection
-type Album struct {
-	Text string
-}
+	"github.com/epond/porthole/shared"
+)
 
 // AlbumAdditions gets an array of new additions as strings
 type AlbumAdditions interface {
-	FetchLatestAdditions() []Album
+	FetchLatestAdditions() []shared.Album
 }
 
 // MusicStatusWorker uses AlbumAdditions to update Status

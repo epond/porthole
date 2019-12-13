@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"github.com/epond/porthole/shared"
-	"github.com/epond/porthole/status"
 )
 
 // Additions treats folders on the filesystem as albums
@@ -27,13 +26,13 @@ func NewAdditions(
 }
 
 // FetchLatestAdditions finds the most recently added albums
-func (a *Additions) FetchLatestAdditions() []status.Album {
+func (a *Additions) FetchLatestAdditions() []shared.Album {
 	scannedAlbums := a.scanner.ScanFolders()
 	// Read known albums file into an array of its lines and a map that conveys if a line is present
 	knownAlbums, knownAlbumsMap := a.persistence.ReadKnownAlbums()
 
 	// Build a list of current scan entries not present in known albums (new albums)
-	var newAlbums []status.Album
+	var newAlbums []shared.Album
 	for _, scanItem := range scannedAlbums {
 		if knownAlbumsMap[scanItem.Text] != present {
 			newAlbums = append(newAlbums, scanItem)
@@ -57,7 +56,7 @@ func (a *Additions) FetchLatestAdditions() []status.Album {
 
 	// Return sorted new albums then knownalbums from the end, up to a total of limit
 	sortByName(newAlbums)
-	var latestAdditions []status.Album
+	var latestAdditions []shared.Album
 	i := 0
 	for i < min(len(newAlbums), a.limit) {
 		latestAdditions = append(latestAdditions, newAlbums[i])
@@ -75,14 +74,14 @@ func (a *Additions) FetchLatestAdditions() []status.Album {
 	return latestAdditions
 }
 
-func findMissingAlbums(scanned []status.Album, known []status.Album) []status.Album {
-	scannedMap := make(map[status.Album]int)
+func findMissingAlbums(scanned []shared.Album, known []shared.Album) []shared.Album {
+	scannedMap := make(map[shared.Album]int)
 	for _, album := range scanned {
 		scannedMap[album] = present
 	}
 
 	// Build a list of known albums not present in current scan
-	var missingList []status.Album
+	var missingList []shared.Album
 	for _, album := range known {
 		if scannedMap[album] != present {
 			missingList = append(missingList, album)

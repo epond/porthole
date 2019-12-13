@@ -7,12 +7,12 @@ import (
 	"os"
 	"sort"
 
-	"github.com/epond/porthole/status"
+	"github.com/epond/porthole/shared"
 )
 
 const present = 1
 
-type sortableAlbums []status.Album
+type sortableAlbums []shared.Album
 
 // KnownAlbumsWithBackup makes a backup each time the known albums are updated
 type KnownAlbumsWithBackup struct {
@@ -20,7 +20,7 @@ type KnownAlbumsWithBackup struct {
 	KnownAlbumsBackupPath string
 }
 
-func (k *KnownAlbumsWithBackup) ReadKnownAlbums() (albums []status.Album, lineMap map[string]int) {
+func (k *KnownAlbumsWithBackup) ReadKnownAlbums() (albums []shared.Album, lineMap map[string]int) {
 	if _, err := os.Stat(k.KnownAlbumsPath); os.IsNotExist(err) {
 		file, errCreate := os.Create(k.KnownAlbumsPath)
 		if errCreate != nil {
@@ -35,7 +35,7 @@ func (k *KnownAlbumsWithBackup) ReadKnownAlbums() (albums []status.Album, lineMa
 	return albums, lineMap
 }
 
-func (k *KnownAlbumsWithBackup) AppendNewAlbums(knownAlbums []status.Album, newAlbums []status.Album) {
+func (k *KnownAlbumsWithBackup) AppendNewAlbums(knownAlbums []shared.Album, newAlbums []shared.Album) {
 	ensureFileEndsInNewline(k.KnownAlbumsPath)
 	var knownAlbumsFile *os.File
 	knownAlbumsFile, err := os.OpenFile(k.KnownAlbumsPath, os.O_RDWR|os.O_APPEND, 0660)
@@ -61,7 +61,7 @@ func (k *KnownAlbumsWithBackup) AppendNewAlbums(knownAlbums []status.Album, newA
 	}
 }
 
-func backupKnownAlbums(knownAlbumsBackupPath string, albums []status.Album) {
+func backupKnownAlbums(knownAlbumsBackupPath string, albums []shared.Album) {
 	os.Remove(knownAlbumsBackupPath)
 	if _, err := os.Stat(knownAlbumsBackupPath); os.IsNotExist(err) {
 		file, errCreate := os.Create(knownAlbumsBackupPath)
@@ -98,12 +98,12 @@ func ensureFileEndsInNewline(fileLocation string) {
 	}
 }
 
-func readFile(fileLocation string) (albums []status.Album, lineMap map[string]int) {
+func readFile(fileLocation string) (albums []shared.Album, lineMap map[string]int) {
 	file, _ := os.Open(fileLocation)
 	scanner := bufio.NewScanner(file)
 	lineMap = make(map[string]int)
 	for scanner.Scan() {
-		albums = append(albums, status.Album{scanner.Text()})
+		albums = append(albums, shared.Album{scanner.Text()})
 		lineMap[scanner.Text()] = present
 	}
 	file.Close()

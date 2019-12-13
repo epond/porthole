@@ -1,43 +1,44 @@
 @startuml porthole
 
+    namespace shared {
+        interface Scanning {
+            + ScanFolders()
+        }
+
+        interface Persistence {
+	        + ReadKnownAlbums()
+	        + AppendNewAlbums()
+        }
+
+        interface Clock {
+            + NewClock()
+        }
+    }
+
+    namespace hub {
+        class Porthole {
+            + GetStatus() Status
+            + RequestScan()
+        }
+
+        class Config
+    }
+
     namespace status {
-        class Coordinator {
-        }
-
-        interface UpdateWorker  {
-            + UpdateStatus(timestamp time.Time, status *Status) 
-        }
-        class MusicStatusWorker {
-            + UpdateStatus(timestamp time.Time, status *Status) 
-
-        }
-        interface AlbumAdditions {
-            + FetchLatestAdditions() []Album
-        }
+        class Coordinator
     }
 
     namespace foldermusic {
-        class Additions {
-            + FetchLatestAdditions() []Album
-        }
-        interface FolderScanner {
-            + ScanFolders() []Album
-        }
         class DepthAwareFolderScanner
-        interface KnownAlbums {
-            + ReadKnownAlbums() []Album
-            + AppendNewAlbums([]Album)
-        }
         class KnownAlbumsWithBackup
     }
 
-status.Coordinator *-- status.UpdateWorker
-status.UpdateWorker <|-- status.MusicStatusWorker
-shared.AlbumAdditions <|-- foldermusic.Additions
-status.MusicStatusWorker *-- shared.AlbumAdditions
-foldermusic.FolderScanner <|-- foldermusic.DepthAwareFolderScanner
-foldermusic.Additions *-- foldermusic.FolderScanner
-foldermusic.Additions *-- foldermusic.KnownAlbums
-foldermusic.KnownAlbums <|-- foldermusic.KnownAlbumsWithBackup
+shared.Scanning <|-- foldermusic.DepthAwareFolderScanner
+shared.Persistence <|-- foldermusic.KnownAlbumsWithBackup
+hub.Porthole *-- hub.Config
+hub.Porthole *-- shared.Scanning
+hub.Porthole *-- shared.Persistence
+hub.Porthole *-- shared.Clock
+hub.Porthole *-- status.Coordinator
 
 @enduml

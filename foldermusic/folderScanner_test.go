@@ -12,18 +12,19 @@ import (
 )
 
 func TestGivenZeroDepthThenReturnEmptyArray(t *testing.T) {
-	test.ExpectInt(t, "number of albums", 0, len(folderInfoAtDepth(FolderToScan{"anything", 0})))
+	albums := scanFolders("anything:0")
+	test.ExpectInt(t, "number of albums", 0, len(albums))
 }
 
 // A folder such as a/b needs to have entry "a - b" where a is artist and b is name of album
 func TestScanListEntriesContainTwoFolderLevels(t *testing.T) {
-	albums := sortAlbums(scanFolders("a1:1"))
+	albums := scanFolders("a1:1")
 	test.ExpectInt(t, "number of albums", 3, len(albums))
 	test.Expect(t, "album strings", "A1 - A2|A1 - B2|A1 - C2", pipeDelimitedString(albums))
 }
 
 func TestScanListAtGreaterDepth(t *testing.T) {
-	albums := sortAlbums(scanFolders("a1:2"))
+	albums := scanFolders("a1:2")
 	test.ExpectInt(t, "number of albums", 4, len(albums))
 	test.Expect(t, "folderInfo strings", "B2 - A3b2|B2 - B3b2|C2 - A3c2|C2 - B3c2", pipeDelimitedString(albums))
 }
@@ -82,5 +83,5 @@ func sortAlbums(albums SortedAlbums) SortedAlbums {
 
 func scanFolders(foldersToScan string) []shared.Album {
 	fs := &DepthAwareFolderScanner{path.Join(os.Getenv("GOPATH"), "src/github.com/epond/porthole/testdata"), foldersToScan}
-	return fs.ScanFolders()
+	return sortAlbums(fs.ScanFolders())
 }

@@ -29,6 +29,12 @@ func TestScanListAtGreaterDepth(t *testing.T) {
 	test.Expect(t, "folderInfo strings", "B2 - A3b2|B2 - B3b2|C2 - A3c2|C2 - B3c2", pipeDelimitedString(albums))
 }
 
+func TestMultipleFoldersToScan(t *testing.T) {
+	albums := scanFolders("a1:1,b1:1")
+	test.ExpectInt(t, "number of albums", 4, len(albums))
+	test.Expect(t, "album strings", "A1 - A2|A1 - B2|A1 - C2|B1 - D2", pipeDelimitedString(albums))
+}
+
 func TestFolderInfoStringCapitalisesFirstLettersOnly(t *testing.T) {
 	folderInfo := FolderInfo{test.DummyFileInfo{"Ef Gh", true}, test.DummyFileInfo{"Ab Cd", true}}
 	test.Expect(t, "FolderInfo String()", "Ab Cd - Ef Gh", folderInfo.String())

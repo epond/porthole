@@ -10,9 +10,6 @@ import (
 
 // Porthole is the core business logic of the porthole application
 type Porthole struct {
-	// Can we also have a port for the Web UI?
-	scanner     shared.Scanning
-	persister   shared.Persistence
 	ticker      shared.Clock
 	config      *Config
 	coordinator *status.Coordinator
@@ -35,8 +32,6 @@ func NewPorthole(
 		ticker.NewClock(),
 		time.Duration(config.SleepAfter)*time.Millisecond)
 	return &Porthole{
-		scanner,
-		persister,
 		ticker,
 		config,
 		statusCoordinator,

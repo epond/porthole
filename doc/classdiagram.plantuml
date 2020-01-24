@@ -26,19 +26,23 @@
 
     namespace status {
         class Coordinator
+        class MusicStatusWorker
     }
 
     namespace foldermusic {
         class DepthAwareFolderScanner
         class KnownAlbumsWithBackup
+        class AlbumAdditions
     }
 
 shared.Scanning <|-- foldermusic.DepthAwareFolderScanner
 shared.Persistence <|-- foldermusic.KnownAlbumsWithBackup
 hub.Porthole *-- hub.Config
-hub.Porthole *-- shared.Scanning
-hub.Porthole *-- shared.Persistence
 hub.Porthole *-- shared.Clock
 hub.Porthole *-- status.Coordinator
+status.Coordinator *-- status.MusicStatusWorker
+status.MusicStatusWorker *-- foldermusic.AlbumAdditions
+foldermusic.AlbumAdditions *-- shared.Scanning
+foldermusic.AlbumAdditions *-- shared.Persistence
 
 @enduml

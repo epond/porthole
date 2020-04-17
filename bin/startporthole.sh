@@ -14,10 +14,8 @@ export FOLDERS_TO_SCAN="Music/flac:3,Music/flac-cd:3,Music/flac-add:2,Music/flac
 echo "Waiting for network..."
 /home/pi/go/src/github.com/epond/porthole/bin/waitforip.sh
 
-echo "Updating porthole..."
 cd /home/pi/go/src/github.com/epond/porthole
 rm /home/pi/porthole.log
-git pull -r >> /home/pi/porthole.log 2>&1
 export GIT_COMMIT=`git log --pretty=format:'%h' -n 1`
 bash -c ./build.sh >> /home/pi/porthole.log 2>&1
 
